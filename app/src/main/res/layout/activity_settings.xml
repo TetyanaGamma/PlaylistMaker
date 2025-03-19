@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:backgroundTint="@color/white"
-    android:orientation="vertical"
-    android:padding="@dimen/list_padding">
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/settings_toolbar"
@@ -16,99 +15,45 @@
         app:titleTextAppearance="@style/Toolbar.TitleText"
         app:titleTextColor="@color/black" />
 
-    <LinearLayout
+    <com.google.android.material.switchmaterial.SwitchMaterial
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="@dimen/list_padding">
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="20dp"
+        android:text="@string/dark_theme"
+        android:textSize="16sp"
+        app:thumbTint="@color/switch_thumb_color"
+        app:trackTint="@color/switch_track_color"/>
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/dark_theme"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/theme_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:checked="true"
-            app:thumbTint="@color/switch_thumb_color"
-            app:trackTint="@color/switch_track_color" />
-
-    </LinearLayout>
-
-    <LinearLayout
+    <com.google.android.material.textview.MaterialTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="@dimen/list_padding">
+        android:drawableEnd="@drawable/baseline_share_24"
+        app:drawableTint="@color/grey"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="20dp"
+        android:text="@string/share_settings"
+        android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/share_settings"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings" />
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/baseline_share_24"
-            app:tint="@color/grey" />
-
-    </LinearLayout>
-
-    <LinearLayout
+    <com.google.android.material.textview.MaterialTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="@dimen/list_padding">
+        android:drawableEnd="@drawable/baseline_support_agent_24"
+        app:drawableTint="@color/grey"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="20dp"
+        android:text="@string/support_settings"
+        android:textSize="16sp" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/support_settings"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings" />
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/baseline_support_agent_24"
-            app:tint="@color/grey" />
-
-    </LinearLayout>
-
-    <LinearLayout
+    <com.google.android.material.textview.MaterialTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="@dimen/list_padding">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/user_agreement"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings" />
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/baseline_arrow_forward_ios_24"
-            app:tint="@color/grey" />
-
-    </LinearLayout>
+        android:drawableEnd="@drawable/baseline_arrow_forward_ios_24"
+        app:drawableTint="@color/grey"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="20dp"
+        android:text="@string/user_agreement"
+        android:textSize="16sp" />
 
 </LinearLayout>

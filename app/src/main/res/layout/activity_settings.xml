@@ -13,24 +13,27 @@
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/settings_switch_theme"
-        style="@style/SwichStyle"
+        style="@style/SwitchStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/list_padding"
         android:text="@string/dark_theme" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/settings_share"
-        style="@style/SettingsTextViewstyle"
+        style="@style/SettingsTextViewStyle"
         android:drawableEnd="@drawable/baseline_share_24"
         android:text="@string/share_settings" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/settings_support"
-        style="@style/SettingsTextViewstyle"
+        style="@style/SettingsTextViewStyle"
         android:drawableEnd="@drawable/baseline_support_agent_24"
         android:text="@string/support_settings" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/settings_user_agreement"
-        style="@style/SettingsTextViewstyle"
+        style="@style/SettingsTextViewStyle"
         android:drawableEnd="@drawable/baseline_arrow_forward_ios_24"
         android:text="@string/user_agreement" />
 

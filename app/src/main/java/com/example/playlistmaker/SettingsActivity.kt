@@ -16,25 +16,33 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.settings_toolbar)
+        val shareMaterialTextView: TextView = findViewById(R.id.settings_share)
+        val supportMaterialTextView: TextView = findViewById(R.id.settings_support)
+        val agreementMaterialTextView: TextView = findViewById(R.id.settings_user_agreement)
+
+        //обрабатываем нажатие на стрелку назад и возвращаемся на главный экран
         toolbar.setNavigationOnClickListener {
             finish()
         }
-        val shareMaterialTextView: TextView = findViewById(R.id.settings_share)
+
+        // обрабатываем нажатие на кнопку поделиться
         shareMaterialTextView.setOnClickListener {
             shareText()
         }
-        val supportMaterialTextView: TextView = findViewById(R.id.settings_support)
+
+        //обрабатываем нажатие на кнопку поддержка
         supportMaterialTextView.setOnClickListener {
             messageToSupport()
         }
-       val agreementMaterialTextView: TextView = findViewById(R.id.settings_user_agreement)
+
+        //обрабатываем нажатие на кнопку пользовательского соглашения
         agreementMaterialTextView.setOnClickListener{
             goToUserAgreement()
         }
     }
 
     fun shareText() {
-        val messageToShare = getText(R.string.massege_to_share)
+        val messageToShare = getString(R.string.massage_to_share)
         val shareIntent = Intent(Intent.ACTION_SEND)
         shareIntent.putExtra(Intent.EXTRA_TEXT, messageToShare)
         shareIntent.type = "text/plain"
@@ -43,9 +51,9 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     fun messageToSupport() {
-        val email = getText(R.string.my_email)
-        val emailSubject = getText(R.string.email_subject)
-        val emailBody = getText(R.string.email_body)
+        val email = getString(R.string.my_email)
+        val emailSubject = getString(R.string.email_subject)
+        val emailBody = getString(R.string.email_body)
 
         val supportIntent = Intent(Intent.ACTION_SEND)
         supportIntent.data = Uri.parse("mailto:$email")
@@ -55,7 +63,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     fun goToUserAgreement() {
-        val agreementUrl = getText(R.string.user_agreement_url)
+        val agreementUrl = getString(R.string.user_agreement_url)
         val agreementIntent = Intent(Intent.ACTION_VIEW)
         agreementIntent.data = Uri.parse("$agreementUrl")
         startActivity(agreementIntent)

@@ -7,7 +7,7 @@
     <string name="share_settings">Поделиться приложением</string>
     <string name="support_settings">Написать в поддержку</string>
     <string name="user_agreement">Пользовательское соглашение</string>
-    <string name="massege_to_share">Чтобы ознакомиться с курсом перейдите по ссылке: https://practicum.yandex.com/profile/android-developer/</string>
+    <string name="massage_to_share">Чтобы ознакомиться с курсом перейдите по ссылке: https://practicum.yandex.com/profile/android-developer/</string>
     <string name="my_email">tetyanagamma@gmail.com</string>
     <string name="email_subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="email_body">Спасибо разработчикам и разработчицам за крутое приложение!</string>

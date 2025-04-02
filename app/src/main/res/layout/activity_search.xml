@@ -11,29 +11,32 @@
         style="@style/Toolbar.TitleText"
         app:title="@string/button_search" />
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginStart="@dimen/list_padding"
+        android:layout_marginEnd="@dimen/list_padding">
 
-    <EditText
-        android:id="@+id/serch_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/EditTextStyle"
-        android:hint="@string/button_search"
-        android:inputType="textMultiLine"
-        android:maxLines="5"
-       />
+        <EditText
+            android:id="@+id/serch_input"
+            style="@style/EditTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_edittext"
+            android:hint="@string/button_search"
+            android:inputType="textMultiLine"
+            android:maxLines="5" />
 
 
-    <ImageView
-        android:id="@+id/clearIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
-        android:visibility="gone" />
+        <ImageView
+            android:id="@+id/clear_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small"
+            android:layout_marginEnd="@dimen/small"
+            android:layout_gravity="end"
+            android:src="@drawable/baseline_clear_24"
+            android:visibility="gone" />
 
-    </LinearLayout>
+    </FrameLayout>
 </LinearLayout>

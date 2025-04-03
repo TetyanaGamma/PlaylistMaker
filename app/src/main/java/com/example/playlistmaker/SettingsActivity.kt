@@ -16,27 +16,26 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.settings_toolbar)
-        val shareMaterialTextView: TextView = findViewById(R.id.settings_share)
-        val supportMaterialTextView: TextView = findViewById(R.id.settings_support)
-        val agreementMaterialTextView: TextView = findViewById(R.id.settings_user_agreement)
-
         //обрабатываем нажатие на стрелку назад и возвращаемся на главный экран
         toolbar.setNavigationOnClickListener {
             finish()
         }
 
+        val shareMaterialTextView: TextView = findViewById(R.id.settings_share)
         // обрабатываем нажатие на кнопку поделиться
         shareMaterialTextView.setOnClickListener {
             shareText()
         }
 
+        val supportMaterialTextView: TextView = findViewById(R.id.settings_support)
         //обрабатываем нажатие на кнопку поддержка
         supportMaterialTextView.setOnClickListener {
             messageToSupport()
         }
 
+        val agreementMaterialTextView: TextView = findViewById(R.id.settings_user_agreement)
         //обрабатываем нажатие на кнопку пользовательского соглашения
-        agreementMaterialTextView.setOnClickListener{
+        agreementMaterialTextView.setOnClickListener {
             goToUserAgreement()
         }
     }
@@ -55,7 +54,7 @@ class SettingsActivity : AppCompatActivity() {
         val emailSubject = getString(R.string.email_subject)
         val emailBody = getString(R.string.email_body)
 
-        val supportIntent = Intent(Intent.ACTION_SEND)
+        val supportIntent = Intent(Intent.ACTION_SENDTO)
         supportIntent.data = Uri.parse("mailto:$email")
         supportIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject)
         supportIntent.putExtra(Intent.EXTRA_TEXT, emailBody)

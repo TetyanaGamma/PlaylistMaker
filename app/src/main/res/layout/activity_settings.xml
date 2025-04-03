@@ -9,15 +9,19 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/settings_toolbar"
         style="@style/Toolbar.TitleText"
+        android:paddingTop="@dimen/margin_top"
+        android:layout_marginBottom="@dimen/small_padding"
         app:title="@string/button_settings" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/settings_switch_theme"
         style="@style/SwitchStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="61dp"
         android:paddingStart="@dimen/list_padding"
-        android:text="@string/dark_theme" />
+        android:paddingEnd="@dimen/small_padding"
+        android:text="@string/dark_theme"
+        android:textAppearance="@style/SwitchTextAppearance" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/settings_share"

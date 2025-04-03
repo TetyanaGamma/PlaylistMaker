@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/list_padding"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="@dimen/list_padding">
 
         <EditText
@@ -30,12 +31,9 @@
 
         <ImageView
             android:id="@+id/clear_icon"
+            style="@style/ClearIconStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/small"
-            android:layout_marginEnd="@dimen/small"
-            android:layout_gravity="end"
-            android:src="@drawable/baseline_clear_24"
             android:visibility="gone" />
 
     </FrameLayout>

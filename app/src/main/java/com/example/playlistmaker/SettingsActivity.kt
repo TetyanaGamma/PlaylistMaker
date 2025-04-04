@@ -53,9 +53,9 @@ class SettingsActivity : AppCompatActivity() {
         val email = getString(R.string.my_email)
         val emailSubject = getString(R.string.email_subject)
         val emailBody = getString(R.string.email_body)
-
         val supportIntent = Intent(Intent.ACTION_SENDTO)
-        supportIntent.data = Uri.parse("mailto:$email")
+        supportIntent.data = Uri.parse("mailto:")
+        supportIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
         supportIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject)
         supportIntent.putExtra(Intent.EXTRA_TEXT, emailBody)
         startActivity(supportIntent)

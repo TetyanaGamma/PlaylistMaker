@@ -9,8 +9,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/settings_toolbar"
         style="@style/Toolbar.TitleText"
-        android:paddingTop="@dimen/margin_top"
-        android:layout_marginBottom="@dimen/small_padding"
+        android:layout_marginBottom="24dp"
         app:title="@string/button_settings" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial

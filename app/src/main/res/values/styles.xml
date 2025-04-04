@@ -31,9 +31,9 @@
 
     <style name="SettingsTextViewStyle">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">61dp</item>
+        <item name="android:gravity">center_vertical</item>
         <item name="android:paddingHorizontal">16dp</item>
-        <item name="android:paddingVertical">20dp</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
@@ -44,7 +44,6 @@
     <style name="SwichStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">24dp</item>
         <item name="android:paddingHorizontal">16dp</item>
         <item name="android:paddingVertical">21dp</item>
         <item name="thumbTint">@color/switch_thumb_color</item>
@@ -55,8 +54,9 @@
         <item name="android:backgroundTint">@color/light_grey</item>
         <item name="android:drawableStart">@drawable/baseline_search_24</item>
         <item name="android:drawablePadding">@dimen/small_padding</item>
+        <item name="android:paddingStart">@dimen/small_padding</item>
         <item name="android:drawableTint">@color/grey</item>
-        <item name="android:padding">@dimen/small_padding</item>
+
         <item name="android:textColor">@color/black</item>
         <item name="android:textColorHint">@color/grey</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
@@ -66,10 +66,8 @@
     </style>
     
     <style name="ClearIconStyle">
-        <item name="android:layout_marginTop">@dimen/margin_top</item>
-        <item name="android:layout_marginLeft">@dimen/small_padding</item>
-        <item name="android:layout_marginRight">@dimen/small_padding</item>
-        <item name="android:layout_gravity">end</item>
+        <item name="android:paddingEnd">@dimen/small_padding</item>
+        <item name="android:layout_gravity">end|center_vertical</item>
         <item name="android:src">@drawable/baseline_clear_24_grey</item>
         <item name="android:drawableTint">@color/grey</item>
     </style>

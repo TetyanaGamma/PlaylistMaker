@@ -22,7 +22,7 @@
             android:id="@+id/serch_input"
             style="@style/EditTextStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="36dp"
             android:background="@drawable/rounded_edittext"
             android:hint="@string/button_search"
             android:inputType="textMultiLine"

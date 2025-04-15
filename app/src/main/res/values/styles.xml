@@ -79,4 +79,26 @@
         <item name="android:textFontWeight">400</item>
     </style>
 
+    <style name="TrackArtistAndTimeText">
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+
+    </style>
+
+    <style name="DotDividerImageStyle">
+        <item name="android:src">@drawable/ellipse_1</item>
+    </style>
+
+    <style name="ForwardIconStyle">
+        <item name="android:src">@drawable/vector</item>
+        <item name="android:layout_gravity">end|center_vertical</item>
+
+    </style>
+    
+
+
     </resources>

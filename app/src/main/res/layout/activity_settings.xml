@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:backgroundTint="@color/white"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
@@ -15,6 +14,8 @@
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/settings_switch_theme"
         style="@style/SwitchStyle"
+        app:thumbTint="@color/switch_thumb_color"
+        app:trackTint="@color/switch_track_color"
         android:layout_width="match_parent"
         android:layout_height="61dp"
         android:paddingStart="@dimen/list_padding"

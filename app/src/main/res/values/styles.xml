@@ -46,8 +46,6 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingHorizontal">16dp</item>
         <item name="android:paddingVertical">21dp</item>
-        <item name="thumbTint">@color/switch_thumb_color</item>
-        <item name="trackTint">@color/switch_track_color</item>
     </style>
 
     <style name="EditTextStyle">
@@ -56,20 +54,21 @@
         <item name="android:drawablePadding">@dimen/small_padding</item>
         <item name="android:paddingStart">@dimen/small_padding</item>
         <item name="android:drawableTint">@color/grey</item>
-
         <item name="android:textColor">@color/black</item>
         <item name="android:textColorHint">@color/grey</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textFontWeight">400</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:textCursorDrawable">@drawable/cursor_custom</item>
 
     </style>
-    
+
     <style name="ClearIconStyle">
         <item name="android:paddingEnd">@dimen/small_padding</item>
         <item name="android:layout_gravity">end|center_vertical</item>
         <item name="android:src">@drawable/baseline_clear_24_grey</item>
         <item name="android:drawableTint">@color/grey</item>
+        <item name="android:background">@color/light_grey</item>
     </style>
 
     <style name="SwitchTextAppearance">
@@ -94,11 +93,11 @@
     </style>
 
     <style name="ForwardIconStyle">
-        <item name="android:src">@drawable/vector</item>
+        <item name="android:src">@drawable/ic_right_arrow_light</item>
         <item name="android:layout_gravity">end|center_vertical</item>
+        <item name="android:gravity">end|center_vertical</item>
 
     </style>
-    
 
 
-    </resources>
+</resources>

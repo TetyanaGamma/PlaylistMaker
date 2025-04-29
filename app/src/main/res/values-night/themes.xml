@@ -2,10 +2,15 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
+        <item name="android:background">@color/design_dark_default_color_background</item>
 
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
+
+    <style name="Theme.PlaylistMaker.Mainscreen" parent="Base.Theme.PlaylistMaker">
+        <item name="android:background">@color/design_dark_default_color_background</item>
+    </style>
 
 
 </resources>

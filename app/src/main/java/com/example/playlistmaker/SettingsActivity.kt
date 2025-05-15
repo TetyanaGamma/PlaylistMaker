@@ -38,6 +38,8 @@ class SettingsActivity : AppCompatActivity() {
         agreementMaterialTextView.setOnClickListener {
             goToUserAgreement()
         }
+
+
     }
 
     fun shareText() {

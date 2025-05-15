@@ -64,7 +64,8 @@
         <item name="android:paddingEnd">@dimen/small_padding</item>
         <item name="android:layout_gravity">end|center_vertical</item>
         <item name="android:src">@drawable/baseline_clear_24</item>
-        <item name="android:drawableTint">@color/black</item>
+        <item name="android:background">@color/white</item>
+
     </style>
 
     <style name="SwitchTextAppearance">

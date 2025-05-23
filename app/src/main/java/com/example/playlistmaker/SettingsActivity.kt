@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +39,16 @@ class SettingsActivity : AppCompatActivity() {
         agreementMaterialTextView.setOnClickListener {
             goToUserAgreement()
         }
+       val settingsSwitchTheme = findViewById<SwitchMaterial>(R.id.settings_switch_theme)
+             val sharedPrefs = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
+        val isDarkTheme = sharedPrefs.getBoolean(THEME_BOOLEAN_KEY, false)
+
+        settingsSwitchTheme.isChecked = isDarkTheme
+
+        settingsSwitchTheme.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
+        }
+
     }
 
     fun shareText() {

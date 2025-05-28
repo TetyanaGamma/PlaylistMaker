@@ -5,11 +5,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!-- заголовок + back -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/search_toolbar"
         style="@style/Toolbar.TitleText"
         app:title="@string/button_search" />
 
+    <!-- Поле поиска -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,6 +39,7 @@
 
     </FrameLayout>
 
+    <!-- Список треков -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/track_list"
         android:layout_width="match_parent"
@@ -44,6 +47,7 @@
         android:layout_marginTop="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
+<!-- Placeholder для ненайденных треков -->
     <LinearLayout
         android:id="@+id/notFound_placeholder"
         android:layout_width="wrap_content"
@@ -70,6 +74,7 @@
 
     </LinearLayout>
 
+    <!-- Placeholder для ошибки поиска -->
     <LinearLayout
         android:id="@+id/error_placeholder"
         android:layout_width="wrap_content"
@@ -114,6 +119,46 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="24dp" />
+
+
+    </LinearLayout>
+
+    <!-- Placeholder для истории поиска -->
+    <LinearLayout
+        android:id="@+id/search_history"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical"
+        android:layout_marginTop="24dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/history_headder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:paddingTop="18dp"
+           android:paddingBottom="12dp"
+            style="@style/SearchHistoryTextStyle"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/history_track_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            />
+
+        <Button
+            android:id="@+id/button_clear_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/ButtonUpdateStyle"
+            android:text="@string/clear_history"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"/>
 
 
     </LinearLayout>

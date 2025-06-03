@@ -21,7 +21,8 @@
         android:paddingStart="@dimen/list_padding"
         android:paddingEnd="@dimen/small_padding"
         android:text="@string/dark_theme"
-        android:textAppearance="@style/SwitchTextAppearance" />
+        android:textAppearance="@style/SwitchTextAppearance"
+        />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/settings_share"

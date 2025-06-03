@@ -1,13 +1,9 @@
 package com.example.playlistmaker
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.text.Editable
-import android.text.Layout
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -15,11 +11,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
-import androidx.activity.enableEdgeToEdge
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.getSystemService
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
 import retrofit2.Callback
@@ -52,30 +45,89 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var placeholderError: LinearLayout
     private lateinit var updateButton: Button
     private lateinit var listTracks: RecyclerView
+    private lateinit var searchHistory: SearchHistory
+    private lateinit var placeholderHistory: LinearLayout
+    private lateinit var historyRecyclerView: RecyclerView
+    private lateinit var historyHeadder: TextView
+    private lateinit var historyClearButton: Button
 
     private val tracks = ArrayList<Track>()
     private val adapter = TrackAdapter()
+    private var historyAdapter = TrackAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        initUi()
+        initAdapters()
+
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.search_toolbar)
+        // нажатие на иконку назад
+        toolbar.setNavigationOnClickListener {
+            finish()
+        }
+
+        initTrackHistory()
+        initListeners()
+
+        // получаем сохраненное значение
+        if (savedInstanceState != null) {
+            searchText = savedInstanceState.getString(INPUT_TEXT, SAVED_TEXT)
+            searchInput.setText(searchText)
+        }
+
+        // Устанавливаем фокус на поле ввода
+        searchInput.post {
+            searchInput.requestFocus()
+            showKeyBoard()
+        }
+
+        updateTrackHistory()
+
+    }
+
+    private fun initUi() {
         searchInput = findViewById(R.id.serch_input)
         clearButton = findViewById<ImageView>(R.id.clear_icon)
         updateButton = findViewById(R.id.button_update)
         placeholderNoFound = findViewById(R.id.notFound_placeholder)
         placeholderError = findViewById(R.id.error_placeholder)
         listTracks = findViewById(R.id.track_list)
+        placeholderHistory = findViewById(R.id.search_history)
+        historyRecyclerView = findViewById(R.id.history_track_list)
+        historyHeadder = findViewById(R.id.history_headder)
+        historyClearButton = findViewById(R.id.button_clear_history)
+    }
 
+    private fun initAdapters() {
         adapter.tracks = tracks
         listTracks.adapter = adapter
 
-        // нажатие на иконку назад
-        toolbar.setNavigationOnClickListener {
-            finish()
-        }
+        historyRecyclerView.adapter = historyAdapter
 
+        // Обработчик кликов для основного списка треков
+        adapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClicklistener {
+            override fun onTrackClick(track: Track) {
+                searchHistory.addTrack(track)
+            }
+        })
+
+        // Обработчик кликов для истории
+        historyAdapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClicklistener {
+            override fun onTrackClick(track: Track) {
+                searchHistory.addTrack(track)
+            }
+        })
+    }
+
+    private fun initTrackHistory() {
+        val prefs = getSharedPreferences("search_prefs", MODE_PRIVATE)
+        searchHistory = SearchHistory(prefs)
+        updateTrackHistory()
+    }
+
+    private fun initListeners() {
         // создаём анонимный класс TextWatcher для обработки ввода текста
         val searchTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -85,10 +137,12 @@ class SearchActivity : AppCompatActivity() {
                 if (s.isNullOrEmpty()) {
                     clearButton.visibility =
                         View.GONE // если в строке поиска ничего нет, кнопка очистить не нужна
+                    updateTrackHistory()
                 } else {
                     clearButton.visibility = View.VISIBLE
-                    searchText = s.toString()
+                    updateTrackHistory()
                 }
+                searchText = s.toString()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -101,20 +155,12 @@ class SearchActivity : AppCompatActivity() {
             showKeyBoard()
         }
 
-        // обрабатываем нажатие на кнопку очистить
-        clearButton.setOnClickListener() {
-            searchInput.text.clear()
-            clearButton.visibility = View.GONE
-            hideKeyBoard()
-            tracks.clear()
-            adapter.notifyDataSetChanged()
-            placeholderNoFound.visibility = View.GONE
-        }
-
-        // получаем сохраненное значение
-        if (savedInstanceState != null) {
-            searchText = savedInstanceState.getString(INPUT_TEXT, SAVED_TEXT)
-            searchInput.setText(searchText)
+        // Отслеживание фокуса в поле поиска
+        searchInput.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            // Обновляем видимость истории только при потере фокуса
+            if (!hasFocus) {
+                updateTrackHistory(hasFocus)
+            }
         }
 
         //обрабатываем нажатие на кнопку Done на клавиатуре
@@ -128,25 +174,43 @@ class SearchActivity : AppCompatActivity() {
             false
         }
 
+        // обрабатываем нажатие на кнопку очистить
+        clearButton.setOnClickListener() {
+            searchInput.text.clear()
+            clearButton.visibility = View.GONE
+            hideKeyBoard()
+            tracks.clear()
+            adapter.notifyDataSetChanged()
+            placeholderNoFound.visibility = View.GONE
+            updateTrackHistory()
+        }
+
         // по нажатию на кнопку обновить - выполняем последний сохраненный поисковый API запрос
         updateButton.setOnClickListener {
             val input = searchInput.text.toString()
             lastInput = input
-            lastInput?.let {input ->
+            lastInput?.let { input ->
                 trackSearch(input)
             }
+        }
+
+        historyClearButton.setOnClickListener {
+            searchHistory.clearHistory()
+            updateTrackHistory()
         }
     }
 
     private fun showKeyBoard() {
         searchInput.requestFocus()
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        imm?.showSoftInput(searchInput, InputMethodManager.SHOW_IMPLICIT)
+        if (searchInput.isFocused && searchInput.windowToken != null) {
+            imm?.showSoftInput(searchInput, InputMethodManager.SHOW_IMPLICIT)
+        }
     }
 
     private fun hideKeyBoard() {
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
-        imm?.hideSoftInputFromWindow(searchInput.windowToken, 0)
+        (getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager)
+            ?.hideSoftInputFromWindow(searchInput.windowToken, 0)
     }
 
     // сохраняем  введенное значение
@@ -165,7 +229,8 @@ class SearchActivity : AppCompatActivity() {
             .enqueue(object : Callback<TrackResponce> {
                 override fun onResponse(
                     call: Call<TrackResponce>,
-                    response: Response<TrackResponce>) {
+                    response: Response<TrackResponce>
+                ) {
                     if (response.isSuccessful) {
                         tracks.clear()
                         val results = response.body()?.results
@@ -174,19 +239,36 @@ class SearchActivity : AppCompatActivity() {
                             tracks.addAll(response.body()?.results!!)
                             adapter.notifyDataSetChanged()
                             placeholderNoFound.visibility = View.GONE
-                        }
-                        else {
+                            placeholderHistory.visibility = View.GONE
+                        } else {
                             placeholderNoFound.visibility = View.VISIBLE
+                            placeholderHistory.visibility = View.GONE
                         }
-                    }
-                    else {
+                    } else {
                         placeholderError.visibility = View.VISIBLE
-                        }
+                        placeholderHistory.visibility = View.GONE
                     }
+                }
 
                 override fun onFailure(call: Call<TrackResponce>, t: Throwable) {
                     placeholderError.visibility = View.VISIBLE
+                    placeholderHistory.visibility = View.GONE
                 }
-    })
-}
+            })
+    }
+
+    private fun updateTrackHistory(hasFocus: Boolean = searchInput.hasFocus()) {
+        val history = searchHistory.getHistory()
+        val isSearchFieldEmpty = searchInput.text.isEmpty()
+        val showHistory = isSearchFieldEmpty && history.isNotEmpty()
+
+        placeholderHistory.visibility = if (!showHistory) View.GONE else View.VISIBLE
+        listTracks.visibility = if (showHistory) View.GONE else View.VISIBLE
+
+        if (showHistory) {
+            historyAdapter.tracks.clear()
+            historyAdapter.tracks.addAll(history)
+            historyAdapter.notifyDataSetChanged()
+        }
+    }
 }

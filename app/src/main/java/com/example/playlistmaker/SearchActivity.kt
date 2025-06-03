@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,6 +15,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,12 +35,17 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchInput: EditText
     private lateinit var clearButton: ImageView
     private var searchText: String = SAVED_TEXT  // переменная для хранения введённого текста
-    private var lastInput: String? = null       // переменная для хранения последнего введенного текста
+    private var lastInput: String? =
+        null       // переменная для хранения последнего введенного текста
 
     // константы для сохранения и извлечения данных
     companion object {
         const val INPUT_TEXT = "SEARCH_TEXT"
         const val SAVED_TEXT = ""
+
+        // Новые константы для передачи данных на экран аудиоплейера
+        const val TRACK_EXTRA = "trackJson"
+        const val SHARED_PREFS_NAME = "playlist_maker_prefs"
     }
 
     private lateinit var placeholderNoFound: LinearLayout
@@ -110,6 +117,12 @@ class SearchActivity : AppCompatActivity() {
         adapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClicklistener {
             override fun onTrackClick(track: Track) {
                 searchHistory.addTrack(track)
+                val intent = Intent(this@SearchActivity, AudioplayerActivity::class.java).apply {
+                    val gson = Gson()
+                    val trackJson = gson.toJson(track)
+                    putExtra(TRACK_EXTRA, trackJson)
+                }
+                startActivity(intent)
             }
         })
 
@@ -117,6 +130,12 @@ class SearchActivity : AppCompatActivity() {
         historyAdapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClicklistener {
             override fun onTrackClick(track: Track) {
                 searchHistory.addTrack(track)
+                val intent = Intent(this@SearchActivity, AudioplayerActivity::class.java).apply {
+                    val gson = Gson()
+                    val trackJson = gson.toJson(track)
+                    putExtra(TRACK_EXTRA, trackJson)
+                }
+                startActivity(intent)
             }
         })
     }

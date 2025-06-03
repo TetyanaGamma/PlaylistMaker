@@ -38,16 +38,6 @@ class SearchActivity : AppCompatActivity() {
     private var lastInput: String? =
         null       // переменная для хранения последнего введенного текста
 
-    // константы для сохранения и извлечения данных
-    companion object {
-        const val INPUT_TEXT = "SEARCH_TEXT"
-        const val SAVED_TEXT = ""
-
-        // Новые константы для передачи данных на экран аудиоплейера
-        const val TRACK_EXTRA = "trackJson"
-        const val SHARED_PREFS_NAME = "playlist_maker_prefs"
-    }
-
     private lateinit var placeholderNoFound: LinearLayout
     private lateinit var placeholderError: LinearLayout
     private lateinit var updateButton: Button
@@ -289,5 +279,15 @@ class SearchActivity : AppCompatActivity() {
             historyAdapter.tracks.addAll(history)
             historyAdapter.notifyDataSetChanged()
         }
+    }
+
+    // константы для сохранения и извлечения данных
+    companion object {
+        const val INPUT_TEXT = "SEARCH_TEXT"
+        const val SAVED_TEXT = ""
+
+        // Новые константы для передачи данных на экран аудиоплейера
+        const val TRACK_EXTRA = "trackJson"
+        const val SHARED_PREFS_NAME = "playlist_maker_prefs"
     }
 }

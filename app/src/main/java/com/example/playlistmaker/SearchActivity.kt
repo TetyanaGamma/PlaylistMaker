@@ -3,6 +3,8 @@ package com.example.playlistmaker
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -12,6 +14,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +25,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
 class SearchActivity : AppCompatActivity() {
     private val trackBaseURL = "https://itunes.apple.com"
 
@@ -31,6 +35,10 @@ class SearchActivity : AppCompatActivity() {
         .build()
 
     private val trackService = retrofit.create(TrackApi::class.java)
+
+    private val searchRunnable = Runnable { trackSearch(searchText) }
+
+    private var mainThreadHandler: Handler? = null
 
     private lateinit var searchInput: EditText
     private lateinit var clearButton: ImageView
@@ -47,6 +55,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyRecyclerView: RecyclerView
     private lateinit var historyHeadder: TextView
     private lateinit var historyClearButton: Button
+    private lateinit var progressBar: ProgressBar
 
     private val tracks = ArrayList<Track>()
     private val adapter = TrackAdapter()
@@ -64,6 +73,8 @@ class SearchActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             finish()
         }
+
+        mainThreadHandler = Handler(Looper.getMainLooper())
 
         initTrackHistory()
         initListeners()
@@ -95,6 +106,7 @@ class SearchActivity : AppCompatActivity() {
         historyRecyclerView = findViewById(R.id.history_track_list)
         historyHeadder = findViewById(R.id.history_headder)
         historyClearButton = findViewById(R.id.button_clear_history)
+        progressBar = findViewById(R.id.progressBar)
     }
 
     private fun initAdapters() {
@@ -152,6 +164,7 @@ class SearchActivity : AppCompatActivity() {
                     updateTrackHistory()
                 }
                 searchText = s.toString()
+                searchDebounce()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -172,7 +185,7 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        //обрабатываем нажатие на кнопку Done на клавиатуре
+        /*обрабатываем нажатие на кнопку Done на клавиатуре
         searchInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val input = searchInput.text.toString()
@@ -181,7 +194,7 @@ class SearchActivity : AppCompatActivity() {
                 true
             }
             false
-        }
+        }*/
 
         // обрабатываем нажатие на кнопку очистить
         clearButton.setOnClickListener() {
@@ -281,6 +294,12 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    //
+    private fun searchDebounce() {
+        mainThreadHandler?.removeCallbacks(searchRunnable)
+        mainThreadHandler?.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
     // константы для сохранения и извлечения данных
     companion object {
         const val INPUT_TEXT = "SEARCH_TEXT"
@@ -289,5 +308,8 @@ class SearchActivity : AppCompatActivity() {
         // Новые константы для передачи данных на экран аудиоплейера
         const val TRACK_EXTRA = "trackJson"
         const val SHARED_PREFS_NAME = "playlist_maker_prefs"
+
+        // константа для отложенного поиского запроса
+        const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 }

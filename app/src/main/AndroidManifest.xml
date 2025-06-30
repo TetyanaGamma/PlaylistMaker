@@ -18,6 +18,9 @@
             android:name=".SearchActivity"
             android:exported="false" />
         <activity
+            android:name=".AudioplayerActivity"
+            android:exported="false" />
+        <activity
             android:name=".MediatekaActivity"
             android:exported="false" />
         <activity

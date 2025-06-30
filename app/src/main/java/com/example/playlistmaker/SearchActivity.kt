@@ -243,40 +243,44 @@ class SearchActivity : AppCompatActivity() {
 
     // выделяем отдельный метод для поискового запроса
     private fun trackSearch(input: String) {
+       if(input.isNotEmpty()) {
+           placeholderNoFound.visibility = View.GONE
+           placeholderError.visibility = View.GONE
+           progressBar.visibility = View.VISIBLE
 
-        placeholderNoFound.visibility = View.GONE
-        placeholderError.visibility = View.GONE
+           trackService.search(input)
+               .enqueue(object : Callback<TrackResponce> {
+                   override fun onResponse(
+                       call: Call<TrackResponce>,
+                       response: Response<TrackResponce>
+                   ) {
+                       if (response.isSuccessful) {
+                           progressBar.visibility = View.GONE
+                           tracks.clear()
+                           val results = response.body()?.results
 
-        trackService.search(input)
-            .enqueue(object : Callback<TrackResponce> {
-                override fun onResponse(
-                    call: Call<TrackResponce>,
-                    response: Response<TrackResponce>
-                ) {
-                    if (response.isSuccessful) {
-                        tracks.clear()
-                        val results = response.body()?.results
+                           if (!results.isNullOrEmpty()) {
+                               tracks.addAll(response.body()?.results!!)
+                               adapter.notifyDataSetChanged()
+                               placeholderNoFound.visibility = View.GONE
+                               placeholderHistory.visibility = View.GONE
+                           } else {
+                               placeholderNoFound.visibility = View.VISIBLE
+                               placeholderHistory.visibility = View.GONE
+                           }
+                       } else {
+                           placeholderError.visibility = View.VISIBLE
+                           placeholderHistory.visibility = View.GONE
+                       }
+                   }
 
-                        if (!results.isNullOrEmpty()) {
-                            tracks.addAll(response.body()?.results!!)
-                            adapter.notifyDataSetChanged()
-                            placeholderNoFound.visibility = View.GONE
-                            placeholderHistory.visibility = View.GONE
-                        } else {
-                            placeholderNoFound.visibility = View.VISIBLE
-                            placeholderHistory.visibility = View.GONE
-                        }
-                    } else {
-                        placeholderError.visibility = View.VISIBLE
-                        placeholderHistory.visibility = View.GONE
-                    }
-                }
-
-                override fun onFailure(call: Call<TrackResponce>, t: Throwable) {
-                    placeholderError.visibility = View.VISIBLE
-                    placeholderHistory.visibility = View.GONE
-                }
-            })
+                   override fun onFailure(call: Call<TrackResponce>, t: Throwable) {
+                       placeholderError.visibility = View.VISIBLE
+                       placeholderHistory.visibility = View.GONE
+                       progressBar.visibility = View.GONE
+                   }
+               })
+       }
     }
 
     private fun updateTrackHistory(hasFocus: Boolean = searchInput.hasFocus()) {

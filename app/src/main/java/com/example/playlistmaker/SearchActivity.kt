@@ -39,7 +39,7 @@ class SearchActivity : AppCompatActivity() {
 
     private val searchRunnable = Runnable { trackSearch(searchText) }
 
-    private var mainThreadHandler: Handler? = null
+    private lateinit var mainThreadHandler: Handler
 
     private lateinit var searchInput: EditText
     private lateinit var clearButton: ImageView
@@ -192,17 +192,6 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        /*обрабатываем нажатие на кнопку Done на клавиатуре
-        searchInput.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val input = searchInput.text.toString()
-                lastInput = input
-                trackSearch(input)
-                true
-            }
-            false
-        }*/
-
         // обрабатываем нажатие на кнопку очистить
         clearButton.setOnClickListener() {
             searchInput.text.clear()
@@ -253,6 +242,8 @@ class SearchActivity : AppCompatActivity() {
         if (input.isNotEmpty()) {
             placeholderNoFound.visibility = View.GONE
             placeholderError.visibility = View.GONE
+            listTracks.visibility = View.GONE
+            placeholderHistory.visibility = View.GONE
             progressBar.visibility = View.VISIBLE
 
             trackService.search(input)
@@ -269,22 +260,30 @@ class SearchActivity : AppCompatActivity() {
                             if (!results.isNullOrEmpty()) {
                                 tracks.addAll(response.body()?.results!!)
                                 adapter.notifyDataSetChanged()
+                                listTracks.visibility = View.VISIBLE
                                 placeholderNoFound.visibility = View.GONE
+                                placeholderError.visibility = View.GONE
                                 placeholderHistory.visibility = View.GONE
                             } else {
+                                listTracks.visibility = View.GONE
                                 placeholderNoFound.visibility = View.VISIBLE
+                                placeholderError.visibility = View.GONE
                                 placeholderHistory.visibility = View.GONE
                             }
                         } else {
+                            listTracks.visibility = View.GONE
                             placeholderError.visibility = View.VISIBLE
+                            placeholderNoFound.visibility = View.GONE
                             placeholderHistory.visibility = View.GONE
                         }
                     }
 
                     override fun onFailure(call: Call<TrackResponce>, t: Throwable) {
-                        placeholderError.visibility = View.VISIBLE
-                        placeholderHistory.visibility = View.GONE
                         progressBar.visibility = View.GONE
+                        listTracks.visibility = View.GONE
+                        placeholderError.visibility = View.VISIBLE
+                        placeholderNoFound.visibility = View.GONE
+                        placeholderHistory.visibility = View.GONE
                     }
                 })
         }
@@ -307,8 +306,8 @@ class SearchActivity : AppCompatActivity() {
 
     //
     private fun searchDebounce() {
-        mainThreadHandler?.removeCallbacks(searchRunnable)
-        mainThreadHandler?.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+        mainThreadHandler.removeCallbacks(searchRunnable)
+        mainThreadHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
     private fun clickDebounce(): Boolean {
@@ -319,6 +318,11 @@ class SearchActivity : AppCompatActivity() {
         } else {
             false
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mainThreadHandler.removeCallbacks(searchRunnable)
     }
 
     // константы для сохранения и извлечения данных

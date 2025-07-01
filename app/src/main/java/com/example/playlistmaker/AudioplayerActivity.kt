@@ -26,6 +26,8 @@ class AudioplayerActivity : AppCompatActivity() {
 
     private var mediaPlayer = MediaPlayer()
     private val handler = Handler(Looper.getMainLooper())
+    private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
+
 
     // целочисленная переменная, в которой хранится текущее состояние медиаплейера
     private var playerState = STATE_DEFAULT
@@ -33,11 +35,8 @@ class AudioplayerActivity : AppCompatActivity() {
     private val updateTimeRunnable = object : Runnable {
         override fun run() {
             if (playerState == STATE_PLAYING) {
-                trackTimeTextView.text = SimpleDateFormat(
-                    "mm:ss",
-                    Locale.getDefault()
-                ).format(mediaPlayer.currentPosition)
-                handler.postDelayed(this, 500)
+                trackTimeTextView.text = dateFormat.format(mediaPlayer.currentPosition)
+                handler.postDelayed(this, UPDATE_TRACK_TIME_DELAY)
             }
         }
     }
@@ -90,7 +89,7 @@ class AudioplayerActivity : AppCompatActivity() {
         trackTrackName.text = track?.trackName
         trackArtistName.text = track?.artistName
         trackDurationValue.text =
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(track?.trackTimeMillis)
+            dateFormat.format(track?.trackTimeMillis)
         trackCollectionNameValue.text = track?.collectionName
         trackReleaseDateValue.text = track?.releaseDate?.substring(0, 4)
         trackPrimaryGenreNameValue.text = track?.primaryGenreName
@@ -99,7 +98,6 @@ class AudioplayerActivity : AppCompatActivity() {
         playButton = findViewById<ImageButton>(R.id.ib_Play_Stop)
         pauseButton = findViewById<ImageButton>(R.id.ib_Pause)
 
-        //    preparePlayer(track)
         setupControls()
     }
 
@@ -179,5 +177,6 @@ class AudioplayerActivity : AppCompatActivity() {
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
+        private const val UPDATE_TRACK_TIME_DELAY = 500L
     }
 }

@@ -173,4 +173,9 @@
         <item name="android:background">@color/white</item>
     </style>
 
+    <style name="PauseButtonStyle">
+        <item name="srcCompat">@drawable/pause_button_light</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
 </resources>

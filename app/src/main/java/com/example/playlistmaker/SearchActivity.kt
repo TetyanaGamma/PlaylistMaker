@@ -3,8 +3,11 @@ package com.example.playlistmaker
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -12,6 +15,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +26,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
 class SearchActivity : AppCompatActivity() {
     private val trackBaseURL = "https://itunes.apple.com"
 
@@ -31,6 +36,10 @@ class SearchActivity : AppCompatActivity() {
         .build()
 
     private val trackService = retrofit.create(TrackApi::class.java)
+
+    private val searchRunnable = Runnable { trackSearch(searchText) }
+
+    private lateinit var mainThreadHandler: Handler
 
     private lateinit var searchInput: EditText
     private lateinit var clearButton: ImageView
@@ -47,10 +56,15 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyRecyclerView: RecyclerView
     private lateinit var historyHeadder: TextView
     private lateinit var historyClearButton: Button
+    private lateinit var progressBar: ProgressBar
 
     private val tracks = ArrayList<Track>()
     private val adapter = TrackAdapter()
     private var historyAdapter = TrackAdapter()
+    private var isClickAllowed = true
+    private val clickHandler = Handler(Looper.getMainLooper())
+    private val CLICK_DEBOUNCE_DELAY = 1000L
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +78,8 @@ class SearchActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             finish()
         }
+
+        mainThreadHandler = Handler(Looper.getMainLooper())
 
         initTrackHistory()
         initListeners()
@@ -95,6 +111,7 @@ class SearchActivity : AppCompatActivity() {
         historyRecyclerView = findViewById(R.id.history_track_list)
         historyHeadder = findViewById(R.id.history_headder)
         historyClearButton = findViewById(R.id.button_clear_history)
+        progressBar = findViewById(R.id.progressBar)
     }
 
     private fun initAdapters() {
@@ -106,26 +123,28 @@ class SearchActivity : AppCompatActivity() {
         // Обработчик кликов для основного списка треков
         adapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClicklistener {
             override fun onTrackClick(track: Track) {
-                searchHistory.addTrack(track)
-                val intent = Intent(this@SearchActivity, AudioplayerActivity::class.java).apply {
-                    val gson = Gson()
-                    val trackJson = gson.toJson(track)
-                    putExtra(TRACK_EXTRA, trackJson)
+                if (clickDebounce()) {
+                    searchHistory.addTrack(track)
+                    val intent =
+                        Intent(this@SearchActivity, AudioplayerActivity::class.java).apply {
+                            putExtra(TRACK_EXTRA, track)
+                        }
+                    startActivity(intent)
                 }
-                startActivity(intent)
             }
         })
 
         // Обработчик кликов для истории
         historyAdapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClicklistener {
             override fun onTrackClick(track: Track) {
-                searchHistory.addTrack(track)
-                val intent = Intent(this@SearchActivity, AudioplayerActivity::class.java).apply {
-                    val gson = Gson()
-                    val trackJson = gson.toJson(track)
-                    putExtra(TRACK_EXTRA, trackJson)
+                if (clickDebounce()) {
+                    searchHistory.addTrack(track)
+                    val intent =
+                        Intent(this@SearchActivity, AudioplayerActivity::class.java).apply {
+                            putExtra(TRACK_EXTRA, track)
+                        }
+                    startActivity(intent)
                 }
-                startActivity(intent)
             }
         })
     }
@@ -152,6 +171,7 @@ class SearchActivity : AppCompatActivity() {
                     updateTrackHistory()
                 }
                 searchText = s.toString()
+                searchDebounce()
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -170,17 +190,6 @@ class SearchActivity : AppCompatActivity() {
             if (!hasFocus) {
                 updateTrackHistory(hasFocus)
             }
-        }
-
-        //обрабатываем нажатие на кнопку Done на клавиатуре
-        searchInput.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val input = searchInput.text.toString()
-                lastInput = input
-                trackSearch(input)
-                true
-            }
-            false
         }
 
         // обрабатываем нажатие на кнопку очистить
@@ -230,40 +239,54 @@ class SearchActivity : AppCompatActivity() {
 
     // выделяем отдельный метод для поискового запроса
     private fun trackSearch(input: String) {
+        if (input.isNotEmpty()) {
+            placeholderNoFound.visibility = View.GONE
+            placeholderError.visibility = View.GONE
+            listTracks.visibility = View.GONE
+            placeholderHistory.visibility = View.GONE
+            progressBar.visibility = View.VISIBLE
 
-        placeholderNoFound.visibility = View.GONE
-        placeholderError.visibility = View.GONE
+            trackService.search(input)
+                .enqueue(object : Callback<TrackResponce> {
+                    override fun onResponse(
+                        call: Call<TrackResponce>,
+                        response: Response<TrackResponce>
+                    ) {
+                        if (response.isSuccessful) {
+                            progressBar.visibility = View.GONE
+                            tracks.clear()
+                            val results = response.body()?.results
 
-        trackService.search(input)
-            .enqueue(object : Callback<TrackResponce> {
-                override fun onResponse(
-                    call: Call<TrackResponce>,
-                    response: Response<TrackResponce>
-                ) {
-                    if (response.isSuccessful) {
-                        tracks.clear()
-                        val results = response.body()?.results
-
-                        if (!results.isNullOrEmpty()) {
-                            tracks.addAll(response.body()?.results!!)
-                            adapter.notifyDataSetChanged()
+                            if (!results.isNullOrEmpty()) {
+                                tracks.addAll(response.body()?.results!!)
+                                adapter.notifyDataSetChanged()
+                                listTracks.visibility = View.VISIBLE
+                                placeholderNoFound.visibility = View.GONE
+                                placeholderError.visibility = View.GONE
+                                placeholderHistory.visibility = View.GONE
+                            } else {
+                                listTracks.visibility = View.GONE
+                                placeholderNoFound.visibility = View.VISIBLE
+                                placeholderError.visibility = View.GONE
+                                placeholderHistory.visibility = View.GONE
+                            }
+                        } else {
+                            listTracks.visibility = View.GONE
+                            placeholderError.visibility = View.VISIBLE
                             placeholderNoFound.visibility = View.GONE
                             placeholderHistory.visibility = View.GONE
-                        } else {
-                            placeholderNoFound.visibility = View.VISIBLE
-                            placeholderHistory.visibility = View.GONE
                         }
-                    } else {
+                    }
+
+                    override fun onFailure(call: Call<TrackResponce>, t: Throwable) {
+                        progressBar.visibility = View.GONE
+                        listTracks.visibility = View.GONE
                         placeholderError.visibility = View.VISIBLE
+                        placeholderNoFound.visibility = View.GONE
                         placeholderHistory.visibility = View.GONE
                     }
-                }
-
-                override fun onFailure(call: Call<TrackResponce>, t: Throwable) {
-                    placeholderError.visibility = View.VISIBLE
-                    placeholderHistory.visibility = View.GONE
-                }
-            })
+                })
+        }
     }
 
     private fun updateTrackHistory(hasFocus: Boolean = searchInput.hasFocus()) {
@@ -281,6 +304,27 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    //
+    private fun searchDebounce() {
+        mainThreadHandler.removeCallbacks(searchRunnable)
+        mainThreadHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    private fun clickDebounce(): Boolean {
+        return if (isClickAllowed) {
+            isClickAllowed = false
+            clickHandler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            true
+        } else {
+            false
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mainThreadHandler.removeCallbacks(searchRunnable)
+    }
+
     // константы для сохранения и извлечения данных
     companion object {
         const val INPUT_TEXT = "SEARCH_TEXT"
@@ -289,5 +333,8 @@ class SearchActivity : AppCompatActivity() {
         // Новые константы для передачи данных на экран аудиоплейера
         const val TRACK_EXTRA = "trackJson"
         const val SHARED_PREFS_NAME = "playlist_maker_prefs"
+
+        // константа для отложенного поиского запроса
+        const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 }

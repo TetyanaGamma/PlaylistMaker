@@ -73,11 +73,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:fontFamily="@font/ys_display_medium"
-            tools:text="Yesterday (Remastered 2009)"
             android:textFontWeight="400"
             android:textSize="22sp"
             app:layout_constraintStart_toStartOf="@+id/left_boarder_24"
-            app:layout_constraintTop_toBottomOf="@+id/track_cover" />
+            app:layout_constraintTop_toBottomOf="@+id/track_cover"
+            tools:text="Yesterday (Remastered 2009)" />
 
         <TextView
             android:id="@+id/track_ArtistName"
@@ -85,11 +85,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            tools:text="The Beatles"
             android:textFontWeight="400"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="@+id/left_boarder_24"
-            app:layout_constraintTop_toBottomOf="@+id/track_TrackName" />
+            app:layout_constraintTop_toBottomOf="@+id/track_TrackName"
+            tools:text="The Beatles" />
 
         <!--Группа кнопок play, seen, favourite-->
         <androidx.constraintlayout.widget.Group
@@ -117,6 +117,17 @@
             android:layout_width="84dp"
             android:layout_height="84dp"
             android:layout_marginTop="38dp"
+            app:layout_constraintEnd_toStartOf="@+id/ib_Favorite"
+            app:layout_constraintStart_toEndOf="@+id/ib_Seen"
+            app:layout_constraintTop_toBottomOf="@+id/track_ArtistName" />
+
+        <ImageButton
+            android:id="@+id/ib_Pause"
+            style="@style/PauseButtonStyle"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:layout_marginTop="38dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@+id/ib_Favorite"
             app:layout_constraintStart_toEndOf="@+id/ib_Seen"
             app:layout_constraintTop_toBottomOf="@+id/track_ArtistName" />
@@ -167,11 +178,11 @@
             style="@style/AudioPlayerTrackValue"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            tools:text="5:35"
+            android:gravity="end"
             app:layout_constraintBaseline_toBaselineOf="@id/track_Duration"
             app:layout_constraintEnd_toEndOf="@+id/right_boarder_16"
             app:layout_constraintStart_toEndOf="@+id/track_Duration"
-            android:gravity="end"/>
+            tools:text="5:35" />
 
         <TextView
             android:id="@+id/track_СollectionName"
@@ -187,11 +198,11 @@
             style="@style/AudioPlayerTrackValue"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            tools:text="Yesterday (Remastered 2009)"
+            android:gravity="end"
             app:layout_constraintBaseline_toBaselineOf="@id/track_СollectionName"
             app:layout_constraintEnd_toEndOf="@+id/right_boarder_16"
             app:layout_constraintStart_toEndOf="@+id/track_СollectionName"
-            android:gravity="end"/>
+            tools:text="Yesterday (Remastered 2009)" />
 
         <TextView
             android:id="@+id/track_ReleaseDate"
@@ -207,11 +218,11 @@
             style="@style/AudioPlayerTrackValue"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            tools:text="1965"
+            android:gravity="end"
             app:layout_constraintBaseline_toBaselineOf="@id/track_ReleaseDate"
             app:layout_constraintEnd_toEndOf="@+id/right_boarder_16"
             app:layout_constraintStart_toEndOf="@+id/track_ReleaseDate"
-            android:gravity="end"/>
+            tools:text="1965" />
 
         <TextView
             android:id="@+id/track_PrimaryGenreName"
@@ -227,11 +238,11 @@
             style="@style/AudioPlayerTrackValue"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            tools:text="Rock"
+            android:gravity="end"
             app:layout_constraintBaseline_toBaselineOf="@id/track_PrimaryGenreName"
             app:layout_constraintEnd_toEndOf="@+id/right_boarder_16"
             app:layout_constraintStart_toEndOf="@+id/track_PrimaryGenreName"
-            android:gravity="end"/>
+            tools:text="Rock" />
 
         <TextView
             android:id="@+id/track_Country"
@@ -247,11 +258,11 @@
             style="@style/AudioPlayerTrackValue"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            tools:text="Великобритания"
+            android:gravity="end"
             app:layout_constraintBaseline_toBaselineOf="@id/track_Country"
             app:layout_constraintEnd_toEndOf="@+id/right_boarder_16"
             app:layout_constraintStart_toEndOf="@+id/track_Country"
-            android:gravity="end"/>
+            tools:text="Великобритания" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

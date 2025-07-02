@@ -171,4 +171,9 @@
         <item name="android:background">@color/black</item>
     </style>
 
+    <style name="PauseButtonStyle">
+        <item name="srcCompat">@drawable/pause_button_dark</item>
+        <item name="android:background">@color/black</item>
+    </style>
+
 </resources>

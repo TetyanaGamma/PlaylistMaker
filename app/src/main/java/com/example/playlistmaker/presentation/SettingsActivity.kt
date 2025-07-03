@@ -1,14 +1,15 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.TextView
-import android.widget.Toolbar
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.appcompat.widget.Toolbar
+import com.example.playlistmaker.App
+import com.example.playlistmaker.PLAYLIST_MAKER_PREFERENCES
+import com.example.playlistmaker.R
+import com.example.playlistmaker.THEME_BOOLEAN_KEY
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
@@ -16,7 +17,7 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.settings_toolbar)
+        val toolbar: Toolbar = findViewById(R.id.settings_toolbar)
         //обрабатываем нажатие на стрелку назад и возвращаемся на главный экран
         toolbar.setNavigationOnClickListener {
             finish()

@@ -1,15 +1,12 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
@@ -18,14 +15,19 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
+import com.example.playlistmaker.R
+import com.example.playlistmaker.SearchHistory
+import com.example.playlistmaker.presentation.TrackAdapter
+import com.example.playlistmaker.data.dto.TrackResponce
+import com.example.playlistmaker.data.network.TrackApi
+import com.example.playlistmaker.domain.model.Track
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
 
 class SearchActivity : AppCompatActivity() {
     private val trackBaseURL = "https://itunes.apple.com"
@@ -73,7 +75,7 @@ class SearchActivity : AppCompatActivity() {
         initUi()
         initAdapters()
 
-        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.search_toolbar)
+        val toolbar: Toolbar = findViewById(R.id.search_toolbar)
         // нажатие на иконку назад
         toolbar.setNavigationOnClickListener {
             finish()
@@ -220,7 +222,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showKeyBoard() {
         searchInput.requestFocus()
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
         if (searchInput.isFocused && searchInput.windowToken != null) {
             imm?.showSoftInput(searchInput, InputMethodManager.SHOW_IMPLICIT)
         }

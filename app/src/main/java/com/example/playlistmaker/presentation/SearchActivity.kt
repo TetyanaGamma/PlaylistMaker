@@ -19,8 +19,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.SearchHistory
-import com.example.playlistmaker.presentation.TrackAdapter
-import com.example.playlistmaker.data.dto.TrackResponce
+import com.example.playlistmaker.data.dto.TrackResponse
 import com.example.playlistmaker.data.network.TrackApi
 import com.example.playlistmaker.domain.model.Track
 import retrofit2.Call
@@ -249,10 +248,10 @@ class SearchActivity : AppCompatActivity() {
             progressBar.visibility = View.VISIBLE
 
             trackService.search(input)
-                .enqueue(object : Callback<TrackResponce> {
+                .enqueue(object : Callback<TrackResponse> {
                     override fun onResponse(
-                        call: Call<TrackResponce>,
-                        response: Response<TrackResponce>
+                        call: Call<TrackResponse>,
+                        response: Response<TrackResponse>
                     ) {
                         if (response.isSuccessful) {
                             progressBar.visibility = View.GONE
@@ -280,7 +279,7 @@ class SearchActivity : AppCompatActivity() {
                         }
                     }
 
-                    override fun onFailure(call: Call<TrackResponce>, t: Throwable) {
+                    override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
                         progressBar.visibility = View.GONE
                         listTracks.visibility = View.GONE
                         placeholderError.visibility = View.VISIBLE

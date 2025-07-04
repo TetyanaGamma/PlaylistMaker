@@ -3,35 +3,42 @@ package com.example.playlistmaker
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
+import com.example.playlistmaker.domain.api.SettingsInteractor
 
 const val PLAYLIST_MAKER_PREFERENCES = "playlist_maker_preferences"
 const val THEME_BOOLEAN_KEY = "theme_boolean"
 
 class App: Application() {
 
-    var darkTheme = false
+    private lateinit var settingsInteractor: SettingsInteractor
+
+    var darkTheme: Boolean = false
+        private set
 
     override fun onCreate() {
         super.onCreate()
-        val sharedPrefs = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
-        darkTheme = sharedPrefs.getBoolean(THEME_BOOLEAN_KEY, false)
-        switchTheme(darkTheme)
+
+        // Инициализация интерактора настроек
+        settingsInteractor = Creator.provideSettingsInteractor(this)
+
+        // Получаем текущую тему из интерактора
+        darkTheme = settingsInteractor.isDarkTheme()
+        applyTheme(darkTheme)
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {
         darkTheme = darkThemeEnabled
-        val sharedPrefs = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
-        sharedPrefs.edit {
-            putBoolean(THEME_BOOLEAN_KEY, darkThemeEnabled)
-        }
 
+        // Сохраняем настройку через интерактор
+        settingsInteractor.switchTheme(darkThemeEnabled)
+
+        applyTheme(darkThemeEnabled)
+    }
+
+    private fun applyTheme(isDark: Boolean) {
         AppCompatDelegate.setDefaultNightMode(
-            if(darkThemeEnabled){
-                AppCompatDelegate.MODE_NIGHT_YES
-            }
-            else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
+            if (isDark) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
         )
     }
 }

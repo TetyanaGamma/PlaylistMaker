@@ -4,8 +4,8 @@ import com.example.playlistmaker.domain.api.AudioplayerInteractor
 import com.example.playlistmaker.domain.api.AudioplayerRepository
 
 class AudioplayerInteractorImpl(
-    private val audioplayerRepository: AudioplayerRepository)
-    : AudioplayerInteractor {
+    private val audioplayerRepository: AudioplayerRepository
+) : AudioplayerInteractor {
 
     override fun preparePlayer(
         previewUrl: String,
@@ -24,7 +24,7 @@ class AudioplayerInteractorImpl(
     }
 
     override fun stopPlayer() {
-       audioplayerRepository.stopPlayer()
+        audioplayerRepository.stopPlayer()
     }
 
     override fun getCurrentPosition(): Int {

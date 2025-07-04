@@ -6,7 +6,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -39,8 +38,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchInput: EditText
     private lateinit var clearButton: ImageView
     private var searchText: String = SAVED_TEXT  // переменная для хранения введённого текста
-    private var lastInput: String? =
-        null       // переменная для хранения последнего введенного текста
 
     private lateinit var placeholderNoFound: LinearLayout
     private lateinit var placeholderError: LinearLayout
@@ -76,7 +73,6 @@ class SearchActivity : AppCompatActivity() {
             searchInput.requestFocus()
             showKeyBoard()
         }
-
     }
 
     private fun initUi() {
@@ -101,7 +97,6 @@ class SearchActivity : AppCompatActivity() {
     private fun initAdapters() {
         adapter.tracks = tracks
         listTracks.adapter = adapter
-
         historyRecyclerView.adapter = historyAdapter
 
         // Обработчик кликов для основного списка треков
@@ -125,11 +120,11 @@ class SearchActivity : AppCompatActivity() {
         })
     }
 
-
     private fun initListeners() {
         // создаём анонимный класс TextWatcher для обработки ввода текста
         searchInput.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
             override fun afterTextChanged(s: Editable?) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -247,11 +242,9 @@ class SearchActivity : AppCompatActivity() {
 
     private fun openPlayer(track: Track) {
         val intent = Intent(this, AudioplayerActivity::class.java)
-            intent.putExtra(TRACK_EXTRA, track)
-
+        intent.putExtra(TRACK_EXTRA, track)
         startActivity(intent)
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
@@ -265,7 +258,6 @@ class SearchActivity : AppCompatActivity() {
 
         // Новые константы для передачи данных на экран аудиоплейера
         const val TRACK_EXTRA = "TRACK_EXTRA"
-        const val SHARED_PREFS_NAME = "playlist_maker_prefs"
 
         // константа для отложенного поиского запроса
         const val SEARCH_DEBOUNCE_DELAY = 2000L

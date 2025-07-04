@@ -1,11 +1,9 @@
 package com.example.playlistmaker.presentation
 
-import android.media.MediaPlayer
+
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
-import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -18,22 +16,20 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.api.AudioplayerInteractor
-import com.example.playlistmaker.presentation.SearchActivity
 import com.example.playlistmaker.domain.model.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class AudioplayerActivity : AppCompatActivity() {
+
     private lateinit var interactor: AudioplayerInteractor
     private lateinit var playButton: ImageButton
     private lateinit var pauseButton: ImageButton
     private lateinit var trackTimeTextView: TextView
     private lateinit var currentTrack: Track
 
-
     private val handler = Handler(Looper.getMainLooper())
     private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
-
 
     // целочисленная переменная, в которой хранится текущее состояние медиаплейера
     private var playerState = STATE_DEFAULT
@@ -62,13 +58,12 @@ class AudioplayerActivity : AppCompatActivity() {
         initUi()
         bindTrackData(currentTrack)
         preparePlayer(currentTrack.previewUrl)
-        }
+    }
 
     private fun initUi() {
         playButton = findViewById(R.id.ib_Play_Stop)
         pauseButton = findViewById(R.id.ib_Pause)
         trackTimeTextView = findViewById(R.id.track_TrackTime)
-
         findViewById<ImageButton>(R.id.backButton).setOnClickListener {
             interactor.stopPlayer()
             finish()
@@ -89,7 +84,8 @@ class AudioplayerActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.track_TrackName).text = track.trackName
         findViewById<TextView>(R.id.track_ArtistName).text = track.artistName
-        findViewById<TextView>(R.id.track_DurationValue).text = dateFormat.format(track.trackTimeMillis)
+        findViewById<TextView>(R.id.track_DurationValue).text =
+            dateFormat.format(track.trackTimeMillis)
         findViewById<TextView>(R.id.track_СollectionNameValue).text = track.collectionName
         findViewById<TextView>(R.id.track_ReleaseDateValue).text = getReleaseYear(track.releaseDate)
         findViewById<TextView>(R.id.track_PrimaryGenreNameValue).text = track.primaryGenreName
@@ -127,6 +123,7 @@ class AudioplayerActivity : AppCompatActivity() {
         super.onPause()
         pausePlayer()
     }
+
     override fun onDestroy() {
         super.onDestroy()
         interactor.releasePlayer()
@@ -137,12 +134,8 @@ class AudioplayerActivity : AppCompatActivity() {
         else getString(R.string.unknown_date)
     }
 
-    // константы для состояния медиаплейера
     companion object {
         private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
         private const val UPDATE_TRACK_TIME_DELAY = 500L
     }
 }

@@ -22,7 +22,7 @@ object Creator {
         return TracksRepositoryImpl(RetrofitNetworkClient())
     }
 
-     fun provideTracksInteractor(): TracksInteractor {
+    fun provideTracksInteractor(): TracksInteractor {
         return TracksInteractorImpl(getTracksRepository())
     }
 
@@ -44,15 +44,14 @@ object Creator {
 
     private var audioplayerRepository: AudioplayerRepository? = null
 
-    fun getAudioplayerRepository(): AudioplayerRepository{
-        if(audioplayerRepository == null) {
+    fun getAudioplayerRepository(): AudioplayerRepository {
+        if (audioplayerRepository == null) {
             audioplayerRepository = AudioplayerRepositoryImpl()
         }
         return audioplayerRepository!!
     }
 
-    fun provideAudioplayerInteractor(): AudioplayerInteractor{
+    fun provideAudioplayerInteractor(): AudioplayerInteractor {
         return AudioplayerInteractorImpl(getAudioplayerRepository())
     }
-
 }

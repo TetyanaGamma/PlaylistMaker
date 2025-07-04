@@ -8,9 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.example.playlistmaker.App
 import com.example.playlistmaker.Creator
-import com.example.playlistmaker.PLAYLIST_MAKER_PREFERENCES
 import com.example.playlistmaker.R
-import com.example.playlistmaker.THEME_BOOLEAN_KEY
 import com.example.playlistmaker.domain.api.SettingsInteractor
 import com.google.android.material.switchmaterial.SwitchMaterial
 
@@ -24,7 +22,6 @@ class SettingsActivity : AppCompatActivity() {
 
         settingsInteractor = Creator.provideSettingsInteractor(this)
 
-
         val toolbar: Toolbar = findViewById(R.id.settings_toolbar)
         //обрабатываем нажатие на стрелку назад и возвращаемся на главный экран
         toolbar.setNavigationOnClickListener {
@@ -34,9 +31,7 @@ class SettingsActivity : AppCompatActivity() {
         setupSupportButton()
         setupUserAgreementButton()
         setupThemeSwitch()
-
-
-        }
+    }
 
     private fun setupShareButton() {
         findViewById<TextView>(R.id.settings_share).setOnClickListener {
@@ -48,6 +43,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(shareIntent, null))
         }
     }
+
     private fun setupSupportButton() {
         findViewById<TextView>(R.id.settings_support).setOnClickListener {
             val email = getString(R.string.my_email)
@@ -63,7 +59,6 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-
     private fun setupUserAgreementButton() {
         findViewById<TextView>(R.id.settings_user_agreement).setOnClickListener {
             val agreementUrl = getString(R.string.user_agreement_url)
@@ -75,11 +70,9 @@ class SettingsActivity : AppCompatActivity() {
     private fun setupThemeSwitch() {
         val themeSwitch = findViewById<SwitchMaterial>(R.id.settings_switch_theme)
         themeSwitch.isChecked = settingsInteractor.isDarkTheme()
-
         themeSwitch.setOnCheckedChangeListener { _, isChecked ->
             settingsInteractor.switchTheme(isChecked)
             (applicationContext as App).switchTheme(isChecked)
         }
     }
-
 }

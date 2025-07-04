@@ -1,6 +1,7 @@
 package com.example.playlistmaker.domain.api
 
 interface AudioplayerRepository {
+
     fun preparePlayer(previewUrl: String,
                       onPrepared: () -> Unit,
                       onCompletion: () -> Unit)

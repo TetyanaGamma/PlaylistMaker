@@ -2,13 +2,12 @@ package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.edit
 import com.example.playlistmaker.domain.api.SettingsInteractor
 
 const val PLAYLIST_MAKER_PREFERENCES = "playlist_maker_preferences"
 const val THEME_BOOLEAN_KEY = "theme_boolean"
 
-class App: Application() {
+class App : Application() {
 
     private lateinit var settingsInteractor: SettingsInteractor
 

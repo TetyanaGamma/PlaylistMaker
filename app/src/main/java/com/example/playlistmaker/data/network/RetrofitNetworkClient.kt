@@ -10,10 +10,11 @@ class RetrofitNetworkClient : NetworkClient {
 
     private val trackBaseURL = "https://itunes.apple.com"
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(trackBaseURL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
+    private val retrofit =
+        Retrofit.Builder()
+            .baseUrl(trackBaseURL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
 
     private val trackService = retrofit.create(TrackApi::class.java)
 

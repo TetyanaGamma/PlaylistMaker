@@ -3,14 +3,13 @@ package com.example.playlistmaker.data.network
 import android.media.MediaPlayer
 import com.example.playlistmaker.domain.api.AudioplayerRepository
 
+
 class AudioplayerRepositoryImpl : AudioplayerRepository {
 
     private var mediaPlayer: MediaPlayer? = null
 
     override fun preparePlayer(
-        previewUrl: String,
-        onPrepared: () -> Unit,
-        onCompletion: () -> Unit
+        previewUrl: String, onPrepared: () -> Unit, onCompletion: () -> Unit
     ) {
         releasePlayer()
 
@@ -40,16 +39,16 @@ class AudioplayerRepositoryImpl : AudioplayerRepository {
     }
 
     override fun releasePlayer() {
-       mediaPlayer?.release()
+        mediaPlayer?.release()
         mediaPlayer = null
     }
 
     override fun getCurrentPosition(): Int {
-      return  mediaPlayer?.currentPosition ?: 0
+        return mediaPlayer?.currentPosition ?: 0
     }
 
     override fun isPlaying(): Boolean {
-     return mediaPlayer?.isPlaying?: false
+        return mediaPlayer?.isPlaying ?: false
     }
 
 

@@ -4,6 +4,7 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -53,6 +54,7 @@ class AudioplayerActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        Log.d("AudioplayerActivity", "onCreate вызван")
 
         // Обрабатываем кнопку "Назад" в Toolbar
         val toolbar = findViewById<ImageButton>(R.id.backButton)
@@ -62,6 +64,7 @@ class AudioplayerActivity : AppCompatActivity() {
         }
 // Получаем данные с экрана поиска
         val track = intent.getParcelableExtra<Track>(SearchActivity.Companion.TRACK_EXTRA)
+        Log.d("AudioplayerActivity", "Получили трек: $track")
         if (track != null) {
             currentTrack = track
             preparePlayer(currentTrack)
@@ -94,7 +97,8 @@ class AudioplayerActivity : AppCompatActivity() {
         trackDurationValue.text =
             dateFormat.format(track?.trackTimeMillis)
         trackCollectionNameValue.text = track?.collectionName
-        trackReleaseDateValue.text = track?.releaseDate?.substring(0, 4)
+        val releaseYear = track?.releaseDate?.takeIf { it.length >= 4 }?.substring(0, 4) ?: "-"
+        trackReleaseDateValue.text = releaseYear
         trackPrimaryGenreNameValue.text = track?.primaryGenreName
         trackCountryValue.text = track?.country
 

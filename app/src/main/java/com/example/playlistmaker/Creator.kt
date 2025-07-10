@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.media.MediaPlayer
 import com.example.playlistmaker.data.network.AudioplayerRepositoryImpl
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.network.SearchHistoryRepositoryImpl
@@ -59,14 +60,21 @@ object Creator {
         return SearchHistoryInteractorImpl(repository)
     }
 
+    // MediaPlayer фабрика
+    private fun createMediaPlayerFactory(): () -> MediaPlayer {
+        return { MediaPlayer() }
+    }
+
     private var audioplayerRepository: AudioplayerRepository? = null
 
     fun getAudioplayerRepository(): AudioplayerRepository {
         if (audioplayerRepository == null) {
-            audioplayerRepository = AudioplayerRepositoryImpl()
+            val mediaPlayerFactory = createMediaPlayerFactory()
+            audioplayerRepository = AudioplayerRepositoryImpl(mediaPlayerFactory)
         }
         return audioplayerRepository!!
     }
+
 
     fun provideAudioplayerInteractor(): AudioplayerInteractor {
         return AudioplayerInteractorImpl(getAudioplayerRepository())

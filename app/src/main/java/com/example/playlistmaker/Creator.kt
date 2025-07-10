@@ -5,6 +5,7 @@ import com.example.playlistmaker.data.network.AudioplayerRepositoryImpl
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.data.network.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.data.network.SettingsRepositoryImpl
+import com.example.playlistmaker.data.network.TrackApi
 import com.example.playlistmaker.data.network.TracksRepositoryImpl
 import com.example.playlistmaker.domain.api.AudioplayerInteractor
 import com.example.playlistmaker.domain.api.AudioplayerRepository
@@ -16,10 +17,26 @@ import com.example.playlistmaker.domain.impl.AudioplayerInteractorImpl
 import com.example.playlistmaker.domain.impl.SearchHistoryInteractorImpl
 import com.example.playlistmaker.domain.impl.SettingsInteractorImpl
 import com.example.playlistmaker.domain.impl.TracksInteractorImpl
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 object Creator {
+
+    private const val BASE_URL = "https://itunes.apple.com"
+
+    private fun createRetrofit(): Retrofit {
+     return Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+    }
+    private fun createTrackApi(): TrackApi {
+        return createRetrofit().create(TrackApi::class.java)
+    }
     private fun getTracksRepository(): TracksRepository {
-        return TracksRepositoryImpl(RetrofitNetworkClient())
+        val trackApi = createTrackApi()
+        val networkClient = RetrofitNetworkClient(trackApi)
+        return TracksRepositoryImpl(networkClient)
     }
 
     fun provideTracksInteractor(): TracksInteractor {

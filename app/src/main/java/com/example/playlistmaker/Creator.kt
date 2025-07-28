@@ -21,6 +21,9 @@ import com.example.playlistmaker.domain.impl.TracksInteractorImpl
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+const val PLAYLIST_MAKER_PREFERENCES = "playlist_maker_preferences"
+const val THEME_BOOLEAN_KEY = "theme_boolean"
+
 object Creator {
 
     private const val BASE_URL = "https://itunes.apple.com"
@@ -67,7 +70,7 @@ object Creator {
 
     private var audioplayerRepository: AudioplayerRepository? = null
 
-    fun getAudioplayerRepository(): AudioplayerRepository {
+    private fun getAudioplayerRepository(): AudioplayerRepository {
         if (audioplayerRepository == null) {
             val mediaPlayerFactory = createMediaPlayerFactory()
             audioplayerRepository = AudioplayerRepositoryImpl(mediaPlayerFactory)

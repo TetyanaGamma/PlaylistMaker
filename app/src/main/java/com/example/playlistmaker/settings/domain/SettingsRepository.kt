@@ -1,4 +1,4 @@
-package com.example.playlistmaker.domain.api
+package com.example.playlistmaker.settings.domain
 
 interface SettingsRepository {
 

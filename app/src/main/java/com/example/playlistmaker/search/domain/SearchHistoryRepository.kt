@@ -1,6 +1,6 @@
-package com.example.playlistmaker.domain.api
+package com.example.playlistmaker.search.domain
 
-import com.example.playlistmaker.domain.model.Track
+import com.example.playlistmaker.search.domain.Track
 
 interface SearchHistoryRepository {
     fun getHistory(): List<Track>

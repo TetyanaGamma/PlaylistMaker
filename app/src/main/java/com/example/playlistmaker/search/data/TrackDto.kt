@@ -1,10 +1,10 @@
-package com.example.playlistmaker.domain.model
+package com.example.playlistmaker.search.data
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Track(
+data class TrackDto(
     val trackId: Int, // Уникальный идентификатор трека
     val trackName: String,
     val artistName: String,

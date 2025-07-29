@@ -53,7 +53,7 @@ class AudioplayerActivity : AppCompatActivity() {
             insets
         }
         interactor = Creator.provideAudioplayerInteractor()
-        currentTrack = intent.getParcelableExtra(SearchActivity.Companion.TRACK_EXTRA)!!
+        currentTrack = intent.getParcelableExtra(SearchActivity.TRACK_EXTRA)!!
 
         initUi()
         bindTrackData(currentTrack)

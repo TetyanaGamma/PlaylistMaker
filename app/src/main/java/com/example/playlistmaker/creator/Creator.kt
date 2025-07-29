@@ -16,6 +16,8 @@ import com.example.playlistmaker.search.domain.TracksInteractor
 import com.example.playlistmaker.search.domain.TracksRepository
 import com.example.playlistmaker.player.domain.AudioplayerInteractorImpl
 import com.example.playlistmaker.search.domain.SearchHistoryInteractorImpl
+import com.example.playlistmaker.search.domain.SearchInteractor
+import com.example.playlistmaker.search.domain.SearchInteractorImpl
 import com.example.playlistmaker.settings.domain.SettingsInteractorImpl
 import com.example.playlistmaker.search.domain.TracksInteractorImpl
 import retrofit2.Retrofit
@@ -45,6 +47,15 @@ object Creator {
 
     fun provideTracksInteractor(): TracksInteractor {
         return TracksInteractorImpl(getTracksRepository())
+    }
+
+    fun provideSearchInteractor(context: Context): SearchInteractor {
+        val sharedPreferences = context.getSharedPreferences("search_prefs", Context.MODE_PRIVATE)
+        val historyRepository = SearchHistoryRepositoryImpl(sharedPreferences)
+        val trackApi = createTrackApi()
+        val networkClient = RetrofitNetworkClient( trackApi)
+        val tracksRepository = TracksRepositoryImpl(networkClient)
+        return SearchInteractorImpl(tracksRepository, historyRepository)
     }
 
     fun provideSettingsInteractor(context: Context): SettingsInteractor {

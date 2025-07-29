@@ -15,11 +15,15 @@ import com.example.playlistmaker.settings.domain.SettingsInteractor
 import com.example.playlistmaker.search.domain.TracksInteractor
 import com.example.playlistmaker.search.domain.TracksRepository
 import com.example.playlistmaker.player.domain.AudioplayerInteractorImpl
+import com.example.playlistmaker.search.data.storage.PrefsStorageClient
 import com.example.playlistmaker.search.domain.SearchHistoryInteractorImpl
+import com.example.playlistmaker.search.domain.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.SearchInteractor
 import com.example.playlistmaker.search.domain.SearchInteractorImpl
+import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.settings.domain.SettingsInteractorImpl
 import com.example.playlistmaker.search.domain.TracksInteractorImpl
+import com.google.gson.reflect.TypeToken
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -50,12 +54,20 @@ object Creator {
     }
 
     fun provideSearchInteractor(context: Context): SearchInteractor {
-        val sharedPreferences = context.getSharedPreferences("search_prefs", Context.MODE_PRIVATE)
-        val historyRepository = SearchHistoryRepositoryImpl(sharedPreferences)
+
         val trackApi = createTrackApi()
         val networkClient = RetrofitNetworkClient( trackApi)
         val tracksRepository = TracksRepositoryImpl(networkClient)
-        return SearchInteractorImpl(tracksRepository, historyRepository)
+
+        val storageClient = PrefsStorageClient<ArrayList<Track>>(
+            context,
+            "HISTORY",
+            type = object : TypeToken<ArrayList<Track>>() {}.type
+        )
+        val historyRepository = SearchHistoryRepositoryImpl(storageClient)
+
+        return SearchInteractorImpl( tracksRepository,
+           historyRepository)
     }
 
     fun provideSettingsInteractor(context: Context): SettingsInteractor {
@@ -67,11 +79,16 @@ object Creator {
             SettingsRepositoryImpl(sharedPrefs)
         )
     }
+    fun getSearchHistoryRepository(context: Context): SearchHistoryRepository{
+        return SearchHistoryRepositoryImpl(PrefsStorageClient<ArrayList<Track>>(
+            context,
+            "HISTORY",
+            object : TypeToken<ArrayList<Track>>() {}.type
+        ))
+    }
 
     fun provideSearchHistoryInteractor(context: Context): SearchHistoryInteractor {
-        val prefs = context.getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, Context.MODE_PRIVATE)
-        val repository = SearchHistoryRepositoryImpl(prefs)
-        return SearchHistoryInteractorImpl(repository)
+        return SearchHistoryInteractorImpl(getSearchHistoryRepository(context))
     }
 
     // MediaPlayer фабрика

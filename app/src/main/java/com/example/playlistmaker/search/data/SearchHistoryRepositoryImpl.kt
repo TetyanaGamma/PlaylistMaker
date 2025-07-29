@@ -8,21 +8,14 @@ import com.google.gson.reflect.TypeToken
 import androidx.core.content.edit
 
 class SearchHistoryRepositoryImpl(
-    private val sharedPreferences: SharedPreferences
+    private val storage: StorageClient<ArrayList<Track>>
 ) : SearchHistoryRepository {
 
-    private val gson = Gson()
-    private val HISTORY_KEY = "search_history"
+
     private val maxSize = 10
 
     override fun getHistory(): List<Track> {
-        val json = sharedPreferences.getString(HISTORY_KEY, null)
-        return if (json != null) {
-            val type = object : TypeToken<List<Track>>() {}.type
-            gson.fromJson(json, type) ?: emptyList()
-        } else {
-            emptyList()
-        }
+        return storage.getData() ?: emptyList()
     }
 
     override fun addTrack(track: Track) {
@@ -37,18 +30,12 @@ class SearchHistoryRepositoryImpl(
         if (history.size > maxSize) {
             history.removeAt(history.size - 1)
         }
-        saveHistory(history)
+        storage.storeData(ArrayList(history))
     }
 
     override fun clearHistory() {
-        sharedPreferences.edit { remove(HISTORY_KEY) }
+        storage.storeData(arrayListOf())
     }
 
-    private fun saveHistory(tracks: List<Track>) {
-        val json = gson.toJson(tracks)
-        sharedPreferences.edit {
-            putString(HISTORY_KEY, json)
-        }
-    }
 
 }

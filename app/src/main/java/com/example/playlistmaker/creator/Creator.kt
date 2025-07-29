@@ -43,7 +43,7 @@ object Creator {
     private fun createTrackApi(): TrackApi {
         return createRetrofit().create(TrackApi::class.java)
     }
-    private fun getTracksRepository(): TracksRepository {
+  /*  private fun getTracksRepository(): TracksRepository {
         val trackApi = createTrackApi()
         val networkClient = RetrofitNetworkClient(trackApi)
         return TracksRepositoryImpl(networkClient)
@@ -51,7 +51,7 @@ object Creator {
 
     fun provideTracksInteractor(): TracksInteractor {
         return TracksInteractorImpl(getTracksRepository())
-    }
+    }*/
 
     fun provideSearchInteractor(context: Context): SearchInteractor {
 
@@ -79,7 +79,7 @@ object Creator {
             SettingsRepositoryImpl(sharedPrefs)
         )
     }
-    fun getSearchHistoryRepository(context: Context): SearchHistoryRepository{
+ /*   fun getSearchHistoryRepository(context: Context): SearchHistoryRepository{
         return SearchHistoryRepositoryImpl(PrefsStorageClient<ArrayList<Track>>(
             context,
             "HISTORY",
@@ -89,7 +89,7 @@ object Creator {
 
     fun provideSearchHistoryInteractor(context: Context): SearchHistoryInteractor {
         return SearchHistoryInteractorImpl(getSearchHistoryRepository(context))
-    }
+    }*/
 
     // MediaPlayer фабрика
     private fun createMediaPlayerFactory(): () -> MediaPlayer {

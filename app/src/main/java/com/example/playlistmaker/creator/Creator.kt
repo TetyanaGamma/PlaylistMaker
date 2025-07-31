@@ -23,6 +23,8 @@ import com.example.playlistmaker.search.domain.SearchInteractorImpl
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.settings.domain.SettingsInteractorImpl
 import com.example.playlistmaker.search.domain.TracksInteractorImpl
+import com.example.playlistmaker.sharing.data.SharingInteractorImpl
+import com.example.playlistmaker.sharing.domain.SharingInteractor
 import com.google.gson.reflect.TypeToken
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -79,17 +81,22 @@ object Creator {
             SettingsRepositoryImpl(sharedPrefs)
         )
     }
- /*   fun getSearchHistoryRepository(context: Context): SearchHistoryRepository{
-        return SearchHistoryRepositoryImpl(PrefsStorageClient<ArrayList<Track>>(
-            context,
-            "HISTORY",
-            object : TypeToken<ArrayList<Track>>() {}.type
-        ))
+
+    fun provideSharingInteractor(context: Context): SharingInteractor {
+        return SharingInteractorImpl(context)
     }
 
-    fun provideSearchHistoryInteractor(context: Context): SearchHistoryInteractor {
-        return SearchHistoryInteractorImpl(getSearchHistoryRepository(context))
-    }*/
+    /*   fun getSearchHistoryRepository(context: Context): SearchHistoryRepository{
+           return SearchHistoryRepositoryImpl(PrefsStorageClient<ArrayList<Track>>(
+               context,
+               "HISTORY",
+               object : TypeToken<ArrayList<Track>>() {}.type
+           ))
+       }
+
+       fun provideSearchHistoryInteractor(context: Context): SearchHistoryInteractor {
+           return SearchHistoryInteractorImpl(getSearchHistoryRepository(context))
+       }*/
 
     // MediaPlayer фабрика
     private fun createMediaPlayerFactory(): () -> MediaPlayer {

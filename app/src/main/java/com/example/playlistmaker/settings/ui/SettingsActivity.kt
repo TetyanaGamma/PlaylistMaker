@@ -5,7 +5,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.App
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
@@ -14,28 +16,53 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var settingsInteractor: SettingsInteractor
+    private lateinit var viewModel: SettingsViewModel
+    private lateinit var themeSwitch: SwitchCompat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        settingsInteractor = Creator.provideSettingsInteractor(this)
+        viewModel = ViewModelProvider(
+            this,
+            SettingsViewModel.getFactory(
+                Creator.provideSettingsInteractor(this),
+                Creator.provideSharingInteractor(this)
+            )
+        )[SettingsViewModel::class.java]
+
 
         val toolbar: Toolbar = findViewById(R.id.settings_toolbar)
         //обрабатываем нажатие на стрелку назад и возвращаемся на главный экран
         toolbar.setNavigationOnClickListener {
             finish()
         }
+        themeSwitch  = findViewById(R.id.settings_switch_theme)
+
+        setupThemeObserver()
+        setupThemeSwitch()
         setupShareButton()
         setupSupportButton()
         setupUserAgreementButton()
-        setupThemeSwitch()
+
+    }
+
+    private fun setupThemeObserver() {
+        viewModel.observe().observe(this) { isDarkTheme ->
+            themeSwitch.isChecked = isDarkTheme
+            (application as App).switchTheme(isDarkTheme)
+        }
+    }
+
+    private fun setupThemeSwitch() {
+        themeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.toggleTheme(isChecked)
+        }
     }
 
     private fun setupShareButton() {
         findViewById<TextView>(R.id.settings_share).setOnClickListener {
-            val messageToShare = getString(R.string.massage_to_share)
+            val messageToShare = viewModel.getShareLink()
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 putExtra(Intent.EXTRA_TEXT, messageToShare)
                 type = "text/plain"
@@ -46,14 +73,12 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun setupSupportButton() {
         findViewById<TextView>(R.id.settings_support).setOnClickListener {
-            val email = getString(R.string.my_email)
-            val emailSubject = getString(R.string.email_subject)
-            val emailBody = getString(R.string.email_body)
+            val supportData = viewModel.getSupportData()
             val supportIntent = Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:")
-                putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
-                putExtra(Intent.EXTRA_SUBJECT, emailSubject)
-                putExtra(Intent.EXTRA_TEXT, emailBody)
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(supportData.email))
+                putExtra(Intent.EXTRA_SUBJECT, supportData.subject)
+                putExtra(Intent.EXTRA_TEXT, supportData.message)
             }
             startActivity(supportIntent)
         }
@@ -61,18 +86,12 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun setupUserAgreementButton() {
         findViewById<TextView>(R.id.settings_user_agreement).setOnClickListener {
-            val agreementUrl = getString(R.string.user_agreement_url)
+            val agreementUrl = viewModel.getUserAgreementUrl()
             val agreementIntent = Intent(Intent.ACTION_VIEW, Uri.parse(agreementUrl))
             startActivity(agreementIntent)
         }
     }
 
-    private fun setupThemeSwitch() {
-        val themeSwitch = findViewById<SwitchMaterial>(R.id.settings_switch_theme)
-        themeSwitch.isChecked = settingsInteractor.isDarkTheme()
-        themeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            settingsInteractor.switchTheme(isChecked)
-            (applicationContext as App).switchTheme(isChecked)
-        }
-    }
+
+
 }

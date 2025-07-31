@@ -23,6 +23,7 @@ import com.example.playlistmaker.search.domain.SearchInteractorImpl
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.settings.domain.SettingsInteractorImpl
 import com.example.playlistmaker.search.domain.TracksInteractorImpl
+import com.example.playlistmaker.settings.data.storage.ThemeStorageClient
 import com.example.playlistmaker.sharing.data.SharingInteractorImpl
 import com.example.playlistmaker.sharing.domain.SharingInteractor
 import com.google.gson.reflect.TypeToken
@@ -73,12 +74,11 @@ object Creator {
     }
 
     fun provideSettingsInteractor(context: Context): SettingsInteractor {
-        val sharedPrefs = context.getSharedPreferences(
-            PLAYLIST_MAKER_PREFERENCES,
-            Context.MODE_PRIVATE
+        val themeStorage = ThemeStorageClient(
+             context
         )
         return SettingsInteractorImpl(
-            SettingsRepositoryImpl(sharedPrefs)
+            SettingsRepositoryImpl(themeStorage)
         )
     }
 

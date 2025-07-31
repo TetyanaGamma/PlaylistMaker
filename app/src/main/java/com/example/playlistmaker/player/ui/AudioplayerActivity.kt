@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
@@ -22,13 +23,15 @@ import java.util.Locale
 
 class AudioplayerActivity : AppCompatActivity() {
 
-    private lateinit var interactor: AudioplayerInteractor
+    private lateinit var viewModel: AudioplayerViewModel
+
+  //  private lateinit var interactor: AudioplayerInteractor
     private lateinit var playButton: ImageButton
     private lateinit var pauseButton: ImageButton
     private lateinit var trackTimeTextView: TextView
     private lateinit var currentTrack: Track
 
-    private val handler = Handler(Looper.getMainLooper())
+ /*   private val handler = Handler(Looper.getMainLooper())
     private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
 
     // целочисленная переменная, в которой хранится текущее состояние медиаплейера
@@ -41,7 +44,7 @@ class AudioplayerActivity : AppCompatActivity() {
                 handler.postDelayed(this, UPDATE_TRACK_TIME_DELAY)
             }
         }
-    }
+    } */
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,12 +55,39 @@ class AudioplayerActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        interactor = Creator.provideAudioplayerInteractor()
+     //   interactor = Creator.provideAudioplayerInteractor()
         currentTrack = intent.getParcelableExtra(SearchActivity.TRACK_EXTRA)!!
+
+        viewModel = ViewModelProvider(
+            this,
+            AudioplayerViewModel.getFactory(
+                Creator.provideAudioplayerInteractor(),
+                currentTrack.previewUrl.toString()
+            )
+        )[AudioplayerViewModel::class.java]
+
+        viewModel.observePlayerState().observe(this) { state ->
+            when (state) {
+                AudioplayerViewModel.STATE_PREPARED, AudioplayerViewModel.STATE_PAUSED -> {
+                    playButton.visibility = ImageButton.VISIBLE
+                    pauseButton.visibility = ImageButton.INVISIBLE
+                }
+                AudioplayerViewModel.STATE_PLAYING -> {
+                    playButton.visibility = ImageButton.INVISIBLE
+                    pauseButton.visibility = ImageButton.VISIBLE
+                }
+            }
+            playButton.isEnabled = state != AudioplayerViewModel.STATE_DEFAULT
+        }
+
+        viewModel.observeProgressTime().observe(this) { time ->
+            trackTimeTextView.text = time
+        }
+
 
         initUi()
         bindTrackData(currentTrack)
-        preparePlayer(currentTrack.previewUrl)
+        //preparePlayer(currentTrack.previewUrl)
     }
 
     private fun initUi() {
@@ -65,13 +95,14 @@ class AudioplayerActivity : AppCompatActivity() {
         pauseButton = findViewById(R.id.ib_Pause)
         trackTimeTextView = findViewById(R.id.track_TrackTime)
         findViewById<ImageButton>(R.id.backButton).setOnClickListener {
-            interactor.stopPlayer()
             finish()
         }
 
-        playButton.setOnClickListener { startPlayer() }
-        pauseButton.setOnClickListener { pausePlayer() }
+        playButton.setOnClickListener { viewModel.onPlayButtonClicked() }
+        pauseButton.setOnClickListener { viewModel.onPause() }
     }
+
+
 
     private fun bindTrackData(track: Track) {
         val radiusInPx = (8f * resources.displayMetrics.density).toInt()
@@ -84,15 +115,16 @@ class AudioplayerActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.track_TrackName).text = track.trackName
         findViewById<TextView>(R.id.track_ArtistName).text = track.artistName
-        findViewById<TextView>(R.id.track_DurationValue).text =
-            dateFormat.format(track.trackTimeMillis)
+        findViewById<TextView>(R.id.track_DurationValue).text =track.trackTimeMillis.let {
+            SimpleDateFormat("mm:ss", Locale.getDefault()).format(it)
+        }
         findViewById<TextView>(R.id.track_СollectionNameValue).text = track.collectionName
         findViewById<TextView>(R.id.track_ReleaseDateValue).text = getReleaseYear(track.releaseDate)
         findViewById<TextView>(R.id.track_PrimaryGenreNameValue).text = track.primaryGenreName
         findViewById<TextView>(R.id.track_CountryValue).text = track.country
     }
 
-    private fun preparePlayer(previewUrl: String?) {
+/*    private fun preparePlayer(previewUrl: String?) {
         previewUrl?.let {
             interactor.preparePlayer(it, onPrepared = {
                 playButton.isEnabled = true
@@ -117,16 +149,16 @@ class AudioplayerActivity : AppCompatActivity() {
         playButton.visibility = ImageButton.VISIBLE
         pauseButton.visibility = ImageButton.INVISIBLE
         handler.removeCallbacks(updateTimeRunnable)
-    }
+    }*/
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
+        viewModel.onPause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        interactor.releasePlayer()
+        viewModel.onDestroy()
     }
 
     private fun getReleaseYear(date: String?): String {
@@ -134,8 +166,8 @@ class AudioplayerActivity : AppCompatActivity() {
         else getString(R.string.unknown_date)
     }
 
-    companion object {
+ /*   companion object {
         private const val STATE_DEFAULT = 0
         private const val UPDATE_TRACK_TIME_DELAY = 500L
-    }
+    }*/
 }

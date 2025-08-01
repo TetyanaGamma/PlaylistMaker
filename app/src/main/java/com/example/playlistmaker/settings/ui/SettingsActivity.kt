@@ -11,17 +11,21 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.App
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.settings.domain.SettingsInteractor
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var viewModel: SettingsViewModel
-    private lateinit var themeSwitch: SwitchCompat
+  //  private lateinit var themeSwitch: SwitchCompat
+    private lateinit var binding: ActivitySettingsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
 
         viewModel = ViewModelProvider(
             this,
@@ -32,12 +36,12 @@ class SettingsActivity : AppCompatActivity() {
         )[SettingsViewModel::class.java]
 
 
-        val toolbar: Toolbar = findViewById(R.id.settings_toolbar)
+
         //обрабатываем нажатие на стрелку назад и возвращаемся на главный экран
-        toolbar.setNavigationOnClickListener {
+        binding.settingsToolbar.setNavigationOnClickListener {
             finish()
         }
-        themeSwitch  = findViewById(R.id.settings_switch_theme)
+
 
         setupThemeObserver()
         setupThemeSwitch()
@@ -49,19 +53,19 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun setupThemeObserver() {
         viewModel.observe().observe(this) { isDarkTheme ->
-            themeSwitch.isChecked = isDarkTheme
+            binding.settingsSwitchTheme.isChecked = isDarkTheme
             (application as App).switchTheme(isDarkTheme)
         }
     }
 
     private fun setupThemeSwitch() {
-        themeSwitch.setOnCheckedChangeListener { _, isChecked ->
+        binding.settingsSwitchTheme.setOnCheckedChangeListener { _, isChecked ->
             viewModel.toggleTheme(isChecked)
         }
     }
 
     private fun setupShareButton() {
-        findViewById<TextView>(R.id.settings_share).setOnClickListener {
+        binding.settingsShare.setOnClickListener {
             val messageToShare = viewModel.getShareLink()
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 putExtra(Intent.EXTRA_TEXT, messageToShare)
@@ -72,7 +76,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setupSupportButton() {
-        findViewById<TextView>(R.id.settings_support).setOnClickListener {
+        binding.settingsSupport.setOnClickListener {
             val supportData = viewModel.getSupportData()
             val supportIntent = Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:")
@@ -85,7 +89,7 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun setupUserAgreementButton() {
-        findViewById<TextView>(R.id.settings_user_agreement).setOnClickListener {
+        binding.settingsUserAgreement.setOnClickListener {
             val agreementUrl = viewModel.getUserAgreementUrl()
             val agreementIntent = Intent(Intent.ACTION_VIEW, Uri.parse(agreementUrl))
             startActivity(agreementIntent)

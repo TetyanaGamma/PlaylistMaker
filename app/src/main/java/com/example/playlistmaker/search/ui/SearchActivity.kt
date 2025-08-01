@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.search.domain.SearchHistoryInteractor
 import com.example.playlistmaker.search.domain.TracksInteractor
 import com.example.playlistmaker.search.domain.Track
@@ -29,7 +30,9 @@ import com.example.playlistmaker.search.domain.SearchViewModelFactory
 
 class SearchActivity : AppCompatActivity() {
 
-    private lateinit var searchInput: EditText
+    private lateinit var binding: ActivitySearchBinding
+
+  /*  private lateinit var searchInput: EditText
     private lateinit var clearButton: ImageView
     private lateinit var placeholderNoFound: LinearLayout
     private lateinit var placeholderError: LinearLayout
@@ -39,7 +42,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyRecyclerView: RecyclerView
     private lateinit var historyHeadder: TextView
     private lateinit var historyClearButton: View
-    private lateinit var progressBar: ProgressBar
+    private lateinit var progressBar: ProgressBar*/
 
     private val adapter = TrackAdapter()
     private val historyAdapter = TrackAdapter()
@@ -52,7 +55,9 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         initUi()
         initListeners()
         viewModel = ViewModelProvider(this, SearchViewModel.getFactory())
@@ -66,23 +71,23 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun initUi() {
-        val toolbar: Toolbar = findViewById(R.id.search_toolbar)
-        toolbar.setNavigationOnClickListener { finish() }
+      //  val toolbar: Toolbar = findViewById(R.id.search_toolbar)
+        binding.searchToolbar.setNavigationOnClickListener { finish() }
 
-        searchInput = findViewById(R.id.serch_input)
-        clearButton = findViewById(R.id.clear_icon)
-        updateButton = findViewById(R.id.button_update)
-        placeholderNoFound = findViewById(R.id.notFound_placeholder)
-        placeholderError = findViewById(R.id.error_placeholder)
-        listTracks = findViewById(R.id.track_list)
-        placeholderHistory = findViewById(R.id.search_history)
-        historyRecyclerView = findViewById(R.id.history_track_list)
-        historyHeadder = findViewById(R.id.history_headder)
-        historyClearButton = findViewById(R.id.button_clear_history)
-        progressBar = findViewById(R.id.progressBar)
+     /*   binding.serchInput
+        binding.clearIcon
+        binding.buttonUpdate
+        binding.notFoundPlaceholder
+       binding.notFoundPlaceholder
+      //  binding.trackList
+        binding.searchHistory
+        binding.historyTrackList
+        binding.historyHeadder
+       binding.buttonClearHistory
+       binding.progressBar*/
 
-        listTracks.adapter = adapter
-        historyRecyclerView.adapter = historyAdapter
+        binding.trackList.adapter = adapter
+        binding.historyTrackList.adapter = historyAdapter
     }
 
     private fun initListeners() {
@@ -94,26 +99,26 @@ class SearchActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                clearButton.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
+                binding.clearIcon.visibility = if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
                 if (s.isNullOrEmpty()) viewModel?.loadHistory() else viewModel?.searchDebounce(s.toString())
             }
         }
-        textWatcher.let { searchInput.addTextChangedListener(it) }
+        textWatcher.let { binding.serchInput.addTextChangedListener(it) }
 
 
-        clearButton.setOnClickListener {
-            searchInput.text.clear()
+        binding.clearIcon.setOnClickListener {
+            binding.serchInput.text.clear()
             hideKeyboard()
             viewModel?.loadHistory()
         }
 
-        updateButton.setOnClickListener {
+        binding.buttonUpdate.setOnClickListener {
             viewModel?.retrySearch()
         }
 
-        historyClearButton.setOnClickListener {
+        binding.buttonClearHistory.setOnClickListener {
             viewModel?.clearHistory()
-            placeholderHistory.visibility = View.GONE
+            binding.searchHistory.visibility = View.GONE
         }
 
         adapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClicklistener {
@@ -155,55 +160,57 @@ class SearchActivity : AppCompatActivity() {
 
 
     private fun showLoading() {
-        progressBar.visibility = View.VISIBLE
-        listTracks.visibility = View.GONE
-        placeholderError.visibility = View.GONE
-        placeholderNoFound.visibility = View.GONE
-        placeholderHistory.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+        binding.trackList.visibility = View.GONE
+        binding.errorPlaceholder.visibility = View.GONE
+        binding.notFoundPlaceholder.visibility = View.GONE
+        binding.searchHistory.visibility = View.GONE
+        hideKeyboard()
     }
 
     private fun showTracks(tracks: List<Track>) {
         adapter.tracks.clear()
         adapter.tracks.addAll(tracks)
         adapter.notifyDataSetChanged()
+        hideKeyboard()
 
-        progressBar.visibility = View.GONE
-        listTracks.visibility = View.VISIBLE
-        placeholderError.visibility = View.GONE
-        placeholderNoFound.visibility = View.GONE
-        placeholderHistory.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
+        binding.trackList.visibility = View.VISIBLE
+        binding.errorPlaceholder.visibility = View.GONE
+        binding.notFoundPlaceholder.visibility = View.GONE
+        binding.searchHistory.visibility = View.GONE
     }
 
     private fun showError() {
-        progressBar.visibility = View.GONE
-        listTracks.visibility = View.GONE
-        placeholderError.visibility = View.VISIBLE
-        placeholderNoFound.visibility = View.GONE
-        placeholderHistory.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
+        binding.trackList.visibility = View.GONE
+       binding.errorPlaceholder.visibility = View.VISIBLE
+        binding.notFoundPlaceholder.visibility = View.GONE
+        binding.searchHistory.visibility = View.GONE
     }
 
     private fun showEmpty() {
-        progressBar.visibility = View.GONE
-        listTracks.visibility = View.GONE
-        placeholderError.visibility = View.GONE
-        placeholderNoFound.visibility = View.VISIBLE
-        placeholderHistory.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
+       binding.trackList.visibility = View.GONE
+        binding.errorPlaceholder.visibility = View.GONE
+        binding.notFoundPlaceholder.visibility = View.VISIBLE
+        binding.searchHistory.visibility = View.GONE
     }
 
     private fun showHistory(history: List<Track>) {
         if (history.isEmpty()) {
-            placeholderHistory.visibility = View.GONE
+            binding.searchHistory.visibility = View.GONE
             return
         }
         historyAdapter.tracks.clear()
         historyAdapter.tracks.addAll(history)
         historyAdapter.notifyDataSetChanged()
 
-        progressBar.visibility = View.GONE
-        listTracks.visibility = View.GONE
-        placeholderError.visibility = View.GONE
-        placeholderNoFound.visibility = View.GONE
-        placeholderHistory.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.GONE
+       binding.trackList.visibility = View.GONE
+       binding.errorPlaceholder.visibility = View.GONE
+        binding.notFoundPlaceholder.visibility = View.GONE
+        binding.searchHistory.visibility = View.VISIBLE
     }
 
    /* private fun debounceSearch() {
@@ -213,7 +220,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun hideKeyboard() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
-        imm?.hideSoftInputFromWindow(searchInput.windowToken, 0)
+        imm?.hideSoftInputFromWindow(binding.serchInput.windowToken, 0)
     }
 
     private fun openPlayer(track: Track) {
@@ -224,7 +231,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        textWatcher.let { searchInput.removeTextChangedListener(it) }
+        textWatcher.let { binding.serchInput.removeTextChangedListener(it) }
     }
 
     companion object {

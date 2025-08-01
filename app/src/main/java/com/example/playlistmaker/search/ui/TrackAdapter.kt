@@ -20,11 +20,8 @@ class TrackAdapter : RecyclerView.Adapter<TrackViewHolder>()  {
         this.listener = listener
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
-        val view: View =
-            LayoutInflater.from(parent.context).inflate(R.layout.track_view, parent, false)
-        return TrackViewHolder(view)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
+    : TrackViewHolder = TrackViewHolder.from(parent)
 
     override fun getItemCount(): Int = tracks.size
 

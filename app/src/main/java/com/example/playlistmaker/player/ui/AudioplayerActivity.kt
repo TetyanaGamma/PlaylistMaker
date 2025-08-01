@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.databinding.ActivityAudioplayerBinding
 import com.example.playlistmaker.player.domain.AudioplayerInteractor
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.ui.SearchActivity
@@ -24,11 +25,12 @@ import java.util.Locale
 class AudioplayerActivity : AppCompatActivity() {
 
     private lateinit var viewModel: AudioplayerViewModel
+    private lateinit var binding: ActivityAudioplayerBinding
 
   //  private lateinit var interactor: AudioplayerInteractor
-    private lateinit var playButton: ImageButton
+ /*   private lateinit var playButton: ImageButton
     private lateinit var pauseButton: ImageButton
-    private lateinit var trackTimeTextView: TextView
+    private lateinit var trackTimeTextView: TextView*/
     private lateinit var currentTrack: Track
 
  /*   private val handler = Handler(Looper.getMainLooper())
@@ -49,7 +51,9 @@ class AudioplayerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_audioplayer)
+
+        binding = ActivityAudioplayerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.audioPlayer_main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -57,6 +61,7 @@ class AudioplayerActivity : AppCompatActivity() {
         }
      //   interactor = Creator.provideAudioplayerInteractor()
         currentTrack = intent.getParcelableExtra(SearchActivity.TRACK_EXTRA)!!
+         //   ?: throw IllegalStateException("Track data is missing in intent")
 
         viewModel = ViewModelProvider(
             this,
@@ -69,19 +74,19 @@ class AudioplayerActivity : AppCompatActivity() {
         viewModel.observePlayerState().observe(this) { state ->
             when (state) {
                 AudioplayerViewModel.STATE_PREPARED, AudioplayerViewModel.STATE_PAUSED -> {
-                    playButton.visibility = ImageButton.VISIBLE
-                    pauseButton.visibility = ImageButton.INVISIBLE
+                    binding.ibPlayStop.visibility = ImageButton.VISIBLE
+                    binding.ibPause.visibility = ImageButton.INVISIBLE
                 }
                 AudioplayerViewModel.STATE_PLAYING -> {
-                    playButton.visibility = ImageButton.INVISIBLE
-                    pauseButton.visibility = ImageButton.VISIBLE
+                    binding.ibPlayStop.visibility = ImageButton.INVISIBLE
+                    binding.ibPause.visibility = ImageButton.VISIBLE
                 }
             }
-            playButton.isEnabled = state != AudioplayerViewModel.STATE_DEFAULT
+            binding.ibPlayStop.isEnabled = state != AudioplayerViewModel.STATE_DEFAULT
         }
 
         viewModel.observeProgressTime().observe(this) { time ->
-            trackTimeTextView.text = time
+            binding.trackTrackTime.text = time
         }
 
 
@@ -91,15 +96,13 @@ class AudioplayerActivity : AppCompatActivity() {
     }
 
     private fun initUi() {
-        playButton = findViewById(R.id.ib_Play_Stop)
-        pauseButton = findViewById(R.id.ib_Pause)
-        trackTimeTextView = findViewById(R.id.track_TrackTime)
-        findViewById<ImageButton>(R.id.backButton).setOnClickListener {
+
+        binding.backButton.setOnClickListener {
             finish()
         }
 
-        playButton.setOnClickListener { viewModel.onPlayButtonClicked() }
-        pauseButton.setOnClickListener { viewModel.onPause() }
+        binding.ibPlayStop.setOnClickListener { viewModel.onPlayButtonClicked() }
+        binding.ibPause.setOnClickListener { viewModel.onPause() }
     }
 
 
@@ -111,17 +114,17 @@ class AudioplayerActivity : AppCompatActivity() {
             .centerCrop()
             .transform(RoundedCorners(radiusInPx))
             .placeholder(R.drawable.placeholder)
-            .into(findViewById<ImageView>(R.id.track_cover))
+            .into(binding.trackCover)
 
-        findViewById<TextView>(R.id.track_TrackName).text = track.trackName
-        findViewById<TextView>(R.id.track_ArtistName).text = track.artistName
-        findViewById<TextView>(R.id.track_DurationValue).text =track.trackTimeMillis.let {
+        binding.trackTrackName.text = track.trackName
+        binding.trackArtistName.text = track.artistName
+        binding.trackDurationValue.text =track.trackTimeMillis.let {
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(it)
         }
-        findViewById<TextView>(R.id.track_СollectionNameValue).text = track.collectionName
-        findViewById<TextView>(R.id.track_ReleaseDateValue).text = getReleaseYear(track.releaseDate)
-        findViewById<TextView>(R.id.track_PrimaryGenreNameValue).text = track.primaryGenreName
-        findViewById<TextView>(R.id.track_CountryValue).text = track.country
+       binding.trackOllectionNameValue.text = track.collectionName
+        binding.trackReleaseDateValue.text = getReleaseYear(track.releaseDate)
+        binding.trackPrimaryGenreNameValue.text = track.primaryGenreName
+        binding.trackCountryValue.text = track.country
     }
 
 /*    private fun preparePlayer(previewUrl: String?) {

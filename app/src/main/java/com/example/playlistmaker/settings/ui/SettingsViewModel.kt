@@ -21,14 +21,6 @@ class SettingsViewModel(
     private val isDarkTheme = MutableLiveData(settingsInteractor.isDarkTheme())
     fun observe(): LiveData<Boolean> = isDarkTheme
 
-    companion object{
-        fun getFactory(settingsInteractor: SettingsInteractor,
-                       sharingInteractor: SharingInteractor): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SettingsViewModel(settingsInteractor, sharingInteractor)
-            }
-        }
-    }
 
     fun toggleTheme(enabled: Boolean) {
         settingsInteractor.switchTheme(enabled)
@@ -40,5 +32,15 @@ class SettingsViewModel(
     fun getSupportData(): SupportData = sharingInteractor.getSupportEmailData()
 
     fun getUserAgreementUrl(): String = sharingInteractor.getUserAgreementUrl()
+
+    companion object{
+        fun getFactory(settingsInteractor: SettingsInteractor,
+                       sharingInteractor: SharingInteractor): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                SettingsViewModel(settingsInteractor, sharingInteractor)
+            }
+        }
+    }
+
 
 }

@@ -35,13 +35,13 @@ class AudioplayerActivity : AppCompatActivity() {
             insets
         }
 
-        currentTrack = intent.getParcelableExtra(SearchActivity.TRACK_EXTRA)!!
+        currentTrack = intent.getParcelableExtra(TRACK_EXTRA)!!
 
         viewModel = ViewModelProvider(
             this,
             AudioplayerViewModel.getFactory(
                 Creator.provideAudioplayerInteractor(),
-                currentTrack.previewUrl.toString()
+                currentTrack
             )
         )[AudioplayerViewModel::class.java]
 
@@ -112,6 +112,10 @@ class AudioplayerActivity : AppCompatActivity() {
     private fun getReleaseYear(date: String?): String {
         return if (!date.isNullOrBlank() && date.length >= 4) date.substring(0, 4)
         else getString(R.string.unknown_date)
+    }
+
+    companion object {
+        const val TRACK_EXTRA = "TRACK_EXTRA"
     }
 
 }

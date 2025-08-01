@@ -20,6 +20,7 @@ import com.example.playlistmaker.settings.domain.interactor.SettingsInteractorIm
 import com.example.playlistmaker.settings.data.storage.ThemeStorageClient
 import com.example.playlistmaker.sharing.data.repositoryImpl.SharingInteractorImpl
 import com.example.playlistmaker.sharing.domain.SharingInteractor
+import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -39,14 +40,21 @@ object Creator {
         return createRetrofit().create(TrackApi::class.java)
     }
 
+    object GsonProvider {
+        val instance: Gson by lazy {
+            Gson()
+        }
+    }
+
     fun provideSearchInteractor(context: Context): SearchInteractor {
 
         val trackApi = createTrackApi()
         val networkClient = RetrofitNetworkClient( trackApi)
         val tracksRepository = TracksRepositoryImpl(networkClient)
-
+        val gson = GsonProvider.instance
         val storageClient = PrefsStorageClient<ArrayList<Track>>(
             context,
+            gson = gson,
             "HISTORY",
             type = object : TypeToken<ArrayList<Track>>() {}.type
         )

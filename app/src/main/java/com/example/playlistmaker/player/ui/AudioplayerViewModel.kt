@@ -9,20 +9,22 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.player.domain.interactor.AudioplayerInteractor
+import com.example.playlistmaker.search.domain.model.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 
 class AudioplayerViewModel(
     private val audioplayerInteractor: AudioplayerInteractor,
-    private val previewUrl: String
+    private val track: Track
 ) : ViewModel() {
 
 
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
     fun observePlayerState(): LiveData<Int> = playerStateLiveData
 
-    private val progressTimeLiveData = MutableLiveData("00:00")
+    private val formatter = SimpleDateFormat("mm:ss", Locale.getDefault())
+    private val progressTimeLiveData = MutableLiveData(formatter.format(0))
     fun observeProgressTime(): LiveData<String> = progressTimeLiveData
 
     private val handler = Handler(Looper.getMainLooper())
@@ -47,7 +49,7 @@ class AudioplayerViewModel(
 
     private fun preparePlayer() {
         audioplayerInteractor.preparePlayer(
-            previewUrl,
+            track.previewUrl.toString(),
             onPrepared = {
                 playerStateLiveData.postValue(STATE_PREPARED)
             },
@@ -86,7 +88,7 @@ class AudioplayerViewModel(
 
     private fun resetTimer() {
         handler.removeCallbacks(timerRunnable)
-        progressTimeLiveData.postValue("00:00")
+        progressTimeLiveData.postValue(formatter.format(0))
     }
 
     fun onPause() {
@@ -106,10 +108,10 @@ class AudioplayerViewModel(
 
         fun getFactory(
             audioplayerInteractor: AudioplayerInteractor,
-            trackUrl: String
+            track: Track
         ): ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                AudioplayerViewModel(audioplayerInteractor, trackUrl)
+                AudioplayerViewModel(audioplayerInteractor, track)
             }
         }
     }

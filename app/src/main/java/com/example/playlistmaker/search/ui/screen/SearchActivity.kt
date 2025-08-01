@@ -170,7 +170,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun openPlayer(track: Track) {
         val intent = Intent(this, AudioplayerActivity::class.java)
-        intent.putExtra("TRACK_EXTRA", track)
+        intent.putExtra(AudioplayerActivity.TRACK_EXTRA, track)
         startActivity(intent)
     }
 
@@ -179,7 +179,5 @@ class SearchActivity : AppCompatActivity() {
         textWatcher.let { binding.serchInput.removeTextChangedListener(it) }
     }
 
-    companion object {
-        const val TRACK_EXTRA = "TRACK_EXTRA"
-    }
+
 }

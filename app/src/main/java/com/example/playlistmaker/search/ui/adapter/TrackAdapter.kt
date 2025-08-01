@@ -10,7 +10,7 @@ class TrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
     var tracks = ArrayList<Track>()
     private var listener: OnTrackClicklistener? = null
 
-    interface OnTrackClicklistener {
+    fun interface OnTrackClicklistener {
         fun onTrackClick(track: Track)
     }
 

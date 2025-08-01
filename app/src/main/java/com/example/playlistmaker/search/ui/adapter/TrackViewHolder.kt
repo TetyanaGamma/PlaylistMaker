@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.ui.adapter
 
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -20,11 +21,17 @@ class TrackViewHolder(private val binding: TrackViewBinding) :
     }
 
     fun bind(model: Track) {
+        val radiusInPx = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            2f,
+            binding.root.resources.displayMetrics
+        ).toInt()
+
         Glide.with(binding.root)
             .load(model.artworkUrl100)
             .placeholder(R.drawable.placeholder)
             .centerCrop()
-            .transform(RoundedCorners(2))
+            .transform(RoundedCorners(radiusInPx))
             .into(binding.trackImage)
 
         binding.trackName.text = model.trackName

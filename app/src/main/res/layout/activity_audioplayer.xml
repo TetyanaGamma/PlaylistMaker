@@ -11,7 +11,7 @@
         android:id="@+id/audioPlayer_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".presentation.AudioplayerActivity">
+        tools:context=".player.ui.AudioplayerActivity">
 
         <!--Общий отступ для иконки назад, навания трека и альбома, инфоблока-->
         <androidx.constraintlayout.widget.Guideline

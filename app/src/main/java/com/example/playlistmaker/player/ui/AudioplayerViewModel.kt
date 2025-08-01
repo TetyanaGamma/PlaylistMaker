@@ -1,6 +1,5 @@
 package com.example.playlistmaker.player.ui
 
-import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.LiveData
@@ -9,35 +8,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.player.domain.AudioplayerInteractor
+import com.example.playlistmaker.player.domain.interactor.AudioplayerInteractor
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 
-class AudioplayerViewModel(private val audioplayerInteractor: AudioplayerInteractor,
-                           private val previewUrl: String) : ViewModel() {
+class AudioplayerViewModel(
+    private val audioplayerInteractor: AudioplayerInteractor,
+    private val previewUrl: String
+) : ViewModel() {
 
-    companion object {
-        const val STATE_DEFAULT = 0
-        const val STATE_PREPARED = 1
-        const val STATE_PLAYING = 2
-        const val STATE_PAUSED = 3
-
-        fun getFactory(audioplayerInteractor: AudioplayerInteractor,
-                       trackUrl: String): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                AudioplayerViewModel(audioplayerInteractor,trackUrl)
-            }
-        }
-    }
 
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
     fun observePlayerState(): LiveData<Int> = playerStateLiveData
 
     private val progressTimeLiveData = MutableLiveData("00:00")
     fun observeProgressTime(): LiveData<String> = progressTimeLiveData
-
-  //  private val mediaPlayer = MediaPlayer()
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -51,14 +37,9 @@ class AudioplayerViewModel(private val audioplayerInteractor: AudioplayerInterac
         preparePlayer()
     }
 
- /*   override fun onCleared() {
-        super.onCleared()
-        audioplayerInteractor.release()
-        resetTimer()
-    }*/
 
     fun onPlayButtonClicked() {
-        when(playerStateLiveData.value) {
+        when (playerStateLiveData.value) {
             STATE_PLAYING -> pausePlayer()
             STATE_PREPARED, STATE_PAUSED -> startPlayer()
         }
@@ -92,8 +73,10 @@ class AudioplayerViewModel(private val audioplayerInteractor: AudioplayerInterac
     }
 
     private fun startTimerUpdate() {
-        progressTimeLiveData.postValue(SimpleDateFormat("mm:ss", Locale.getDefault())
-            .format(audioplayerInteractor.getCurrentPosition()))
+        progressTimeLiveData.postValue(
+            SimpleDateFormat("mm:ss", Locale.getDefault())
+                .format(audioplayerInteractor.getCurrentPosition())
+        )
         handler.postDelayed(timerRunnable, 200)
     }
 
@@ -113,6 +96,22 @@ class AudioplayerViewModel(private val audioplayerInteractor: AudioplayerInterac
     fun onDestroy() {
         audioplayerInteractor.releasePlayer()
         resetTimer()
+    }
+
+    companion object {
+        const val STATE_DEFAULT = 0
+        const val STATE_PREPARED = 1
+        const val STATE_PLAYING = 2
+        const val STATE_PAUSED = 3
+
+        fun getFactory(
+            audioplayerInteractor: AudioplayerInteractor,
+            trackUrl: String
+        ): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                AudioplayerViewModel(audioplayerInteractor, trackUrl)
+            }
+        }
     }
 
 }

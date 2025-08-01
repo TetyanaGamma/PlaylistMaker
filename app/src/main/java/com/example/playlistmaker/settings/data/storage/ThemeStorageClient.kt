@@ -2,8 +2,7 @@ package com.example.playlistmaker.settings.data.storage
 
 import android.content.Context
 import android.content.SharedPreferences
-
-import com.example.playlistmaker.search.data.StorageClient
+import com.example.playlistmaker.search.data.storage.StorageClient
 
 const val PLAYLIST_MAKER_PREFERENCES = "playlist_maker_preferences"
 const val THEME_BOOLEAN_KEY = "theme_boolean"

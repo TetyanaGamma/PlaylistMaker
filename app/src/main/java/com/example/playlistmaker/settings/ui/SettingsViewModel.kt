@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.App
-import com.example.playlistmaker.search.ui.SearchViewModel
-import com.example.playlistmaker.settings.domain.SettingsInteractor
+import com.example.playlistmaker.search.ui.screen.SearchViewModel
+import com.example.playlistmaker.settings.domain.interactor.SettingsInteractor
 import com.example.playlistmaker.sharing.domain.SharingInteractor
 import com.example.playlistmaker.sharing.domain.SupportData
 

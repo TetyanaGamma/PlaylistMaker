@@ -3,29 +3,22 @@ package com.example.playlistmaker.settings.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SwitchCompat
-import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.App
-import com.example.playlistmaker.R
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
-import com.example.playlistmaker.settings.domain.SettingsInteractor
-import com.google.android.material.switchmaterial.SwitchMaterial
+
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var viewModel: SettingsViewModel
-  //  private lateinit var themeSwitch: SwitchCompat
     private lateinit var binding: ActivitySettingsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
 
         viewModel = ViewModelProvider(
             this,
@@ -35,13 +28,10 @@ class SettingsActivity : AppCompatActivity() {
             )
         )[SettingsViewModel::class.java]
 
-
-
         //обрабатываем нажатие на стрелку назад и возвращаемся на главный экран
         binding.settingsToolbar.setNavigationOnClickListener {
             finish()
         }
-
 
         setupThemeObserver()
         setupThemeSwitch()
@@ -95,7 +85,5 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(agreementIntent)
         }
     }
-
-
 
 }

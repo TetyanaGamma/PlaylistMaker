@@ -14,7 +14,8 @@ class SearchInteractorImpl(
 
     override fun searchTracks(
         expression: String,
-        consumer: SearchInteractor.TrackConsumer) {
+        consumer: SearchInteractor.TrackConsumer
+    ) {
         executor.execute {
             try {
                 val result = tracksRepository.searchTracks(expression)
@@ -40,6 +41,5 @@ class SearchInteractorImpl(
     override fun addTrack(track: Track) {
         historyRepository.addTrack(track)
     }
-
 
 }

@@ -28,6 +28,7 @@ class AudioplayerActivity : AppCompatActivity() {
     private val viewModel: AudioplayerViewModel by viewModel {
         parametersOf(currentTrack)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

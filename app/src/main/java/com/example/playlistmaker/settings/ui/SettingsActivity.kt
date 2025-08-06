@@ -4,10 +4,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.App
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import androidx.core.net.toUri
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -61,7 +61,7 @@ class SettingsActivity : AppCompatActivity() {
         binding.settingsSupport.setOnClickListener {
             val supportData = viewModel.getSupportData()
             val supportIntent = Intent(Intent.ACTION_SENDTO).apply {
-                data = Uri.parse("mailto:")
+                data = "mailto:".toUri()
                 putExtra(Intent.EXTRA_EMAIL, arrayOf(supportData.email))
                 putExtra(Intent.EXTRA_SUBJECT, supportData.subject)
                 putExtra(Intent.EXTRA_TEXT, supportData.message)
@@ -73,7 +73,7 @@ class SettingsActivity : AppCompatActivity() {
     private fun setupUserAgreementButton() {
         binding.settingsUserAgreement.setOnClickListener {
             val agreementUrl = viewModel.getUserAgreementUrl()
-            val agreementIntent = Intent(Intent.ACTION_VIEW, Uri.parse(agreementUrl))
+            val agreementIntent = Intent(Intent.ACTION_VIEW, agreementUrl.toUri())
             startActivity(agreementIntent)
         }
     }

@@ -25,7 +25,7 @@ val searchModule = module {
         Gson()
     }
 
-    single <StorageClient<ArrayList<Track>>> {
+    single<StorageClient<ArrayList<Track>>> {
         val type = object : TypeToken<ArrayList<Track>>() {}.type
         PrefsStorageClient<ArrayList<Track>>(
             context = get<android.content.Context>(),
@@ -41,7 +41,7 @@ val searchModule = module {
 
     single {
         Retrofit.Builder()
-            .baseUrl( "https://itunes.apple.com")
+            .baseUrl("https://itunes.apple.com")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -63,6 +63,5 @@ val searchModule = module {
     viewModel {
         SearchViewModel(get())
     }
-
 
 }

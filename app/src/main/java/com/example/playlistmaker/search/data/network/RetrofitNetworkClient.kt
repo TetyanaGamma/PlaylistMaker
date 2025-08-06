@@ -1,10 +1,7 @@
 package com.example.playlistmaker.search.data.network
 
-import com.example.playlistmaker.search.data.network.Response
-import com.example.playlistmaker.search.data.network.TrackApi
-import com.example.playlistmaker.search.data.network.TrackSearchRequest
 
-class RetrofitNetworkClient (private val trackService: TrackApi): NetworkClient {
+class RetrofitNetworkClient(private val trackService: TrackApi) : NetworkClient {
 
     override fun doRequest(dto: Any): Response {
         if (dto is TrackSearchRequest) {

@@ -8,7 +8,6 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.player.ui.AudioplayerActivity
 import com.example.playlistmaker.search.domain.model.Track
@@ -33,7 +32,6 @@ class SearchActivity : AppCompatActivity() {
 
         initUi()
         initListeners()
-
 
         viewModel.observeState().observe(this, Observer {
             render(it)
@@ -69,7 +67,8 @@ class SearchActivity : AppCompatActivity() {
         binding.clearIcon.setOnClickListener {
             binding.serchInput.text.clear()
             hideKeyboard()
-            viewModel.loadHistory()
+            binding.trackList.visibility = View.GONE
+            binding.notFoundPlaceholder.visibility = View.GONE
         }
 
         binding.buttonUpdate.setOnClickListener {
@@ -176,6 +175,5 @@ class SearchActivity : AppCompatActivity() {
         super.onDestroy()
         textWatcher.let { binding.serchInput.removeTextChangedListener(it) }
     }
-
 
 }

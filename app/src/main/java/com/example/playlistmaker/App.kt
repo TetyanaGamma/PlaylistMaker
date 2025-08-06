@@ -20,11 +20,10 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-
-
         startKoin {
             androidContext(this@App)
-            modules(playerModule,
+            modules(
+                playerModule,
                 settingsModule,
                 searchModule
             )

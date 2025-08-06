@@ -1,6 +1,5 @@
 package com.example.playlistmaker.search.ui.screen
 
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
@@ -14,7 +13,6 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
     private val stateLiveData = MutableLiveData<SearchState>()
     fun observeState(): LiveData<SearchState> = stateLiveData
-
 
     private var latestSearchText: String? = null
     private val handler = Handler(Looper.getMainLooper())
@@ -84,7 +82,6 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
-
     }
 
 }

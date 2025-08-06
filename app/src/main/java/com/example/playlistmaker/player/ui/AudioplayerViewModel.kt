@@ -5,9 +5,6 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.player.domain.interactor.AudioplayerInteractor
 import com.example.playlistmaker.search.domain.model.Track
 import java.text.SimpleDateFormat
@@ -18,7 +15,6 @@ class AudioplayerViewModel(
     private val audioplayerInteractor: AudioplayerInteractor,
     private val track: Track
 ) : ViewModel() {
-
 
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
     fun observePlayerState(): LiveData<Int> = playerStateLiveData
@@ -38,7 +34,6 @@ class AudioplayerViewModel(
     init {
         preparePlayer()
     }
-
 
     fun onPlayButtonClicked() {
         when (playerStateLiveData.value) {

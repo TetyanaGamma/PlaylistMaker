@@ -106,14 +106,6 @@ class AudioplayerViewModel(
         const val STATE_PLAYING = 2
         const val STATE_PAUSED = 3
 
-        fun getFactory(
-            audioplayerInteractor: AudioplayerInteractor,
-            track: Track
-        ): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                AudioplayerViewModel(audioplayerInteractor, track)
-            }
-        }
     }
 
 }

@@ -3,7 +3,10 @@ package com.example.playlistmaker
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.player.di.playerModule
 import com.example.playlistmaker.settings.domain.interactor.SettingsInteractor
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
 class App : Application() {
 
@@ -21,6 +24,11 @@ class App : Application() {
         // Получаем текущую тему из интерактора
         darkTheme = settingsInteractor.isDarkTheme()
         applyTheme(darkTheme)
+
+        startKoin {
+            androidContext(this@App)
+            modules(playerModule)
+        }
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {

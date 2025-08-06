@@ -33,14 +33,5 @@ class SettingsViewModel(
 
     fun getUserAgreementUrl(): String = sharingInteractor.getUserAgreementUrl()
 
-    companion object{
-        fun getFactory(settingsInteractor: SettingsInteractor,
-                       sharingInteractor: SharingInteractor): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SettingsViewModel(settingsInteractor, sharingInteractor)
-            }
-        }
-    }
-
 
 }

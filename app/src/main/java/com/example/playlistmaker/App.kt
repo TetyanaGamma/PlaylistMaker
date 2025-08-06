@@ -2,11 +2,13 @@ package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.player.di.playerModule
+import com.example.playlistmaker.search.di.searchModule
+import com.example.playlistmaker.settings.di.settingsModule
 import com.example.playlistmaker.settings.domain.interactor.SettingsInteractor
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+import org.koin.java.KoinJavaComponent.getKoin
 
 class App : Application() {
 
@@ -18,17 +20,19 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        // Инициализация интерактора настроек
-        settingsInteractor = Creator.provideSettingsInteractor(this)
 
-        // Получаем текущую тему из интерактора
-        darkTheme = settingsInteractor.isDarkTheme()
-        applyTheme(darkTheme)
 
         startKoin {
             androidContext(this@App)
-            modules(playerModule)
+            modules(playerModule,
+                settingsModule,
+                searchModule
+            )
         }
+        settingsInteractor = getKoin().get()
+        // Получаем текущую тему из интерактора
+        darkTheme = settingsInteractor.isDarkTheme()
+        applyTheme(darkTheme)
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {

@@ -8,13 +8,12 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.player.ui.AudioplayerActivity
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.search.ui.screen.SearchState
-import com.example.playlistmaker.search.ui.screen.SearchViewModel
 import com.example.playlistmaker.search.ui.adapter.TrackAdapter
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -23,7 +22,7 @@ class SearchActivity : AppCompatActivity() {
     private val adapter = TrackAdapter()
     private val historyAdapter = TrackAdapter()
 
-    private var viewModel: SearchViewModel? = null
+    private val viewModel: SearchViewModel by viewModel()
     private var textWatcher: TextWatcher? = null
 
 
@@ -34,13 +33,12 @@ class SearchActivity : AppCompatActivity() {
 
         initUi()
         initListeners()
-        viewModel = ViewModelProvider(this, SearchViewModel.Companion.getFactory())
-            .get(SearchViewModel::class.java)
 
-        viewModel?.observeState()?.observe(this, Observer {
+
+        viewModel.observeState().observe(this, Observer {
             render(it)
         })
-        viewModel?.loadHistory()
+        viewModel.loadHistory()
 
     }
 
@@ -62,8 +60,8 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearIcon.visibility = if (s.isNullOrEmpty()) View.GONE
                 else View.VISIBLE
-                if (s.isNullOrEmpty()) viewModel?.loadHistory()
-                else viewModel?.searchDebounce(s.toString())
+                if (s.isNullOrEmpty()) viewModel.loadHistory()
+                else viewModel.searchDebounce(s.toString())
             }
         }
         textWatcher.let { binding.serchInput.addTextChangedListener(it) }
@@ -71,28 +69,28 @@ class SearchActivity : AppCompatActivity() {
         binding.clearIcon.setOnClickListener {
             binding.serchInput.text.clear()
             hideKeyboard()
-            viewModel?.loadHistory()
+            viewModel.loadHistory()
         }
 
         binding.buttonUpdate.setOnClickListener {
-            viewModel?.retrySearch()
+            viewModel.retrySearch()
         }
 
         binding.buttonClearHistory.setOnClickListener {
-            viewModel?.clearHistory()
+            viewModel.clearHistory()
             binding.searchHistory.visibility = View.GONE
         }
 
         adapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClicklistener {
             override fun onTrackClick(track: Track) {
-                viewModel?.saveTrack(track)
+                viewModel.saveTrack(track)
                 openPlayer(track)
             }
         })
 
         historyAdapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClicklistener {
             override fun onTrackClick(track: Track) {
-                viewModel?.saveTrack(track)
+                viewModel.saveTrack(track)
                 openPlayer(track)
             }
         })

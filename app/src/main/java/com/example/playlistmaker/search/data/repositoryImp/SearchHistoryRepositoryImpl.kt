@@ -3,7 +3,8 @@ package com.example.playlistmaker.search.data.repositoryImp
 import com.example.playlistmaker.search.data.storage.StorageClient
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.model.Track
-  const val MAX_SIZE = 10
+
+const val MAX_SIZE = 10
 
 class SearchHistoryRepositoryImpl(
     private val storage: StorageClient<ArrayList<Track>>
@@ -31,6 +32,5 @@ class SearchHistoryRepositoryImpl(
     override fun clearHistory() {
         storage.storeData(arrayListOf())
     }
-
 
 }

@@ -10,18 +10,24 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivityAudioplayerBinding
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.screen.SearchActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class AudioplayerActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: AudioplayerViewModel
     private lateinit var binding: ActivityAudioplayerBinding
-    private lateinit var currentTrack: Track
+    private val currentTrack: Track by lazy {
+        intent.getParcelableExtra<Track>(TRACK_EXTRA)!!
+    }
+
+    private val viewModel: AudioplayerViewModel by viewModel {
+        parametersOf(currentTrack)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,16 +40,6 @@ class AudioplayerActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        currentTrack = intent.getParcelableExtra(TRACK_EXTRA)!!
-
-        viewModel = ViewModelProvider(
-            this,
-            AudioplayerViewModel.getFactory(
-                Creator.provideAudioplayerInteractor(),
-                currentTrack
-            )
-        )[AudioplayerViewModel::class.java]
 
         viewModel.observePlayerState().observe(this) { state ->
             when (state) {

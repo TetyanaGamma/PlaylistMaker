@@ -17,30 +17,29 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MediatekaActivity : AppCompatActivity() {
 
-    private val mediatekaViewModel: MediatekaViewModel by viewModel()
     private var _binding: ActivityMediatekaBinding? = null
     private val binding get() = _binding!!
-    private lateinit var tabMediator: TabLayoutMediator
 
+    private lateinit var tabMediator: TabLayoutMediator
     private val adapter by lazy { MediatekaViewPagerAdapter(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         _binding = ActivityMediatekaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setupToolbar()
         setupBackPressHandler()
         setupViewPager()
-        observeTabSelection()
     }
+
     // Инициализация Toolbar и обработка нажатия кнопки "назад"
     private fun setupToolbar() {
         binding.toolBarMedia.setNavigationOnClickListener {
             finish()
         }
     }
+
     // Обработка нажатия кнопки "назад"
     private fun setupBackPressHandler() {
         val onBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -55,15 +54,6 @@ class MediatekaActivity : AppCompatActivity() {
     private fun setupViewPager() {
         binding.viewPager.adapter = adapter
 
-        // Восстанавливаем сохраненную позицию
-        binding.viewPager.setCurrentItem(mediatekaViewModel.selectedTab.value, false)
-
-        // Обновляем ViewModel при смене таба
-        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                mediatekaViewModel.selectTab(position)
-            }
-        })
         // Инициализируем TabLayout
         tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when (position) {
@@ -73,17 +63,6 @@ class MediatekaActivity : AppCompatActivity() {
             }
         }
         tabMediator.attach()
-    }
-    // Обновляем ViewModel при смене таба
-    private fun observeTabSelection() {
-        // Дополнительная подписка на изменения
-        mediatekaViewModel.selectedTab
-            .onEach { position ->
-                if (binding.viewPager.currentItem != position) {
-                    binding.viewPager.setCurrentItem(position, false)
-                }
-            }
-            .launchIn(lifecycleScope)
     }
 
     override fun onDestroy() {

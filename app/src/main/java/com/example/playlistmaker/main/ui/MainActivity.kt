@@ -2,11 +2,9 @@ package com.example.playlistmaker.main.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityMainBinding
-import com.example.playlistmaker.mediateca.ui.MediatekaActivity
+import com.example.playlistmaker.media.ui.MediatekaActivity
 import com.example.playlistmaker.search.ui.screen.SearchActivity
 import com.example.playlistmaker.settings.ui.SettingsActivity
 
@@ -30,8 +28,8 @@ class MainActivity : AppCompatActivity() {
             val mediatekaIntent = Intent(this, MediatekaActivity::class.java)
             startActivity(mediatekaIntent)
         }
-        // обрабока нажатия на кнопку настройки через лямбду для перехода на экран настройки
 
+        // обрабока нажатия на кнопку настройки через лямбду для перехода на экран настройки
         binding.settingsButton.setOnClickListener {
             val settingsIntent = Intent(this, SettingsActivity::class.java)
             startActivity(settingsIntent)

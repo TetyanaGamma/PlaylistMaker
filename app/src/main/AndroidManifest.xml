@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name="com.example.playlistmaker.App"
@@ -21,7 +23,7 @@
             android:name=".player.ui.AudioplayerActivity"
             android:exported="false" />
         <activity
-            android:name=".mediateca.ui.MediatekaActivity"
+            android:name=".media.ui.MediatekaActivity"
             android:exported="false" />
         <activity
             android:name=".settings.ui.SettingsActivity"

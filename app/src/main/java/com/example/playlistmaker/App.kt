@@ -2,6 +2,7 @@ package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.mediateca.di.mediatekaModule
 import com.example.playlistmaker.player.di.playerModule
 import com.example.playlistmaker.search.di.searchModule
 import com.example.playlistmaker.settings.di.settingsModule
@@ -25,7 +26,8 @@ class App : Application() {
             modules(
                 playerModule,
                 settingsModule,
-                searchModule
+                searchModule,
+                mediatekaModule
             )
         }
         settingsInteractor = getKoin().get()

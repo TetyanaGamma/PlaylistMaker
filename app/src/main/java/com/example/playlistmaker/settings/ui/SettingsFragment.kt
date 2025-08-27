@@ -1,42 +1,46 @@
 package com.example.playlistmaker.settings.ui
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.example.playlistmaker.App
-import com.example.playlistmaker.databinding.ActivitySettingsBinding
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
+import com.example.playlistmaker.App
+import com.example.playlistmaker.databinding.FragmentSettingsBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.getValue
 
+class SettingsFragment: Fragment() {
 
-class SettingsActivity : AppCompatActivity() {
+    private var _binding: FragmentSettingsBinding? = null
+    private val binding get() = _binding!!
 
     private val viewModel: SettingsViewModel by viewModel()
-    private lateinit var binding: ActivitySettingsBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        //обрабатываем нажатие на стрелку назад и возвращаемся на главный экран
-        binding.settingsToolbar.setNavigationOnClickListener {
-            finish()
-        }
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setupThemeObserver()
         setupThemeSwitch()
         setupShareButton()
         setupSupportButton()
         setupUserAgreementButton()
-
     }
 
     private fun setupThemeObserver() {
-        viewModel.observe().observe(this) { isDarkTheme ->
+        viewModel.observe().observe(viewLifecycleOwner) { isDarkTheme ->
             binding.settingsSwitchTheme.isChecked = isDarkTheme
-            (application as App).switchTheme(isDarkTheme)
+            (requireActivity().application as App).switchTheme(isDarkTheme)
         }
     }
 
@@ -76,6 +80,11 @@ class SettingsActivity : AppCompatActivity() {
             val agreementIntent = Intent(Intent.ACTION_VIEW, agreementUrl.toUri())
             startActivity(agreementIntent)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

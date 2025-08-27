@@ -23,9 +23,7 @@
         <activity
             android:name=".media.ui.MediatekaActivity"
             android:exported="false" />
-        <activity
-            android:name=".settings.ui.SettingsActivity"
-            android:exported="false" />
+
 
         <!-- Добавили RootActivity и сделали её главной -->
         <activity android:name=".root.ui.RootActivity"

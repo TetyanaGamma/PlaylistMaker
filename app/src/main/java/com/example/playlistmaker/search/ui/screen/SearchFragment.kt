@@ -23,7 +23,8 @@ import kotlin.text.clear
 class SearchFragment: Fragment() {
 
 
-    private lateinit var binding: FragmentSearchBinding
+    private  var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
 
     private val adapter = TrackAdapter()
     private val historyAdapter = TrackAdapter()
@@ -35,8 +36,8 @@ class SearchFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentSearchBinding.inflate(inflater, container, false)
+    ): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
 

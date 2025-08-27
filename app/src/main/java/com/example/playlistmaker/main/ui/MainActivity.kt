@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.playlistmaker.databinding.ActivityMainBinding
 import com.example.playlistmaker.media.ui.MediatekaActivity
-import com.example.playlistmaker.search.ui.screen.SearchActivity
 import com.example.playlistmaker.settings.ui.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
@@ -18,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         //обрабока нажатия на кнопку поиск через лямбду для перехода на экран поиска
-        binding.searchButton.setOnClickListener {
+    /*    binding.searchButton.setOnClickListener {
             val searchIntent = Intent(this, SearchActivity::class.java)
             startActivity(searchIntent)
         }
@@ -32,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         // обрабока нажатия на кнопку настройки через лямбду для перехода на экран настройки
         binding.settingsButton.setOnClickListener {
             val settingsIntent = Intent(this, SettingsActivity::class.java)
-            startActivity(settingsIntent)
+            startActivity(settingsIntent) }*/
         }
-    }
+
 }

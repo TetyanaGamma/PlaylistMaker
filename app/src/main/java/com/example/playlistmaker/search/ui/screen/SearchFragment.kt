@@ -12,8 +12,9 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.player.ui.AudioplayerActivity
+import com.example.playlistmaker.player.ui.AudioplayerFragment
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.adapter.TrackAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -179,9 +180,16 @@ class SearchFragment: Fragment() {
     }
 
     private fun openPlayer(track: Track) {
-        val intent = Intent(requireContext(), AudioplayerActivity::class.java)
-        intent.putExtra(AudioplayerActivity.TRACK_EXTRA, track)
-        startActivity(intent)
+        val fragment = AudioplayerFragment().apply {
+            arguments = Bundle().apply {
+                putParcelable(AudioplayerFragment.TRACK_EXTRA, track)
+            }
+        }
+
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.rootFragmentContainerView, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onDestroyView() {

@@ -6,13 +6,18 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.playlistmaker.media.ui.FavoriteTracksFragment
 import com.example.playlistmaker.media.ui.PlaylistsFragment
 
-const val TAB_NUMBER = 2
+
 
 class MediatekaViewPagerAdapter(
-    activity: FragmentActivity
-) : FragmentStateAdapter(activity) {
+   fragment: Fragment
+) : FragmentStateAdapter(fragment) {
 
-    override fun getItemCount(): Int = TAB_NUMBER // Количество вкладок
+    private val tabs = listOf(
+        { FavoriteTracksFragment.newInstance() },
+        { PlaylistsFragment.newInstance() }
+    )
+
+    override fun getItemCount(): Int = tabs.size // Количество вкладок
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {

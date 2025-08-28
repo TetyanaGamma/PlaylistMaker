@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
@@ -69,9 +71,9 @@ class AudioplayerFragment: Fragment() {
 
     private fun initUi() {
 
-      /*  binding.backButton.setOnClickListener {
-            finish()
-        }*/
+        binding.backButton.setOnClickListener {
+            findNavController().popBackStack()
+        }
 
         binding.ibPlayStop.setOnClickListener { viewModel.onPlayButtonClicked() }
         binding.ibPause.setOnClickListener { viewModel.onPause() }
@@ -114,6 +116,9 @@ class AudioplayerFragment: Fragment() {
 
     companion object {
         const val TRACK_EXTRA = "TRACK_EXTRA"
+
+        fun createArgs(track: Track): Bundle =
+            bundleOf(AudioplayerFragment.TRACK_EXTRA to track)
 
     }
 

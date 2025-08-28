@@ -10,8 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.AudioplayerFragment
@@ -180,16 +182,10 @@ class SearchFragment: Fragment() {
     }
 
     private fun openPlayer(track: Track) {
-        val fragment = AudioplayerFragment().apply {
-            arguments = Bundle().apply {
-                putParcelable(AudioplayerFragment.TRACK_EXTRA, track)
-            }
-        }
-
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.rootFragmentContainerView, fragment)
-            .addToBackStack(null)
-            .commit()
+        findNavController().navigate(
+            R.id.action_searchFragment_to_audioplayerFragment,
+            AudioplayerFragment.createArgs(track)
+        )
     }
 
     override fun onDestroyView() {

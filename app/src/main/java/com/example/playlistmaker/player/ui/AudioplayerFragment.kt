@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import androidx.activity.enableEdgeToEdge
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -20,7 +19,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.getValue
 
-class AudioplayerFragment: Fragment() {
+class AudioplayerFragment : Fragment() {
 
     private var _binding: FragmentAudioplayerBinding? = null
     private val binding get() = _binding!!
@@ -38,7 +37,7 @@ class AudioplayerFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-       _binding = FragmentAudioplayerBinding.inflate(inflater, container,false)
+        _binding = FragmentAudioplayerBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -64,17 +63,14 @@ class AudioplayerFragment: Fragment() {
             binding.trackTrackTime.text = time
         }
 
-
         initUi()
         bindTrackData(currentTrack)
     }
 
     private fun initUi() {
-
         binding.backButton.setOnClickListener {
-            findNavController().popBackStack()
+            findNavController().navigateUp()
         }
-
         binding.ibPlayStop.setOnClickListener { viewModel.onPlayButtonClicked() }
         binding.ibPause.setOnClickListener { viewModel.onPause() }
     }
@@ -119,7 +115,6 @@ class AudioplayerFragment: Fragment() {
 
         fun createArgs(track: Track): Bundle =
             bundleOf(AudioplayerFragment.TRACK_EXTRA to track)
-
     }
 
 }

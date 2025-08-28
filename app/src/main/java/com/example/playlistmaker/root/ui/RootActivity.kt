@@ -19,30 +19,26 @@ class RootActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-     //   AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-
-
         // Привязываем вёрстку к экрану
         binding = ActivityRootBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        /* Добавляем первый фрагмент
-        if(savedInstanceState ==null) {
-            supportFragmentManager.commit {
-                this.add(R.id.rootFragmentContainerView, SearchFragment())
-            }
-        }*/
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.rootFragmentContainerView) as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(
+            R.id.rootFragmentContainerView
+        ) as NavHostFragment
         val navController = navHostFragment.navController
 
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        val bottomNavigationView = findViewById<BottomNavigationView>(
+            R.id.bottomNavigationView
+        )
         bottomNavigationView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            when(destination.id) {
+            when (destination.id) {
                 R.id.audioplayerFragment -> {
                     bottomNavigationView.visibility = View.GONE
                 }
+
                 else -> {
                     bottomNavigationView.visibility = View.VISIBLE
                 }

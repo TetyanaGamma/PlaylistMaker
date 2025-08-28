@@ -9,14 +9,13 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentMediatekaBinding
 import com.google.android.material.tabs.TabLayoutMediator
 
-class MediatekaFragment: Fragment() {
+class MediatekaFragment : Fragment() {
 
     private var _binding: FragmentMediatekaBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var tabMediator: TabLayoutMediator
-  // private val adapter by lazy { MediatekaViewPagerAdapter(this) }
-  private var adapter: MediatekaViewPagerAdapter? = null
+    private var adapter: MediatekaViewPagerAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,20 +32,8 @@ class MediatekaFragment: Fragment() {
         adapter = MediatekaViewPagerAdapter(this)
         binding.viewPager.adapter = adapter
 
-      //  setupBackPressHandler()
         setupViewPager()
-
     }
-
-    /*Обработка нажатия кнопки "назад"
-    private fun setupBackPressHandler() {
-        val onBackPressedCallback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                finish()
-            }
-        }
-        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
-    }*/
 
     // Инициализация ViewPager и TabLayout
     private fun setupViewPager() {

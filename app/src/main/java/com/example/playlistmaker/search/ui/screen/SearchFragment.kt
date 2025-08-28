@@ -1,7 +1,6 @@
 package com.example.playlistmaker.search.ui.screen
 
 import android.content.Context.INPUT_METHOD_SERVICE
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,8 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -21,12 +18,11 @@ import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.adapter.TrackAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
-import kotlin.text.clear
-
-class SearchFragment: Fragment() {
 
 
-    private  var _binding: FragmentSearchBinding? = null
+class SearchFragment : Fragment() {
+
+    private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
     private val adapter = TrackAdapter()
@@ -62,7 +58,6 @@ class SearchFragment: Fragment() {
 
     private fun initUi() {
 
-      //  binding.searchToolbar.setNavigationOnClickListener { finish() }
         binding.trackList.adapter = adapter
         binding.historyTrackList.adapter = historyAdapter
     }
@@ -201,8 +196,6 @@ class SearchFragment: Fragment() {
         super.onDestroyView()
         textWatcher.let { binding.serchInput.removeTextChangedListener(it) }
     }
-
-
 
 }
 

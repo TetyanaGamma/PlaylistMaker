@@ -9,13 +9,13 @@
         android:id="@+id/meditekaFragment"
         android:name="com.example.playlistmaker.mediateca.ui.MediatekaFragment"
         android:label="MediatekaFragment"
-        tools:layout="@layout/fragment_mediateka"/>
+        tools:layout="@layout/fragment_mediateka" />
 
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.playlistmaker.settings.ui.SettingsFragment"
         android:label="SettingsFragment"
-        tools:layout="@layout/fragment_settings"/>
+        tools:layout="@layout/fragment_settings" />
 
     <fragment
         android:id="@+id/searchFragment"
@@ -24,7 +24,7 @@
         tools:layout="@layout/fragment_search">
         <action
             android:id="@+id/action_searchFragment_to_audioplayerFragment"
-            app:destination="@+id/audioplayerFragment"/>
+            app:destination="@+id/audioplayerFragment" />
     </fragment>
     <fragment
         android:id="@+id/audioplayerFragment"

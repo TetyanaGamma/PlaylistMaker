@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -28,10 +28,10 @@
             android:layout_height="36dp"
             android:background="@drawable/rounded_edittext"
             android:hint="@string/button_search"
-            android:inputType="text"
             android:imeOptions="actionDone"
-            android:singleLine="true"
-            android:saveEnabled="false"/>
+            android:inputType="text"
+            android:saveEnabled="false"
+            android:singleLine="true" />
 
         <ImageView
             android:id="@+id/clear_icon"
@@ -42,13 +42,14 @@
 
     </FrameLayout>
 
-    <ProgressBar android:id="@+id/progressBar"
+    <ProgressBar
+        android:id="@+id/progressBar"
         android:layout_width="44dp"
         android:layout_height="44dp"
         android:layout_gravity="center"
         android:layout_marginTop="136dp"
         android:indeterminateTint="@color/blue"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <!-- Список треков -->
     <androidx.recyclerview.widget.RecyclerView
@@ -58,14 +59,14 @@
         android:layout_marginTop="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-<!-- Placeholder для ненайденных треков -->
+    <!-- Placeholder для ненайденных треков -->
     <LinearLayout
         android:id="@+id/notFound_placeholder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:orientation="vertical"
         android:layout_marginTop="102dp"
+        android:orientation="vertical"
         android:visibility="gone">
 
         <ImageView
@@ -91,9 +92,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="102dp"
         android:orientation="vertical"
-        android:visibility="gone"
-        android:layout_marginTop="102dp">
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/image_error"
@@ -140,36 +141,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:orientation="vertical"
         android:layout_marginTop="24dp"
+        android:orientation="vertical"
         android:visibility="gone">
 
         <TextView
             android:id="@+id/history_headder"
+            style="@style/SearchHistoryTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:paddingTop="18dp"
-           android:paddingBottom="12dp"
-            style="@style/SearchHistoryTextStyle"/>
+            android:paddingBottom="12dp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/history_track_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
             android:layout_marginTop="8dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            />
+            android:layout_weight="1"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         <Button
             android:id="@+id/button_clear_history"
+            style="@style/ButtonUpdateStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/ButtonUpdateStyle"
-            android:text="@string/clear_history"
             android:layout_gravity="center"
-            android:layout_marginTop="24dp"/>
+            android:layout_marginTop="24dp"
+            android:text="@string/clear_history" />
 
 
     </LinearLayout>

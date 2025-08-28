@@ -47,6 +47,10 @@ class SearchFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.serchInput.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) showKeyboard()
+        }
+
         initUi()
         initListeners()
 
@@ -175,6 +179,11 @@ class SearchFragment: Fragment() {
         binding.searchHistory.visibility = View.VISIBLE
     }
 
+    private fun showKeyboard() {
+        val imm = requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        binding.serchInput.requestFocus()
+        imm.showSoftInput(binding.serchInput, InputMethodManager.SHOW_IMPLICIT)
+    }
 
     private fun hideKeyboard() {
         val imm = requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager

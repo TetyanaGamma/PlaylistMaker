@@ -30,7 +30,8 @@
             android:hint="@string/button_search"
             android:inputType="text"
             android:imeOptions="actionDone"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:saveEnabled="false"/>
 
         <ImageView
             android:id="@+id/clear_icon"

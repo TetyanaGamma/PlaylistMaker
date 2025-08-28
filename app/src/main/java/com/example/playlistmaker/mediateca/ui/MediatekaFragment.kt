@@ -15,7 +15,8 @@ class MediatekaFragment: Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var tabMediator: TabLayoutMediator
-    private val adapter by lazy { MediatekaViewPagerAdapter(this) }
+  // private val adapter by lazy { MediatekaViewPagerAdapter(this) }
+  private var adapter: MediatekaViewPagerAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,6 +29,9 @@ class MediatekaFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        adapter = MediatekaViewPagerAdapter(this)
+        binding.viewPager.adapter = adapter
 
       //  setupBackPressHandler()
         setupViewPager()
@@ -62,6 +66,7 @@ class MediatekaFragment: Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding.viewPager.adapter = null
+        adapter = null
         tabMediator.detach()
         _binding = null
     }

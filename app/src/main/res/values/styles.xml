@@ -199,5 +199,9 @@
         <item name="cornerRadius">54dp</item>
     </style>
 
+    <style name="Widget.PlaylistMaker.BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="backgroundTint">?attr/colorSurface</item>
+    </style>
+
 
 </resources>

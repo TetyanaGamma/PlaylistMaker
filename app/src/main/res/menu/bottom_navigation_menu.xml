@@ -3,7 +3,9 @@
     <item
         android:id="@+id/searchFragment"
         android:icon="@drawable/baseline_search_24"
-        android:title="@string/button_search"/>
+        android:title="@string/button_search"
+        />
+
     <item
         android:id="@+id/meditekaFragment"
         android:icon="@drawable/baseline_library_music_24"

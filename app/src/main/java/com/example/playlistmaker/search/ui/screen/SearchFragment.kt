@@ -43,17 +43,27 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initUi()
+        initListeners()
+
+        // Восстанавливаем состояние из ViewModel
+        if (viewModel.currentSearchQuery.isNotEmpty()) {
+            binding.serchInput.setText(viewModel.currentSearchQuery)
+            if (viewModel.currentSearchResults.isNotEmpty()) {
+                showTracks(viewModel.currentSearchResults)
+            }
+        } else {
+            binding.serchInput.text.clear()
+            viewModel.loadHistory()
+        }
         binding.serchInput.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) showKeyboard()
         }
 
-        initUi()
-        initListeners()
-
+        // Наблюдаем за состоянием из ViewModel
         viewModel.observeState().observe(viewLifecycleOwner, Observer {
             render(it)
         })
-        viewModel.loadHistory()
     }
 
     private fun initUi() {
@@ -80,10 +90,18 @@ class SearchFragment : Fragment() {
         textWatcher.let { binding.serchInput.addTextChangedListener(it) }
 
         binding.clearIcon.setOnClickListener {
+            // очищаем поле ввода
             binding.serchInput.text.clear()
-            hideKeyboard()
+
+            // очищаем состояние ViewModel
+            viewModel.currentSearchQuery = ""
+            viewModel.currentSearchResults = emptyList()
+            viewModel.isShowingHistory = true
+
+            // обновляем UI
             binding.trackList.visibility = View.GONE
             binding.notFoundPlaceholder.visibility = View.GONE
+            viewModel.loadHistory() // покажем историю
         }
 
         binding.buttonUpdate.setOnClickListener {
@@ -92,6 +110,12 @@ class SearchFragment : Fragment() {
 
         binding.buttonClearHistory.setOnClickListener {
             viewModel.clearHistory()
+
+            // Полностью очищаем UI
+            binding.serchInput.text.clear()
+            binding.trackList.visibility = View.GONE
+            binding.notFoundPlaceholder.visibility = View.GONE
+            binding.errorPlaceholder.visibility = View.GONE
             binding.searchHistory.visibility = View.GONE
         }
 
@@ -159,6 +183,10 @@ class SearchFragment : Fragment() {
     }
 
     private fun showHistory(history: List<Track>) {
+
+        // очищаем поле ввода при показе истории
+        binding.serchInput.text.clear()
+
         if (history.isEmpty()) {
             binding.searchHistory.visibility = View.GONE
             return
@@ -195,6 +223,7 @@ class SearchFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         textWatcher.let { binding.serchInput.removeTextChangedListener(it) }
+        _binding = null
     }
 
 }

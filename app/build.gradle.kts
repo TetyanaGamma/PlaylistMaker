@@ -42,23 +42,36 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    implementation ("com.github.bumptech.glide:glide:4.14.2")
-    annotationProcessor ("com.github.bumptech.glide:compiler:4.14.2")
-    implementation("com.google.code.gson:gson:2.10")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("io.insert-koin:koin-android:3.5.3")
-    implementation ("androidx.navigation:navigation-fragment-ktx:2.5.3")
-    implementation ("androidx.navigation:navigation-ui-ktx:2.5.3")
-    implementation ("androidx.fragment:fragment-ktx:1.5.6")
-    implementation ("com.google.android.material:material:1.8.0")
+    // --- Базовые Android библиотеки ---
+    implementation(libs.androidx.core.ktx)           // Core KTX – расширения для стандартных классов Android
+    implementation(libs.androidx.appcompat)          // AppCompat – поддержка старых версий Android
+    implementation(libs.androidx.activity)           // Activity KTX – удобные расширения для Activity
+    implementation(libs.androidx.constraintlayout)   // ConstraintLayout – современный лайаут для гибкой вёрстки
+    implementation(libs.androidx.fragment.ktx)       // Fragment KTX – удобные расширения для работы с фрагментами
 
+    // --- Material Design ---
+    implementation(libs.material)                    // Material Components – UI-компоненты по гайдлайнам Material 3
+
+    // --- Загрузка изображений ---
+    implementation(libs.glide)                       // Glide – загрузка и кэширование изображений
+    annotationProcessor(libs.glide.compiler)         // Аннотационный процессор для генерации кода Glide
+
+    // --- Сериализация / JSON ---
+    implementation(libs.gson)                        // Gson – сериализация и десериализация JSON
+
+    // --- Сетевое взаимодействие ---
+    implementation(libs.retrofit)                    // Retrofit – HTTP клиент
+    implementation(libs.converter.gson)              // Конвертер JSON → Kotlin объектов для Retrofit
+
+    // --- DI (Dependency Injection) ---
+    implementation(libs.koin.android)                // Koin – внедрение зависимостей
+
+    // --- Навигация ---
+    implementation(libs.navigation.fragment.ktx)     // Навигация через фрагменты
+    implementation(libs.navigation.ui.ktx)           // Навигация + UI (BottomNavigationView, Toolbar и т.д.)
+
+    // --- Тестирование ---
+    testImplementation(libs.junit)                   // JUnit – модульные тесты
+    androidTestImplementation(libs.androidx.junit)   // AndroidJUnit – инструментальные тесты
+    androidTestImplementation(libs.espresso.core)    // Espresso – UI-тесты
 }

@@ -18,10 +18,17 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     private val handler = Handler(Looper.getMainLooper())
     private var lastQuery: String = ""
 
+    var currentSearchQuery: String = ""
+    var currentSearchResults: List<Track> = emptyList()
+
+    var isShowingHistory: Boolean = false
+
     fun searchDebounce(changedText: String) {
         if (latestSearchText == changedText) return
 
         latestSearchText = changedText
+        // сохраняем введённый текст
+        currentSearchQuery = changedText
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
 
         val searchRunnable = Runnable { searchRequest(changedText) }
@@ -57,6 +64,11 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
     fun loadHistory() {
         val history = searchInteractor.getHistory()
+        isShowingHistory = true
+        // очищаем результаты поиска
+        currentSearchResults = emptyList()
+        // очищаем поле ввода
+        currentSearchQuery = ""
         renderState(SearchState.History(history))
     }
 
@@ -71,6 +83,11 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
 
     private fun renderState(state: SearchState) {
+        //  сохраняем результаты последнего поиска
+        if (state is SearchState.Content) {
+            currentSearchResults = state.tracks
+            isShowingHistory = false
+        }
         stateLiveData.postValue(state)
     }
 

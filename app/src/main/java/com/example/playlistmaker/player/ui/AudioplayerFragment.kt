@@ -1,47 +1,50 @@
 package com.example.playlistmaker.player.ui
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageButton
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
+import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivityAudioplayerBinding
+import com.example.playlistmaker.databinding.FragmentAudioplayerBinding
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.search.ui.screen.SearchActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Locale
+import kotlin.getValue
 
-class AudioplayerActivity : AppCompatActivity() {
+class AudioplayerFragment : Fragment() {
 
-    private lateinit var binding: ActivityAudioplayerBinding
+    private var _binding: FragmentAudioplayerBinding? = null
+    private val binding get() = _binding!!
+
     private val currentTrack: Track by lazy {
-        intent.getParcelableExtra<Track>(TRACK_EXTRA)!!
+        requireArguments().getParcelable<Track>(TRACK_EXTRA)!!
     }
 
     private val viewModel: AudioplayerViewModel by viewModel {
         parametersOf(currentTrack)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentAudioplayerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        binding = ActivityAudioplayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.audioPlayer_main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        viewModel.observePlayerState().observe(this) { state ->
+        viewModel.observePlayerState().observe(viewLifecycleOwner) { state ->
             when (state) {
                 AudioplayerViewModel.STATE_PREPARED, AudioplayerViewModel.STATE_PAUSED -> {
                     binding.ibPlayStop.visibility = ImageButton.VISIBLE
@@ -56,21 +59,18 @@ class AudioplayerActivity : AppCompatActivity() {
             binding.ibPlayStop.isEnabled = state != AudioplayerViewModel.STATE_DEFAULT
         }
 
-        viewModel.observeProgressTime().observe(this) { time ->
+        viewModel.observeProgressTime().observe(viewLifecycleOwner) { time ->
             binding.trackTrackTime.text = time
         }
-
 
         initUi()
         bindTrackData(currentTrack)
     }
 
     private fun initUi() {
-
         binding.backButton.setOnClickListener {
-            finish()
+            findNavController().navigateUp()
         }
-
         binding.ibPlayStop.setOnClickListener { viewModel.onPlayButtonClicked() }
         binding.ibPause.setOnClickListener { viewModel.onPause() }
     }
@@ -100,9 +100,9 @@ class AudioplayerActivity : AppCompatActivity() {
         viewModel.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun getReleaseYear(date: String?): String {
@@ -112,6 +112,9 @@ class AudioplayerActivity : AppCompatActivity() {
 
     companion object {
         const val TRACK_EXTRA = "TRACK_EXTRA"
+
+        fun createArgs(track: Track): Bundle =
+            bundleOf(AudioplayerFragment.TRACK_EXTRA to track)
     }
 
 }

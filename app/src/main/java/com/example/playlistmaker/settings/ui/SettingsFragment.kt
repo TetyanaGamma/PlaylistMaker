@@ -1,50 +1,46 @@
 package com.example.playlistmaker.settings.ui
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import com.example.playlistmaker.App
-import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.databinding.ActivitySettingsBinding
+import com.example.playlistmaker.databinding.FragmentSettingsBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.getValue
 
+class SettingsFragment : Fragment() {
 
-class SettingsActivity : AppCompatActivity() {
+    private var _binding: FragmentSettingsBinding? = null
+    private val binding get() = _binding!!
 
-    private lateinit var viewModel: SettingsViewModel
-    private lateinit var binding: ActivitySettingsBinding
+    private val viewModel: SettingsViewModel by viewModel()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        viewModel = ViewModelProvider(
-            this,
-            SettingsViewModel.getFactory(
-                Creator.provideSettingsInteractor(this),
-                Creator.provideSharingInteractor(this)
-            )
-        )[SettingsViewModel::class.java]
-
-        //обрабатываем нажатие на стрелку назад и возвращаемся на главный экран
-        binding.settingsToolbar.setNavigationOnClickListener {
-            finish()
-        }
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setupThemeObserver()
         setupThemeSwitch()
         setupShareButton()
         setupSupportButton()
         setupUserAgreementButton()
-
     }
 
     private fun setupThemeObserver() {
-        viewModel.observe().observe(this) { isDarkTheme ->
+        viewModel.observe().observe(viewLifecycleOwner) { isDarkTheme ->
             binding.settingsSwitchTheme.isChecked = isDarkTheme
-            (application as App).switchTheme(isDarkTheme)
+            (requireActivity().application as App).switchTheme(isDarkTheme)
         }
     }
 
@@ -69,7 +65,7 @@ class SettingsActivity : AppCompatActivity() {
         binding.settingsSupport.setOnClickListener {
             val supportData = viewModel.getSupportData()
             val supportIntent = Intent(Intent.ACTION_SENDTO).apply {
-                data = Uri.parse("mailto:")
+                data = "mailto:".toUri()
                 putExtra(Intent.EXTRA_EMAIL, arrayOf(supportData.email))
                 putExtra(Intent.EXTRA_SUBJECT, supportData.subject)
                 putExtra(Intent.EXTRA_TEXT, supportData.message)
@@ -81,9 +77,14 @@ class SettingsActivity : AppCompatActivity() {
     private fun setupUserAgreementButton() {
         binding.settingsUserAgreement.setOnClickListener {
             val agreementUrl = viewModel.getUserAgreementUrl()
-            val agreementIntent = Intent(Intent.ACTION_VIEW, Uri.parse(agreementUrl))
+            val agreementIntent = Intent(Intent.ACTION_VIEW, agreementUrl.toUri())
             startActivity(agreementIntent)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

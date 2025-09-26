@@ -2,12 +2,13 @@ package com.example.playlistmaker.search.data.storage
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.playlistmaker.search.data.storage.StorageClient
+
 import com.google.gson.Gson
 import java.lang.reflect.Type
+import androidx.core.content.edit
 
 class PrefsStorageClient<T>(
-     context: Context,
+    context: Context,
     private var gson: Gson,
     private val dataKey: String,
     private val type: Type
@@ -19,16 +20,11 @@ class PrefsStorageClient<T>(
     )
 
     override fun storeData(data: T) {
-        sharedPreferences.edit().putString(dataKey, gson.toJson(data, type)).apply()
+        sharedPreferences.edit { putString(dataKey, gson.toJson(data, type)) }
     }
 
     override fun getData(): T? {
         val dataJson = sharedPreferences.getString(dataKey, null)
-     /*   if (dataJson == null) {
-            return null
-        } else {
-            return gson.fromJson(dataJson, type)
-        }*/
         return dataJson?.let { gson.fromJson(it, type) }
     }
 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".mediateca.ui.PlaylistFragment">
+
+    <Button
+        android:id="@+id/addPlayList"
+        style="@style/AddPlayList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/newPlayList" />
+
+    <ImageView
+        android:id="@+id/image_notFound_FragmentPlaylists"
+        style="@style/NotFoundIconStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="46dp" />
+
+    <TextView
+        android:id="@+id/text_notFound_FragmentPlaylists"
+        style="@style/MediaFavoriteFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="@string/not_created_playlists"
+        android:textFontWeight="500" />
+
+
+</LinearLayout>

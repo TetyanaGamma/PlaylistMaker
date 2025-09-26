@@ -1,52 +1,73 @@
 package com.example.playlistmaker.search.ui.screen
 
-import android.content.Intent
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.player.ui.AudioplayerActivity
+import androidx.navigation.fragment.findNavController
+import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.FragmentSearchBinding
+import com.example.playlistmaker.player.ui.AudioplayerFragment
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.search.ui.screen.SearchState
-import com.example.playlistmaker.search.ui.screen.SearchViewModel
 import com.example.playlistmaker.search.ui.adapter.TrackAdapter
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.getValue
 
-class SearchActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivitySearchBinding
+class SearchFragment : Fragment() {
+
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
 
     private val adapter = TrackAdapter()
     private val historyAdapter = TrackAdapter()
 
-    private var viewModel: SearchViewModel? = null
+    private val viewModel: SearchViewModel by viewModel()
     private var textWatcher: TextWatcher? = null
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         initUi()
         initListeners()
-        viewModel = ViewModelProvider(this, SearchViewModel.Companion.getFactory())
-            .get(SearchViewModel::class.java)
 
-        viewModel?.observeState()?.observe(this, Observer {
+        // Восстанавливаем состояние из ViewModel
+        if (viewModel.currentSearchQuery.isNotEmpty()) {
+            binding.serchInput.setText(viewModel.currentSearchQuery)
+            if (viewModel.currentSearchResults.isNotEmpty()) {
+                showTracks(viewModel.currentSearchResults)
+            }
+        } else {
+            binding.serchInput.text.clear()
+            viewModel.loadHistory()
+        }
+        binding.serchInput.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) showKeyboard()
+        }
+
+        // Наблюдаем за состоянием из ViewModel
+        viewModel.observeState().observe(viewLifecycleOwner, Observer {
             render(it)
         })
-        viewModel?.loadHistory()
-
     }
 
     private fun initUi() {
 
-        binding.searchToolbar.setNavigationOnClickListener { finish() }
         binding.trackList.adapter = adapter
         binding.historyTrackList.adapter = historyAdapter
     }
@@ -62,37 +83,52 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.clearIcon.visibility = if (s.isNullOrEmpty()) View.GONE
                 else View.VISIBLE
-                if (s.isNullOrEmpty()) viewModel?.loadHistory()
-                else viewModel?.searchDebounce(s.toString())
+                if (s.isNullOrEmpty()) viewModel.loadHistory()
+                else viewModel.searchDebounce(s.toString())
             }
         }
         textWatcher.let { binding.serchInput.addTextChangedListener(it) }
 
         binding.clearIcon.setOnClickListener {
+            // очищаем поле ввода
             binding.serchInput.text.clear()
-            hideKeyboard()
-            viewModel?.loadHistory()
+
+            // очищаем состояние ViewModel
+            viewModel.currentSearchQuery = ""
+            viewModel.currentSearchResults = emptyList()
+            viewModel.isShowingHistory = true
+
+            // обновляем UI
+            binding.trackList.visibility = View.GONE
+            binding.notFoundPlaceholder.visibility = View.GONE
+            viewModel.loadHistory() // покажем историю
         }
 
         binding.buttonUpdate.setOnClickListener {
-            viewModel?.retrySearch()
+            viewModel.retrySearch()
         }
 
         binding.buttonClearHistory.setOnClickListener {
-            viewModel?.clearHistory()
+            viewModel.clearHistory()
+
+            // Полностью очищаем UI
+            binding.serchInput.text.clear()
+            binding.trackList.visibility = View.GONE
+            binding.notFoundPlaceholder.visibility = View.GONE
+            binding.errorPlaceholder.visibility = View.GONE
             binding.searchHistory.visibility = View.GONE
         }
 
         adapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClicklistener {
             override fun onTrackClick(track: Track) {
-                viewModel?.saveTrack(track)
+                viewModel.saveTrack(track)
                 openPlayer(track)
             }
         })
 
         historyAdapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClicklistener {
             override fun onTrackClick(track: Track) {
-                viewModel?.saveTrack(track)
+                viewModel.saveTrack(track)
                 openPlayer(track)
             }
         })
@@ -147,6 +183,10 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showHistory(history: List<Track>) {
+
+        // очищаем поле ввода при показе истории
+        binding.serchInput.text.clear()
+
         if (history.isEmpty()) {
             binding.searchHistory.visibility = View.GONE
             return
@@ -162,22 +202,30 @@ class SearchActivity : AppCompatActivity() {
         binding.searchHistory.visibility = View.VISIBLE
     }
 
+    private fun showKeyboard() {
+        val imm = requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        binding.serchInput.requestFocus()
+        imm.showSoftInput(binding.serchInput, InputMethodManager.SHOW_IMPLICIT)
+    }
 
     private fun hideKeyboard() {
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+        val imm = requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.hideSoftInputFromWindow(binding.serchInput.windowToken, 0)
     }
 
     private fun openPlayer(track: Track) {
-        val intent = Intent(this, AudioplayerActivity::class.java)
-        intent.putExtra(AudioplayerActivity.TRACK_EXTRA, track)
-        startActivity(intent)
+        findNavController().navigate(
+            R.id.action_searchFragment_to_audioplayerFragment,
+            AudioplayerFragment.createArgs(track)
+        )
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         textWatcher.let { binding.serchInput.removeTextChangedListener(it) }
+        _binding = null
     }
-
 
 }
+
+

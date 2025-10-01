@@ -1,14 +1,12 @@
 package com.example.playlistmaker.search.ui.screen
 
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
+import SearchInteractor
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.search.domain.interactor.SearchInteractor
 import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.utils.Resource
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -19,7 +17,7 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     fun observeState(): LiveData<SearchState> = stateLiveData
 
     private var latestSearchText: String? = null
-  //  private val handler = Handler(Looper.getMainLooper())
+
     private var lastQuery: String = ""
 
     var currentSearchQuery: String = ""
@@ -51,17 +49,20 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
         lastQuery = newSearchText
         renderState(SearchState.Loading)
 
-        searchInteractor.searchTracks(newSearchText, object : SearchInteractor.TrackConsumer {
-            override fun consume(foundTracks: List<Track>?) {
-                    when {
-                        foundTracks == null -> renderState(SearchState.NoConnection)
-                        foundTracks.isEmpty() -> renderState(SearchState.NothingFound)
-                        else -> renderState(SearchState.Content(foundTracks))
+        viewModelScope.launch {
+            searchInteractor.searchTracks(newSearchText)
+                .collect { resource ->
+                    when (resource) {
+                        is Resource.Loading -> renderState(SearchState.Loading)
+                        is Resource.Success -> {
+                            val tracks = resource.data
+                            if (tracks.isEmpty()) renderState(SearchState.NothingFound)
+                            else renderState(SearchState.Content(tracks))
+                        }
+                        is Resource.Error -> renderState(SearchState.NoConnection)
                     }
-
-            }
+                }
         }
-        )
     }
 
     fun retrySearch() {
@@ -71,13 +72,21 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     }
 
     fun loadHistory() {
-        val history = searchInteractor.getHistory()
-        isShowingHistory = true
-        // очищаем результаты поиска
-        currentSearchResults = emptyList()
-        // очищаем поле ввода
-        currentSearchQuery = ""
-        renderState(SearchState.History(history))
+        viewModelScope.launch {
+            searchInteractor.getHistory()
+                .collect { resource ->
+                    when (resource) {
+                        is Resource.Loading -> Unit
+                        is Resource.Success -> {
+                            isShowingHistory = true
+                            currentSearchResults = emptyList()
+                            currentSearchQuery = ""
+                            renderState(SearchState.History(resource.data))
+                        }
+                        is Resource.Error -> renderState(SearchState.NoConnection)
+                    }
+                }
+        }
     }
 
     fun saveTrack(track: Track) {
@@ -105,7 +114,6 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
     }
 
 }

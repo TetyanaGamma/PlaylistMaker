@@ -1,7 +1,5 @@
 package com.example.playlistmaker.player.ui
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,8 +10,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 
 class AudioplayerViewModel(
@@ -24,7 +20,6 @@ class AudioplayerViewModel(
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
     fun observePlayerState(): LiveData<Int> = playerStateLiveData
 
- //   private val formatter = SimpleDateFormat("mm:ss", Locale.getDefault())
     private val progressTimeLiveData = MutableLiveData("00:00")
     fun observeProgressTime(): LiveData<String> = progressTimeLiveData
 
@@ -77,7 +72,7 @@ class AudioplayerViewModel(
                     val currentPosition = audioplayerInteractor.getCurrentPosition()
                     progressTimeLiveData.postValue(formatTime(currentPosition))
                 }
-                delay(300)
+                delay(PROGRESS_UPDATE_DELAY)
             }
         }
     }
@@ -115,6 +110,7 @@ class AudioplayerViewModel(
         const val STATE_PLAYING = 2
         const val STATE_PAUSED = 3
 
+        private const val PROGRESS_UPDATE_DELAY = 300L // миллисекунды
     }
 
 }

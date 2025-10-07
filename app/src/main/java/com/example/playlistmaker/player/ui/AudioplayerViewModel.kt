@@ -1,20 +1,26 @@
 package com.example.playlistmaker.player.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.mediateca.domain.interactors.FavouriteTracksInteractor
 import com.example.playlistmaker.player.domain.interactor.AudioplayerInteractor
 import com.example.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.onEach
+import  kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
 
 
 class AudioplayerViewModel(
     private val audioplayerInteractor: AudioplayerInteractor,
-    private val track: Track
+    private val track: Track,
+    private val favouriteTracksInteractor: FavouriteTracksInteractor
 ) : ViewModel() {
 
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
@@ -22,6 +28,49 @@ class AudioplayerViewModel(
 
     private val progressTimeLiveData = MutableLiveData("00:00")
     fun observeProgressTime(): LiveData<String> = progressTimeLiveData
+
+    private val _isFavourite = MutableLiveData<Boolean>()
+    val isFavourite: LiveData<Boolean> = _isFavourite
+
+    private var currentTrack: Track? = null
+
+    fun setTrack(track: Track) {
+        currentTrack = track
+        // Проверяем актуальное состояние из БД
+        checkFavoriteStatus(track)
+    }
+
+    private fun checkFavoriteStatus(track: Track) {
+        viewModelScope.launch {
+            favouriteTracksInteractor.getAllFavouriteTracks()
+                .onEach { favouriteTracks ->
+                    val isFav = favouriteTracks.any { it.trackId == track.trackId }
+                    track.isFavourite = isFav
+                    _isFavourite.postValue(isFav)
+                }
+                .catch { error ->
+                    Log.e("AudioPlayer", "Error checking favorite status", error)
+                    _isFavourite.postValue(false)
+                }
+                .launchIn(this)
+        }
+    }
+
+    fun onFavoriteClicked() {
+        val track = currentTrack ?: return
+
+        viewModelScope.launch {
+            if (track.isFavourite) {
+                favouriteTracksInteractor.removeTrackFromFavourites(track)
+            } else {
+                favouriteTracksInteractor.addTrackToFavourites(track)
+            }
+            // Обновляем состояние
+            track.isFavourite = !track.isFavourite
+            _isFavourite.value = track.isFavourite
+        }
+    }
+
 
     private var progressJob: Job? = null
 

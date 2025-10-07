@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("kotlin-parcelize")
+    id ("kotlin-kapt")
 }
 
 android {
@@ -72,6 +73,12 @@ dependencies {
 
     // --- Корутины ---
     implementation(libs.kotlinx.coroutines.android)
+
+    // Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    kapt(libs.androidx.room.compiler)
+    testImplementation(libs.androidx.room.testing)
 
     // --- Тестирование ---
     testImplementation(libs.junit)                   // JUnit – модульные тесты

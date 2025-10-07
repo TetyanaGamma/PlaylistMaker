@@ -70,6 +70,9 @@ dependencies {
     implementation(libs.navigation.fragment.ktx)     // Навигация через фрагменты
     implementation(libs.navigation.ui.ktx)           // Навигация + UI (BottomNavigationView, Toolbar и т.д.)
 
+    // --- Корутины ---
+    implementation(libs.kotlinx.coroutines.android)
+
     // --- Тестирование ---
     testImplementation(libs.junit)                   // JUnit – модульные тесты
     androidTestImplementation(libs.androidx.junit)   // AndroidJUnit – инструментальные тесты

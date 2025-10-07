@@ -10,12 +10,14 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.AudioplayerFragment
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.adapter.TrackAdapter
+import com.example.playlistmaker.utils.ClickDebounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.getValue
 
@@ -31,6 +33,9 @@ class SearchFragment : Fragment() {
     private val viewModel: SearchViewModel by viewModel()
     private var textWatcher: TextWatcher? = null
 
+    private lateinit var clickDebounce: ClickDebounce
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,6 +47,8 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        clickDebounce = ClickDebounce(viewLifecycleOwner.lifecycleScope)
 
         initUi()
         initListeners()
@@ -121,17 +128,22 @@ class SearchFragment : Fragment() {
 
         adapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClicklistener {
             override fun onTrackClick(track: Track) {
-                viewModel.saveTrack(track)
-                openPlayer(track)
+                clickDebounce.submit {
+                    viewModel.saveTrack(track)
+                    openPlayer(track)
+                }
             }
         })
 
         historyAdapter.setOnTrackClickListener(object : TrackAdapter.OnTrackClicklistener {
             override fun onTrackClick(track: Track) {
-                viewModel.saveTrack(track)
-                openPlayer(track)
+                clickDebounce.submit {
+                    viewModel.saveTrack(track)
+                    openPlayer(track)
+                }
             }
         })
+
     }
 
     private fun render(state: SearchState) {

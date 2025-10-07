@@ -3,16 +3,23 @@ package com.example.playlistmaker.search.data.repositoryImp
 import com.example.playlistmaker.search.data.network.NetworkClient
 import com.example.playlistmaker.search.data.network.TrackResponse
 import com.example.playlistmaker.search.data.network.TrackSearchRequest
-import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.api.TracksRepository
+import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.utils.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 
 class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
 
-    override fun searchTracks(expression: String): List<Track> {
+    override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
+        // эмитим Loading
+        emit(Resource.Loading())
 
         val response = networkClient.doRequest(TrackSearchRequest(expression))
+
         if (response.resultCode == 200) {
-            return (response as TrackResponse).results.map {
+            val tracks = (response as? TrackResponse)?.results?.map {
                 Track(
                     it.trackId,
                     it.trackName,
@@ -25,9 +32,14 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
                     it.releaseDate,
                     it.previewUrl
                 )
-            }
+            } ?: emptyList()
+
+            emit(Resource.Success(tracks))
         } else {
-            return emptyList()
+            emit(Resource.Error(Throwable("Ошибка сети или запроса: код ${response.resultCode}")))
         }
+
+    }.catch { e ->
+        emit(Resource.Error(e))
     }
 }

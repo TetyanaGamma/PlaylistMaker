@@ -15,7 +15,7 @@ koin = "3.5.3"
 navigation = "2.5.3"
 fragment-ktx = "1.5.6"
 coroutines = "1.6.4" # добавили корутины
-room = "2.5.1"
+room = "2.6.0"
 
 [libraries]
 # Базовые AndroidX

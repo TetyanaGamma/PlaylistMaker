@@ -1,5 +1,6 @@
 package com.example.playlistmaker.player.ui
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Locale
+import kotlin.coroutines.Continuation
 import kotlin.getValue
 
 class AudioplayerFragment : Fragment() {
@@ -63,8 +65,30 @@ class AudioplayerFragment : Fragment() {
             binding.trackTrackTime.text = time
         }
 
+        // Observer для состояния избранного
+        viewModel.isFavourite.observe(viewLifecycleOwner) { isFavorite ->
+            val favoriteIcon = if (isFavorite) {
+                if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
+                    Configuration.UI_MODE_NIGHT_YES) {
+                    R.drawable.favourite_filled_dark
+                } else {
+                    R.drawable.favourite_filled //Красное сердечко
+                }
+
+            } else {
+                if (resources.configuration.uiMode and
+                    Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
+                    R.drawable.favourite_dark
+                } else {
+                    R.drawable.favourite_light
+                }
+            }
+            binding.ibFavorite.setImageResource(favoriteIcon)
+        }
+
         initUi()
         bindTrackData(currentTrack)
+
     }
 
     private fun initUi() {
@@ -76,6 +100,9 @@ class AudioplayerFragment : Fragment() {
     }
 
     private fun bindTrackData(track: Track) {
+
+        viewModel.setTrack(currentTrack)
+
         val radiusInPx = (8f * resources.displayMetrics.density).toInt()
         Glide.with(this)
             .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
@@ -93,6 +120,11 @@ class AudioplayerFragment : Fragment() {
         binding.trackReleaseDateValue.text = getReleaseYear(track.releaseDate)
         binding.trackPrimaryGenreNameValue.text = track.primaryGenreName
         binding.trackCountryValue.text = track.country
+
+        // Настройка кнопки избранного
+        binding.ibFavorite.setOnClickListener {
+            viewModel.onFavoruiteClicked()
+        }
     }
 
     override fun onPause() {

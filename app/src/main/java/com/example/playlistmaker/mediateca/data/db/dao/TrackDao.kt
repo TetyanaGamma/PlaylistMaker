@@ -1,10 +1,10 @@
-package com.example.playlistmaker.mediateca.db.dao
+package com.example.playlistmaker.mediateca.data.db.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.playlistmaker.mediateca.db.entities.TrackEntity
+import com.example.playlistmaker.mediateca.data.db.entities.TrackEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -16,7 +16,7 @@ interface TrackDao {
 
     //удаление трека из таблицы избранных треков
     @Query("DELETE FROM favourite_tracks_table WHERE trackId = :trackId")
-    suspend fun deleteTrack(trackId: Int): Int
+    suspend fun deleteTrack(trackId: Int)
 
     //получение списка со всеми треками, добавленными в избранное
     @Query("SELECT * FROM favourite_tracks_table ORDER BY addedTimestamp DESC")
@@ -24,5 +24,5 @@ interface TrackDao {
 
     //получение списка идентификаторов всех треков, которые добавлены в избранное
     @Query("SELECT trackId FROM favourite_tracks_table")
-    fun getFavoriteTrackIds(): Flow<List<Int>>
+    fun getFavouriteTrackIds(): Flow<List<Int>>
 }

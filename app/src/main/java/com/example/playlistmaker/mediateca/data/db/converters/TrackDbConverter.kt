@@ -1,6 +1,6 @@
-package com.example.playlistmaker.mediateca.db.converters
+package com.example.playlistmaker.mediateca.data.db.converters
 
-import com.example.playlistmaker.mediateca.db.entities.TrackEntity
+import com.example.playlistmaker.mediateca.data.db.entities.TrackEntity
 import com.example.playlistmaker.search.domain.model.Track
 
 class TrackDbConverter {

@@ -1,6 +1,6 @@
 package com.example.playlistmaker.search.di
 
-import SearchInteractor
+import com.example.playlistmaker.search.domain.interactor.SearchInteractor
 import com.example.playlistmaker.search.data.network.NetworkClient
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.search.data.network.TrackApi

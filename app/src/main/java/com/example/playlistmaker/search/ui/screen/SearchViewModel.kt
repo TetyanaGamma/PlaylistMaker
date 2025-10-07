@@ -1,6 +1,6 @@
 package com.example.playlistmaker.search.ui.screen
 
-import SearchInteractor
+import com.example.playlistmaker.search.domain.interactor.SearchInteractor
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

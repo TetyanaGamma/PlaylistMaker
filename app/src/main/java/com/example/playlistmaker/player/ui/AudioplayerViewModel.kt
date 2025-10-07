@@ -56,7 +56,7 @@ class AudioplayerViewModel(
         }
     }
 
-    fun onFavoriteClicked() {
+    fun onFavoruiteClicked() {
         val track = currentTrack ?: return
 
         viewModelScope.launch {

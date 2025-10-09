@@ -3,32 +3,48 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation_graph"
-    app:startDestination="@id/meditekaFragment">
+    app:startDestination="@id/mediatekaFragment">
 
+    <!-- Медиатека с ViewPager -->
     <fragment
-        android:id="@+id/meditekaFragment"
+        android:id="@+id/mediatekaFragment"
         android:name="com.example.playlistmaker.mediateca.ui.MediatekaFragment"
         android:label="MediatekaFragment"
-        tools:layout="@layout/fragment_mediateka" />
+        tools:layout="@layout/fragment_mediateka">
+        <!-- Action для перехода на плеер -->
+        <action
+            android:id="@+id/action_mediateka_to_audioplayer"
+            app:destination="@id/audioplayerFragment" />
+    </fragment>
 
+    <!-- Настройки -->
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.playlistmaker.settings.ui.SettingsFragment"
         android:label="SettingsFragment"
         tools:layout="@layout/fragment_settings" />
 
+    <!-- Поиск -->
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.playlistmaker.search.ui.screen.SearchFragment"
         android:label="SearchFragment"
         tools:layout="@layout/fragment_search">
+        <!-- Action для перехода на плеер -->
         <action
             android:id="@+id/action_searchFragment_to_audioplayerFragment"
-            app:destination="@+id/audioplayerFragment" />
+            app:destination="@id/audioplayerFragment" />
     </fragment>
+
+    <!-- Плеер -->
     <fragment
         android:id="@+id/audioplayerFragment"
         android:name="com.example.playlistmaker.player.ui.AudioplayerFragment"
         android:label="fragment_audioplayer"
-        tools:layout="@layout/fragment_audioplayer" />
+        tools:layout="@layout/fragment_audioplayer">
+        <argument
+            android:name="trackJson"
+            app:argType="string" />
+    </fragment>
+
 </navigation>

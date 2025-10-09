@@ -24,8 +24,9 @@ val mediatekaModule = module {
         FavouriteTracksInteractor(get())
     }
 
+    // ViewModels
     viewModel { MediatekaViewModel() }
     viewModel { PlaylistsViewModel() }
-    viewModel { FavoriteTracksViewModel() }
+    viewModel { FavoriteTracksViewModel(interactor = get()) }
 
 }

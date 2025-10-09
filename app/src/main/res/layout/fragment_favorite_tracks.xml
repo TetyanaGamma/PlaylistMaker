@@ -6,6 +6,13 @@
     android:orientation="vertical"
     tools:context=".mediateca.ui.FavoriteTracksFragment">
 
+    <!-- Контейнер для пустого состояния -->
+    <LinearLayout
+        android:id="@+id/emptyStateContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
     <ImageView
         style="@style/NotFoundIconStyle"
         android:layout_width="wrap_content"
@@ -21,5 +28,13 @@
         android:layout_marginTop="16dp"
         android:text="@string/empty_media"
         android:textFontWeight="400" />
+    </LinearLayout>
+
+    <!-- RecyclerView для списка треков -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/favouriteTracksRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 </LinearLayout>

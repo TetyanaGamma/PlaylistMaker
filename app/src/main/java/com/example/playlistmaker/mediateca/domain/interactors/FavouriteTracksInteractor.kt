@@ -7,15 +7,16 @@ import kotlinx.coroutines.flow.Flow
 class FavouriteTracksInteractor(
     private val repository: FavouriteTracksRepository
 ) {
+    // Получение всех избранных треков
+    fun getAllFavouriteTracks(): Flow<List<Track>> {
+        return repository.getAllFavouriteTracks()
+    }
+
     suspend fun addTrackToFavourites(track: Track) {
         repository.addTrackToFavourites(track)
     }
 
     suspend fun removeTrackFromFavourites(track: Track) {
         repository.removeTrackFromFavourites(track)
-    }
-
-    fun getAllFavouriteTracks(): Flow<List<Track>> {
-        return repository.getAllFavouriteTracks()
     }
 }

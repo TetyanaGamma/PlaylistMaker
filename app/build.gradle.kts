@@ -80,6 +80,8 @@ dependencies {
     kapt(libs.androidx.room.compiler)
     testImplementation(libs.androidx.room.testing)
 
+    implementation(libs.lifecycle.livedata.ktx)
+
     // --- Тестирование ---
     testImplementation(libs.junit)                   // JUnit – модульные тесты
     androidTestImplementation(libs.androidx.junit)   // AndroidJUnit – инструментальные тесты

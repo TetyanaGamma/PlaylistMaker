@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 class FavouriteTracksRepositoryImpl(
     private val database: AppDataBase,
     private val converter: TrackDbConverter
-): FavouriteTracksRepository{
+) : FavouriteTracksRepository {
 
     private val trackDao = database.trackDao()
 
@@ -28,5 +28,9 @@ class FavouriteTracksRepositoryImpl(
             .map { entities ->
                 entities.map { converter.mapEntityToTrack(it) }
             }
+    }
+
+    override fun getFavouriteTrackIds(): Flow<List<Int>> {
+        return trackDao.getFavouriteTrackIds()
     }
 }

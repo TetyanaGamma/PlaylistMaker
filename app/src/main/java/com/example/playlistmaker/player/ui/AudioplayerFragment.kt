@@ -18,7 +18,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Locale
-import kotlin.coroutines.Continuation
 import kotlin.getValue
 
 class AudioplayerFragment : Fragment() {
@@ -46,6 +45,13 @@ class AudioplayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val track = currentTrack
+        if (track == null) {
+            // Если почему-то пришли без данных — возвращаемся назад
+            findNavController().popBackStack()
+            return
+        }
+
         viewModel.observePlayerState().observe(viewLifecycleOwner) { state ->
             when (state) {
                 AudioplayerViewModel.STATE_PREPARED, AudioplayerViewModel.STATE_PAUSED -> {
@@ -69,7 +75,8 @@ class AudioplayerFragment : Fragment() {
         viewModel.isFavourite.observe(viewLifecycleOwner) { isFavorite ->
             val favoriteIcon = if (isFavorite) {
                 if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
-                    Configuration.UI_MODE_NIGHT_YES) {
+                    Configuration.UI_MODE_NIGHT_YES
+                ) {
                     R.drawable.favourite_filled_dark
                 } else {
                     R.drawable.favourite_filled //Красное сердечко
@@ -77,7 +84,8 @@ class AudioplayerFragment : Fragment() {
 
             } else {
                 if (resources.configuration.uiMode and
-                    Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES) {
+                    Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+                ) {
                     R.drawable.favourite_dark
                 } else {
                     R.drawable.favourite_light
@@ -147,6 +155,15 @@ class AudioplayerFragment : Fragment() {
 
         fun createArgs(track: Track): Bundle =
             bundleOf(AudioplayerFragment.TRACK_EXTRA to track)
+
+        fun newInstance(trackJson: String): AudioplayerFragment {
+            return AudioplayerFragment().apply {
+                arguments = Bundle().apply {
+                    putString(TRACK_EXTRA, trackJson)
+                }
+            }
+        }
     }
+
 
 }

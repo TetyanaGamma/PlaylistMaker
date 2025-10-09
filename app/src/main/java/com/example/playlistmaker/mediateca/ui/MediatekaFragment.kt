@@ -1,45 +1,54 @@
 package com.example.playlistmaker.mediateca.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentMediatekaBinding
+import com.example.playlistmaker.player.ui.AudioplayerFragment
+import com.example.playlistmaker.search.domain.model.Track
 import com.google.android.material.tabs.TabLayoutMediator
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.launchIn
 
-class MediatekaFragment : Fragment() {
+class MediatekaFragment : Fragment(R.layout.fragment_mediateka),
+    FavoriteTracksFragment.OnTrackClickListener {
 
     private var _binding: FragmentMediatekaBinding? = null
     private val binding get() = _binding!!
-
+    private val mediaViewModel: MediatekaViewModel by viewModel()
     private lateinit var tabMediator: TabLayoutMediator
-    private var adapter: MediatekaViewPagerAdapter? = null
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentMediatekaBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        adapter = MediatekaViewPagerAdapter(this)
-        binding.viewPager.adapter = adapter
+        _binding = FragmentMediatekaBinding.bind(view)
 
         setupViewPager()
+        observeTabSelection()
     }
 
-    // Инициализация ViewPager и TabLayout
     private fun setupViewPager() {
+        val adapter = MediatekaViewPagerAdapter(childFragmentManager, lifecycle)
         binding.viewPager.adapter = adapter
 
-        // Инициализируем TabLayout
+        // Важное: отключаем автоматическое сохранение состояния
+        binding.viewPager.isSaveEnabled = false
+
+        // Восстанавливаем выбранный таб
+        binding.viewPager.setCurrentItem(mediaViewModel.selectedTab.value, false)
+
+        // Обновляем ViewModel при смене таба
+        binding.viewPager.registerOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                mediaViewModel.selectTab(position)
+            }
+        })
+
         tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when (position) {
                 0 -> getString(R.string.favorite_tracks)
@@ -50,11 +59,31 @@ class MediatekaFragment : Fragment() {
         tabMediator.attach()
     }
 
+    private fun observeTabSelection() {
+        mediaViewModel.selectedTab
+            .onEach { position ->
+                if (binding.viewPager.currentItem != position) {
+                    binding.viewPager.setCurrentItem(position, false)
+                }
+            }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    // Делегируем переход на плеер из дочернего фрагмента
+    override fun openPlayer(track: Track) {
+        val bundle = Bundle().apply {
+            putParcelable(AudioplayerFragment.TRACK_EXTRA, track)
+        }
+        // Используем Action из nav_graph
+        findNavController().navigate(
+            R.id.action_mediateka_to_audioplayer,
+            bundle
+        )
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.viewPager.adapter = null
-        adapter = null
-        tabMediator.detach()
+        if (::tabMediator.isInitialized) tabMediator.detach()
         _binding = null
     }
 }

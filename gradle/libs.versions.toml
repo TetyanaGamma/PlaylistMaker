@@ -16,6 +16,8 @@ navigation = "2.5.3"
 fragment-ktx = "1.5.6"
 coroutines = "1.6.4" # добавили корутины
 room = "2.6.0"
+lifecycle = "2.6.2"
+
 
 [libraries]
 # Базовые AndroidX
@@ -59,6 +61,9 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
+
+lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version = "8.10.1" }

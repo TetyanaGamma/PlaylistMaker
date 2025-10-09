@@ -36,7 +36,9 @@ val searchModule = module {
     }
 
     single<SearchHistoryRepository> {
-        SearchHistoryRepositoryImpl(get())
+        SearchHistoryRepositoryImpl(
+            storage = get(),
+            database = get())
     }
 
     single {
@@ -53,7 +55,9 @@ val searchModule = module {
     }
 
     single<TracksRepository> {
-        TracksRepositoryImpl(get())
+        TracksRepositoryImpl(
+            networkClient = get(),
+            database = get())
     }
 
     single<SearchInteractor> {

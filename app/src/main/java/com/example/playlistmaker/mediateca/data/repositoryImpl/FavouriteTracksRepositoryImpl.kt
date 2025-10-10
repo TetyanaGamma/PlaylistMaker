@@ -2,17 +2,17 @@ package com.example.playlistmaker.mediateca.data.repositoryImpl
 
 import com.example.playlistmaker.mediateca.data.db.AppDataBase
 import com.example.playlistmaker.mediateca.data.db.converters.TrackDbConverter
+import com.example.playlistmaker.mediateca.data.db.dao.TrackDao
 import com.example.playlistmaker.mediateca.domain.api.FavouriteTracksRepository
 import com.example.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class FavouriteTracksRepositoryImpl(
-    private val database: AppDataBase,
+    private val trackDao: TrackDao,
     private val converter: TrackDbConverter
 ) : FavouriteTracksRepository {
 
-    private val trackDao = database.trackDao()
 
     override suspend fun addTrackToFavourites(track: Track) {
         val entity = converter.mapTrackToEntity(track)

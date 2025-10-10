@@ -1,5 +1,6 @@
 package com.example.playlistmaker.mediateca.di
 
+import com.example.playlistmaker.mediateca.data.db.AppDataBase
 import com.example.playlistmaker.mediateca.data.repositoryImpl.FavouriteTracksRepositoryImpl
 import com.example.playlistmaker.mediateca.domain.api.FavouriteTracksRepository
 import com.example.playlistmaker.mediateca.domain.interactors.FavouriteTracksInteractor
@@ -14,7 +15,7 @@ val mediatekaModule = module {
     // Repository
     single<FavouriteTracksRepository> {
         FavouriteTracksRepositoryImpl(
-            database = get(),
+            trackDao = get<AppDataBase>().trackDao(),
             converter = get()
         )
     }

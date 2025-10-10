@@ -28,7 +28,7 @@ val dataModule = module {
     // Репозиторий
     single<FavouriteTracksRepository> {
         FavouriteTracksRepositoryImpl(
-            database = get(),
+            trackDao = get<AppDataBase>().trackDao(),
             converter = get()
         )
     }

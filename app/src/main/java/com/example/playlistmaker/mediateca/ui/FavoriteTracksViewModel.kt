@@ -14,9 +14,9 @@ class FavoriteTracksViewModel(
 ) : ViewModel() {
 
     // Состояния экрана
-    sealed class FavoriteTracksState {
-        object Empty : FavoriteTracksState()
-        data class Content(val tracks: List<Track>) : FavoriteTracksState()
+    sealed interface FavoriteTracksState {
+        object Empty : FavoriteTracksState
+        data class Content(val tracks: List<Track>) : FavoriteTracksState
     }
 
     private val _state = MutableLiveData<FavoriteTracksState>()

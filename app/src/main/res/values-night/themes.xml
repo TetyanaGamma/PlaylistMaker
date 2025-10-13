@@ -13,6 +13,9 @@
         <item name="android:navigationBarColor">?attr/colorSurface</item>
 
         <item name="elevationOverlayEnabled">false</item>
+
+        <item name="colorOutline">@color/white</item> <!-- белая рамка -->
+        <item name="colorControlActivated">@color/white</item>
     </style>
 
 

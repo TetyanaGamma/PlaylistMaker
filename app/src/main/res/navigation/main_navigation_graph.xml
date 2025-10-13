@@ -15,6 +15,9 @@
         <action
             android:id="@+id/action_mediateka_to_audioplayer"
             app:destination="@id/audioplayerFragment" />
+        <action
+            android:id="@+id/action_mediateka_to_playlistCreation"
+            app:destination="@+id/playlistCreationFragment"/>
     </fragment>
 
     <!-- Настройки -->
@@ -46,5 +49,13 @@
             android:name="trackJson"
             app:argType="string" />
     </fragment>
+
+    <!-- Экран для создания плейлиста -->
+    <fragment
+        android:id="@+id/playlistCreationFragment"
+        android:name="com.example.playlistmaker.mediateca.ui.PlaylistCreationFragment"
+        android:label="PlaylistCreationFragment"
+        tools:layout="@layout/fragment_playlist_creation"
+        ></fragment>
 
 </navigation>

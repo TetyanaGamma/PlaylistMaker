@@ -47,4 +47,19 @@ class RootActivity : AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.rootFragmentContainerView) as NavHostFragment
+        val currentDest = navHostFragment.navController.currentDestination?.id
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+
+        if (currentDest == R.id.mediatekaFragment ||
+            currentDest == R.id.searchFragment ||
+            currentDest == R.id.mediatekaFragment
+        ) {
+            bottomNavigationView.visibility = View.VISIBLE
+        }
+    }
+
+
 }

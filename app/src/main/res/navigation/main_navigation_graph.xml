@@ -56,6 +56,14 @@
         android:name="com.example.playlistmaker.mediateca.ui.PlaylistCreationFragment"
         android:label="PlaylistCreationFragment"
         tools:layout="@layout/fragment_playlist_creation"
-        ></fragment>
+    />
+
+    <!-- Экран  плейлистов -->
+    <fragment
+        android:id="@+id/playlistFragment"
+        android:name="com.example.playlistmaker.media.ui.PlaylistsFragment"
+        android:label="PlaylistFragment"
+        tools:layout="@layout/fragment_playlist"
+       />
 
 </navigation>

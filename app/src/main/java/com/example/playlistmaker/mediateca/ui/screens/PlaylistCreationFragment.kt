@@ -1,8 +1,8 @@
-package com.example.playlistmaker.mediateca.ui
+package com.example.playlistmaker.mediateca.ui.screens
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -17,16 +17,17 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistCreationBinding
+import com.example.playlistmaker.mediateca.ui.screens.PlaylistCreationViewModel
 import com.markodevcic.peko.PermissionRequester
 import com.markodevcic.peko.PermissionResult
 import kotlinx.coroutines.flow.first
@@ -41,7 +42,7 @@ class PlaylistCreationFragment : Fragment() {
     private val viewModel: PlaylistCreationViewModel by viewModel()
 
 
-    private val requester = PermissionRequester.instance()
+    private val requester = PermissionRequester.Companion.instance()
     private var selectedImageUri: Uri? = null
 
     // Photo Picker (Android 13+)
@@ -143,7 +144,8 @@ class PlaylistCreationFragment : Fragment() {
                 val result = requester.request(Manifest.permission.READ_EXTERNAL_STORAGE).first()
                 when (result) {
                     is PermissionResult.Granted -> {
-                        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                        val intent =
+                            Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                         legacyImagePicker.launch(intent)
                     }
 
@@ -168,18 +170,24 @@ class PlaylistCreationFragment : Fragment() {
         // Создаём плейлист через ViewModel
         viewModel.createPlaylist(name, desc, cover)
 
+        // Сообщение о создании плейлиста
+        Toast.makeText(
+            requireContext(), "Плейлист \"$name\" создан",
+            Toast.LENGTH_SHORT
+        ).show()
+
         // Закрываем экран
         findNavController().popBackStack()
     }
 
     private fun showKeyboard(editText: View?) {
         editText?.requestFocus()
-        val imm = requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
     }
 
     private fun hideKeyboard(view: View?) {
-        val imm = requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 

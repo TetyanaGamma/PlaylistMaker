@@ -8,7 +8,7 @@
     <!-- Медиатека с ViewPager -->
     <fragment
         android:id="@+id/mediatekaFragment"
-        android:name="com.example.playlistmaker.mediateca.ui.MediatekaFragment"
+        android:name="com.example.playlistmaker.mediateca.ui.screens.MediatekaFragment"
         android:label="MediatekaFragment"
         tools:layout="@layout/fragment_mediateka">
         <!-- Action для перехода на плеер -->
@@ -53,7 +53,7 @@
     <!-- Экран для создания плейлиста -->
     <fragment
         android:id="@+id/playlistCreationFragment"
-        android:name="com.example.playlistmaker.mediateca.ui.PlaylistCreationFragment"
+        android:name="com.example.playlistmaker.mediateca.ui.screens.PlaylistCreationFragment"
         android:label="PlaylistCreationFragment"
         tools:layout="@layout/fragment_playlist_creation"
     />

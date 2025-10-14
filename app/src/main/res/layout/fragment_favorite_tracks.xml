@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".mediateca.ui.FavoriteTracksFragment">
+    tools:context=".mediateca.ui.screens.FavoriteTracksFragment">
 
     <!-- Контейнер для пустого состояния -->
     <LinearLayout

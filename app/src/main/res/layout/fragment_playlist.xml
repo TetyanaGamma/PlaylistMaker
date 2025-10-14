@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".mediateca.ui.PlaylistFragment">
+    tools:context=".mediateca.ui.screen.PlaylistFragment">
 
     <Button
         android:id="@+id/addPlayList"
@@ -14,24 +14,46 @@
         android:layout_height="wrap_content"
         android:text="@string/newPlayList" />
 
+    <LinearLayout
+        android:id="@+id/noPlaylists_placeholder"
+        android:layout_width="312dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="46dp"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal">
+
     <ImageView
         android:id="@+id/image_notFound_FragmentPlaylists"
         style="@style/NotFoundIconStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="46dp" />
+
+         />
 
     <TextView
         android:id="@+id/text_notFound_FragmentPlaylists"
         style="@style/MediaFavoriteFragment"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
         android:gravity="center"
+        android:layout_marginTop="16dp"
         android:text="@string/not_created_playlists"
         android:textFontWeight="500" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_playlists"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+       android:layout_marginHorizontal="12dp"
+        android:visibility="visible" />
+
+
 
 
 </LinearLayout>

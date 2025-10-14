@@ -1,10 +1,9 @@
-package com.example.playlistmaker.mediateca.ui
+package com.example.playlistmaker.mediateca.ui.screens
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.mediateca.domain.interactors.PlaylistInteractor
-
 import com.example.playlistmaker.mediateca.domain.model.Playlist
 import kotlinx.coroutines.launch
 

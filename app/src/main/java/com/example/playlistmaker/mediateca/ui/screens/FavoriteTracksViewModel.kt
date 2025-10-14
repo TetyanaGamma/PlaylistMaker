@@ -1,4 +1,4 @@
-package com.example.playlistmaker.mediateca.ui
+package com.example.playlistmaker.mediateca.ui.screens
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

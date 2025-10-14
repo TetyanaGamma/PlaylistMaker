@@ -1,11 +1,12 @@
-package com.example.playlistmaker.mediateca.ui
+package com.example.playlistmaker.mediateca.ui.adapters
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.playlistmaker.media.ui.screens.PlaylistsFragment
 
-import com.example.playlistmaker.media.ui.PlaylistsFragment
+import com.example.playlistmaker.mediateca.ui.screens.FavoriteTracksFragment
 
 const val TABS_NUM = 2
 

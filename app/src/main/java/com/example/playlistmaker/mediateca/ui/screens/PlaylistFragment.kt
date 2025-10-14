@@ -1,22 +1,24 @@
-package com.example.playlistmaker.media.ui
+package com.example.playlistmaker.media.ui.screens
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistBinding
-import com.example.playlistmaker.mediateca.ui.MediatekaFragment
-import com.example.playlistmaker.mediateca.ui.PlaylistsViewModel
+import com.example.playlistmaker.mediateca.ui.adapters.PlaylistsAdapter
+import com.example.playlistmaker.mediateca.ui.screens.PlaylistsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
 
     private var _binding: FragmentPlaylistBinding?=null
     private val binding get() = _binding!!
+
+    private lateinit var adapter: PlaylistsAdapter
 
     private val viewModel: PlaylistsViewModel by viewModel()
 
@@ -50,11 +52,19 @@ class PlaylistsFragment : Fragment() {
                 }
             }
         }
+
+        adapter = PlaylistsAdapter(emptyList()) {
+            // TODO: обработка клика по плейлисту
+        }
+        binding.recyclerPlaylists.adapter = adapter
+        binding.recyclerPlaylists.layoutManager = GridLayoutManager(requireContext(), 2)
+
+        // Список плейлистов
+        viewModel.playlists.observe(viewLifecycleOwner) { list ->
+            adapter.updateData(list)
+            binding.noPlaylistsPlaceholder.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
+        }
     }
-
-
-
-
 
     override fun onDestroyView() {
         super.onDestroyView()

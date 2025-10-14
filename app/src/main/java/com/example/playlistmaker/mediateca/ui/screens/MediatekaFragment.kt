@@ -1,19 +1,21 @@
-package com.example.playlistmaker.mediateca.ui
+package com.example.playlistmaker.mediateca.ui.screens
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentMediatekaBinding
+import com.example.playlistmaker.mediateca.ui.adapters.MediatekaViewPagerAdapter
 import com.example.playlistmaker.player.ui.AudioplayerFragment
 import com.example.playlistmaker.search.domain.model.Track
 import com.google.android.material.tabs.TabLayoutMediator
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MediatekaFragment : Fragment(R.layout.fragment_mediateka),
     FavoriteTracksFragment.OnTrackClickListener {
@@ -72,7 +74,7 @@ class MediatekaFragment : Fragment(R.layout.fragment_mediateka),
     // Делегируем переход на плеер из дочернего фрагмента
     override fun openPlayer(track: Track) {
         val bundle = Bundle().apply {
-            putParcelable(AudioplayerFragment.TRACK_EXTRA, track)
+            putParcelable(AudioplayerFragment.Companion.TRACK_EXTRA, track)
         }
         // Используем Action из nav_graph
         findNavController().navigate(
@@ -90,7 +92,7 @@ class MediatekaFragment : Fragment(R.layout.fragment_mediateka),
                 navController.navigate(
                     R.id.action_mediateka_to_playlistCreation,
                     null,
-                    androidx.navigation.NavOptions.Builder()
+                    NavOptions.Builder()
                         .setLaunchSingleTop(true)
                         .build()
                 )

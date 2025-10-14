@@ -7,10 +7,10 @@ import com.example.playlistmaker.mediateca.domain.api.FavouriteTracksRepository
 import com.example.playlistmaker.mediateca.domain.api.PlaylistRepository
 import com.example.playlistmaker.mediateca.domain.interactors.FavouriteTracksInteractor
 import com.example.playlistmaker.mediateca.domain.interactors.PlaylistInteractor
-import com.example.playlistmaker.mediateca.ui.FavoriteTracksViewModel
-import com.example.playlistmaker.mediateca.ui.MediatekaViewModel
-import com.example.playlistmaker.mediateca.ui.PlaylistCreationViewModel
-import com.example.playlistmaker.mediateca.ui.PlaylistsViewModel
+import com.example.playlistmaker.mediateca.ui.screens.FavoriteTracksViewModel
+import com.example.playlistmaker.mediateca.ui.screens.MediatekaViewModel
+import com.example.playlistmaker.mediateca.ui.screens.PlaylistCreationViewModel
+import com.example.playlistmaker.mediateca.ui.screens.PlaylistsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 

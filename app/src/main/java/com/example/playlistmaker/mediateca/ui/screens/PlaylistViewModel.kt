@@ -1,12 +1,10 @@
-package com.example.playlistmaker.mediateca.ui
+package com.example.playlistmaker.mediateca.ui.screens
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.mediateca.domain.interactors.PlaylistInteractor
 import com.example.playlistmaker.mediateca.domain.model.Playlist
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.launchIn
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
@@ -14,14 +12,18 @@ class PlaylistsViewModel(
     private val interactor: PlaylistInteractor
 ) : ViewModel() {
 
-    private val _playlists = MutableStateFlow<List<Playlist>>(emptyList())
-    val playlists: StateFlow<List<Playlist>> = _playlists
+    // Список плейлистов
+    private val _playlists = MutableLiveData<List<Playlist>>()
+    val playlists: LiveData<List<Playlist>> = _playlists
 
     init {
-        interactor.getAllPlaylists()
-            .onEach { _playlists.value = it }
-            .launchIn(viewModelScope)
+        viewModelScope.launch {
+            interactor.getAllPlaylists().collect { list ->
+                _playlists.postValue(list)
+            }
+        }
     }
+
 
     fun addPlaylist(playlist: Playlist) {
         viewModelScope.launch {

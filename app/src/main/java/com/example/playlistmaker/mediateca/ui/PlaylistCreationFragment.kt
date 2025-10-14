@@ -22,6 +22,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
@@ -30,11 +31,15 @@ import com.markodevcic.peko.PermissionRequester
 import com.markodevcic.peko.PermissionResult
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistCreationFragment : Fragment() {
 
     private var _binding: FragmentPlaylistCreationBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: PlaylistCreationViewModel by viewModel()
+
 
     private val requester = PermissionRequester.instance()
     private var selectedImageUri: Uri? = null
@@ -155,11 +160,16 @@ class PlaylistCreationFragment : Fragment() {
 
     private fun savePlaylist() {
         val name = binding.inputPlaylistName.editText?.text?.toString()?.trim()
-        val desc = binding.inputPlaylistDescription.editText?.text?.toString()?.trim()
-        val coverUri = selectedImageUri
+        if (name.isNullOrBlank()) return // Название обязательно
 
-        println("Playlist saved: name=$name, desc=$desc, cover=$coverUri")
-        // Можно тут закрыть фрагмент или передавать данные в ViewModel
+        val desc = binding.inputPlaylistDescription.editText?.text?.toString()?.trim() ?: ""
+        val cover = selectedImageUri?.toString() ?: "android.resource://${requireContext().packageName}/${R.drawable.placeholder}"
+
+        // Создаём плейлист через ViewModel
+        viewModel.createPlaylist(name, desc, cover)
+
+        // Закрываем экран
+        findNavController().popBackStack()
     }
 
     private fun showKeyboard(editText: View?) {

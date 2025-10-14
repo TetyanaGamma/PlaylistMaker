@@ -2,10 +2,14 @@ package com.example.playlistmaker.mediateca.di
 
 import com.example.playlistmaker.mediateca.data.db.AppDataBase
 import com.example.playlistmaker.mediateca.data.repositoryImpl.FavouriteTracksRepositoryImpl
+import com.example.playlistmaker.mediateca.data.repositoryImpl.PlaylistRepositoryimpl
 import com.example.playlistmaker.mediateca.domain.api.FavouriteTracksRepository
+import com.example.playlistmaker.mediateca.domain.api.PlaylistRepository
 import com.example.playlistmaker.mediateca.domain.interactors.FavouriteTracksInteractor
+import com.example.playlistmaker.mediateca.domain.interactors.PlaylistInteractor
 import com.example.playlistmaker.mediateca.ui.FavoriteTracksViewModel
 import com.example.playlistmaker.mediateca.ui.MediatekaViewModel
+import com.example.playlistmaker.mediateca.ui.PlaylistCreationViewModel
 import com.example.playlistmaker.mediateca.ui.PlaylistsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -20,14 +24,22 @@ val mediatekaModule = module {
         )
     }
 
-    // Interactor
-    factory {
-        FavouriteTracksInteractor(get())
+    single<PlaylistRepository> {
+        PlaylistRepositoryimpl(
+            playlistDao = get<AppDataBase>().playlistDao(),
+            converter = get()
+        )
     }
+
+    // Interactor
+    single { FavouriteTracksInteractor(get()) }
+    single { PlaylistInteractor(get()) }
+
 
     // ViewModels
     viewModel { MediatekaViewModel() }
-    viewModel { PlaylistsViewModel() }
+    viewModel { PlaylistsViewModel(interactor = get()) }
     viewModel { FavoriteTracksViewModel(interactor = get()) }
+    viewModel { PlaylistCreationViewModel(interactor = get()) }
 
 }

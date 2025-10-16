@@ -53,16 +53,32 @@ class SearchFragment : Fragment() {
         initUi()
         initListeners()
 
-        // Восстанавливаем состояние из ViewModel
-        if (viewModel.currentSearchQuery.isNotEmpty()) {
-            binding.serchInput.setText(viewModel.currentSearchQuery)
-            if (viewModel.currentSearchResults.isNotEmpty()) {
+        //  Восстанавливаем состояние из ViewModel
+        when {
+            viewModel.cameFromHistory -> {
+                viewModel.loadHistory()
+                viewModel.markCameFromHistory(false) // сбрасываем флаг
+            }
+            viewModel.isShowingHistory -> {
+                // Показываем историю (если ViewModel сама в этом состоянии)
+                viewModel.loadHistory()
+            }
+            viewModel.currentSearchResults.isNotEmpty() -> {
+                // Если есть сохранённые результаты поиска
+                binding.serchInput.setText(viewModel.currentSearchQuery)
                 showTracks(viewModel.currentSearchResults)
             }
-        } else {
-            binding.serchInput.text.clear()
-            viewModel.loadHistory()
+            viewModel.currentSearchQuery.isNotEmpty() -> {
+                // Если был запрос, но результатов пока нет — обновим его
+                binding.serchInput.setText(viewModel.currentSearchQuery)
+                viewModel.searchRequest(viewModel.currentSearchQuery)
+            }
+            else -> {
+                // В остальных случаях — показываем историю
+                viewModel.loadHistory()
+            }
         }
+
         binding.serchInput.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) showKeyboard()
         }
@@ -130,7 +146,7 @@ class SearchFragment : Fragment() {
             override fun onTrackClick(track: Track) {
                 clickDebounce.submit {
                     viewModel.saveTrack(track)
-                    openPlayer(track)
+                    openPlayer(track, fromHistory = false)
                 }
             }
         })
@@ -139,11 +155,10 @@ class SearchFragment : Fragment() {
             override fun onTrackClick(track: Track) {
                 clickDebounce.submit {
                     viewModel.saveTrack(track)
-                    openPlayer(track)
+                    openPlayer(track, fromHistory = true)
                 }
             }
         })
-
     }
 
     private fun render(state: SearchState) {
@@ -225,7 +240,8 @@ class SearchFragment : Fragment() {
         imm?.hideSoftInputFromWindow(binding.serchInput.windowToken, 0)
     }
 
-    private fun openPlayer(track: Track) {
+    private fun openPlayer(track: Track, fromHistory: Boolean) {
+        viewModel.markCameFromHistory(fromHistory)
         findNavController().navigate(
             R.id.action_searchFragment_to_audioplayerFragment,
             AudioplayerFragment.createArgs(track)
@@ -239,5 +255,4 @@ class SearchFragment : Fragment() {
     }
 
 }
-
 

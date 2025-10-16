@@ -1,15 +1,18 @@
 package com.example.playlistmaker.mediateca.ui
 
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.playlistmaker.media.ui.FavoriteTracksFragment
+
 import com.example.playlistmaker.media.ui.PlaylistsFragment
 
-const val  TABS_NUM = 2
+const val TABS_NUM = 2
 
 class MediatekaViewPagerAdapter(
-    fragment: Fragment
-) : FragmentStateAdapter(fragment) {
+    fragmentManager: FragmentManager,
+    lifecycle: Lifecycle
+) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
     override fun getItemCount(): Int = TABS_NUM // Количество вкладок
 

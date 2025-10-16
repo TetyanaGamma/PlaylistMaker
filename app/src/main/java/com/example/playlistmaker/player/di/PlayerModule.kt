@@ -4,6 +4,7 @@ import android.media.MediaPlayer
 import com.example.playlistmaker.player.data.AudioplayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.AudioplayerRepository
 import com.example.playlistmaker.player.domain.interactor.AudioplayerInteractor
+import com.example.playlistmaker.mediateca.domain.interactors.FavouriteTracksInteractor
 import com.example.playlistmaker.player.domain.interactor.AudioplayerInteractorImpl
 import com.example.playlistmaker.player.ui.AudioplayerViewModel
 import com.example.playlistmaker.search.domain.model.Track
@@ -27,7 +28,8 @@ val playerModule = module {
     viewModel { (track: Track) ->
         AudioplayerViewModel(
             audioplayerInteractor = get(),
-            track = track
+            track = track,
+            favouriteTracksInteractor = get() // Добавляем интерактор избранного
         )
     }
 }

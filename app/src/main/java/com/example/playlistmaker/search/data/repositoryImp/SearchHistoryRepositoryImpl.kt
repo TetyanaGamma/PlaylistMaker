@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.data.repositoryImp
 
+import com.example.playlistmaker.mediateca.data.db.AppDataBase
 import com.example.playlistmaker.search.data.storage.StorageClient
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.model.Track
@@ -10,14 +11,22 @@ import kotlinx.coroutines.flow.flow
 const val MAX_SIZE = 10
 
 class SearchHistoryRepositoryImpl(
-    private val storage: StorageClient<ArrayList<Track>>
+    private val storage: StorageClient<ArrayList<Track>>,
+    private val database: AppDataBase
 ) : SearchHistoryRepository {
 
     override fun getHistory(): Flow<Resource<List<Track>>> = flow {
         emit(Resource.Loading())
         try {
-            val data = storage.getData() ?: emptyList()
-            emit(Resource.Success(data))
+            val history = storage.getData() ?: emptyList()
+
+            // Проставляем флаг isFavourite для истории
+            database.trackDao().getFavouriteTrackIds().collect { favouriteIds ->
+                val updatedHistory = history.map { track ->
+                    track.copy(isFavourite = favouriteIds.contains(track.trackId))
+                }
+                emit(Resource.Success(updatedHistory))
+            }
         } catch (e: Throwable) {
             emit(Resource.Error(e))
         }

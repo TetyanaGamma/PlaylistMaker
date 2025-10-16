@@ -1,6 +1,6 @@
 package com.example.playlistmaker.search.ui.screen
 
-import SearchInteractor
+import com.example.playlistmaker.search.domain.interactor.SearchInteractor
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,6 +24,10 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     var currentSearchResults: List<Track> = emptyList()
 
     var isShowingHistory: Boolean = false
+
+    var cameFromHistory: Boolean = false
+        private set
+
     private var debounceJob: Job? = null
 
     // --- DEBOUNCE ---
@@ -78,10 +82,10 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
                     when (resource) {
                         is Resource.Loading -> Unit
                         is Resource.Success -> {
-                            isShowingHistory = true
-                            currentSearchResults = emptyList()
-                            currentSearchQuery = ""
-                            renderState(SearchState.History(resource.data))
+                            if (currentSearchQuery.isEmpty() && currentSearchResults.isEmpty()) {
+                                isShowingHistory = true
+                                renderState(SearchState.History(resource.data))
+                            }
                         }
                         is Resource.Error -> renderState(SearchState.NoConnection)
                     }
@@ -96,6 +100,10 @@ class SearchViewModel(private val searchInteractor: SearchInteractor) : ViewMode
     fun clearHistory() {
         searchInteractor.clearHistory()
         loadHistory()
+    }
+
+    fun markCameFromHistory(fromHistory: Boolean) {
+        cameFromHistory = fromHistory
     }
 
 

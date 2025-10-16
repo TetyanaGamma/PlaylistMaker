@@ -1,3 +1,5 @@
+package com.example.playlistmaker.search.domain.interactor
+
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.utils.Resource
 import kotlinx.coroutines.flow.Flow

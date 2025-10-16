@@ -7,7 +7,7 @@
         />
 
     <item
-        android:id="@+id/meditekaFragment"
+        android:id="@+id/mediatekaFragment"
         android:icon="@drawable/baseline_library_music_24"
         android:title="@string/button_library"/>
     <item

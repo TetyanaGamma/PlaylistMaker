@@ -1,5 +1,6 @@
 package com.example.playlistmaker.player.ui
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -44,6 +45,13 @@ class AudioplayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val track = currentTrack
+        if (track == null) {
+            // Если почему-то пришли без данных — возвращаемся назад
+            findNavController().popBackStack()
+            return
+        }
+
         viewModel.observePlayerState().observe(viewLifecycleOwner) { state ->
             when (state) {
                 AudioplayerViewModel.STATE_PREPARED, AudioplayerViewModel.STATE_PAUSED -> {
@@ -63,8 +71,32 @@ class AudioplayerFragment : Fragment() {
             binding.trackTrackTime.text = time
         }
 
+        // Observer для состояния избранного
+        viewModel.isFavourite.observe(viewLifecycleOwner) { isFavorite ->
+            val favoriteIcon = if (isFavorite) {
+                if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
+                    Configuration.UI_MODE_NIGHT_YES
+                ) {
+                    R.drawable.favourite_filled_dark
+                } else {
+                    R.drawable.favourite_filled //Красное сердечко
+                }
+
+            } else {
+                if (resources.configuration.uiMode and
+                    Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+                ) {
+                    R.drawable.favourite_dark
+                } else {
+                    R.drawable.favourite_light
+                }
+            }
+            binding.ibFavorite.setImageResource(favoriteIcon)
+        }
+
         initUi()
         bindTrackData(currentTrack)
+
     }
 
     private fun initUi() {
@@ -76,6 +108,9 @@ class AudioplayerFragment : Fragment() {
     }
 
     private fun bindTrackData(track: Track) {
+
+        viewModel.setTrack(currentTrack)
+
         val radiusInPx = (8f * resources.displayMetrics.density).toInt()
         Glide.with(this)
             .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
@@ -93,6 +128,11 @@ class AudioplayerFragment : Fragment() {
         binding.trackReleaseDateValue.text = getReleaseYear(track.releaseDate)
         binding.trackPrimaryGenreNameValue.text = track.primaryGenreName
         binding.trackCountryValue.text = track.country
+
+        // Настройка кнопки избранного
+        binding.ibFavorite.setOnClickListener {
+            viewModel.onFavoruiteClicked()
+        }
     }
 
     override fun onPause() {
@@ -115,6 +155,15 @@ class AudioplayerFragment : Fragment() {
 
         fun createArgs(track: Track): Bundle =
             bundleOf(AudioplayerFragment.TRACK_EXTRA to track)
+
+        fun newInstance(trackJson: String): AudioplayerFragment {
+            return AudioplayerFragment().apply {
+                arguments = Bundle().apply {
+                    putString(TRACK_EXTRA, trackJson)
+                }
+            }
+        }
     }
+
 
 }

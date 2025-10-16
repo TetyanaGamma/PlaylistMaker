@@ -3,7 +3,6 @@ package com.example.playlistmaker.mediateca.ui.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.PlaylistViewBinding
 import com.example.playlistmaker.mediateca.domain.model.Playlist
 

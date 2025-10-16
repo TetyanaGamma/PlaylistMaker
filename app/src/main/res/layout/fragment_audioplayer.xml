@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginBottom="28dp"
-    tools:context=".player.ui.AudioplayerFragment">
+    tools:context=".player.ui.screens.AudioplayerFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/audioPlayer_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".player.ui.AudioplayerFragment">
+        tools:context=".player.ui.screens.AudioplayerFragment">
 
         <!--Общий отступ для иконки назад, навания трека и альбома, инфоблока-->
         <androidx.constraintlayout.widget.Guideline

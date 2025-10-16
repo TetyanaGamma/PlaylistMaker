@@ -1,4 +1,4 @@
-package com.example.playlistmaker.player.ui
+package com.example.playlistmaker.player.ui.screens
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -6,21 +6,23 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.mediateca.domain.interactors.FavouriteTracksInteractor
+import com.example.playlistmaker.mediateca.domain.interactors.PlaylistInteractor
+import com.example.playlistmaker.mediateca.domain.model.Playlist
 import com.example.playlistmaker.player.domain.interactor.AudioplayerInteractor
 import com.example.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.onEach
-import  kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-
 
 class AudioplayerViewModel(
     private val audioplayerInteractor: AudioplayerInteractor,
     private val track: Track,
-    private val favouriteTracksInteractor: FavouriteTracksInteractor
+    private val favouriteTracksInteractor: FavouriteTracksInteractor,
+    private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
 
     private val playerStateLiveData = MutableLiveData(STATE_DEFAULT)
@@ -31,6 +33,10 @@ class AudioplayerViewModel(
 
     private val _isFavourite = MutableLiveData<Boolean>()
     val isFavourite: LiveData<Boolean> = _isFavourite
+
+    // Список плейлистов
+    private val _playlists = MutableLiveData<List<Playlist>>()
+    val playlists: LiveData<List<Playlist>> = _playlists
 
     private var currentTrack: Track? = null
 
@@ -76,6 +82,11 @@ class AudioplayerViewModel(
 
     init {
         preparePlayer()
+        viewModelScope.launch {
+            playlistInteractor.getAllPlaylists().collect { list ->
+                _playlists.postValue(list)
+            }
+        }
     }
 
     fun onPlayButtonClicked() {

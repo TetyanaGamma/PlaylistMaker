@@ -42,7 +42,7 @@
     <!-- Плеер -->
     <fragment
         android:id="@+id/audioplayerFragment"
-        android:name="com.example.playlistmaker.player.ui.AudioplayerFragment"
+        android:name="com.example.playlistmaker.player.ui.screens.AudioplayerFragment"
         android:label="fragment_audioplayer"
         tools:layout="@layout/fragment_audioplayer">
         <argument

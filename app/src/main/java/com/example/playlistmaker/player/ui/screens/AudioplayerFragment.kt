@@ -1,4 +1,4 @@
-package com.example.playlistmaker.player.ui
+package com.example.playlistmaker.player.ui.screens
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -13,12 +13,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentAudioplayerBinding
+import com.example.playlistmaker.player.ui.screens.AudioplayerViewModel
 import com.example.playlistmaker.search.domain.model.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
 import java.util.Locale
-import kotlin.getValue
 
 class AudioplayerFragment : Fragment() {
 
@@ -54,17 +54,17 @@ class AudioplayerFragment : Fragment() {
 
         viewModel.observePlayerState().observe(viewLifecycleOwner) { state ->
             when (state) {
-                AudioplayerViewModel.STATE_PREPARED, AudioplayerViewModel.STATE_PAUSED -> {
+                AudioplayerViewModel.Companion.STATE_PREPARED, AudioplayerViewModel.Companion.STATE_PAUSED -> {
                     binding.ibPlayStop.visibility = ImageButton.VISIBLE
                     binding.ibPause.visibility = ImageButton.INVISIBLE
                 }
 
-                AudioplayerViewModel.STATE_PLAYING -> {
+                AudioplayerViewModel.Companion.STATE_PLAYING -> {
                     binding.ibPlayStop.visibility = ImageButton.INVISIBLE
                     binding.ibPause.visibility = ImageButton.VISIBLE
                 }
             }
-            binding.ibPlayStop.isEnabled = state != AudioplayerViewModel.STATE_DEFAULT
+            binding.ibPlayStop.isEnabled = state != AudioplayerViewModel.Companion.STATE_DEFAULT
         }
 
         viewModel.observeProgressTime().observe(viewLifecycleOwner) { time ->
@@ -154,7 +154,7 @@ class AudioplayerFragment : Fragment() {
         const val TRACK_EXTRA = "TRACK_EXTRA"
 
         fun createArgs(track: Track): Bundle =
-            bundleOf(AudioplayerFragment.TRACK_EXTRA to track)
+            bundleOf(TRACK_EXTRA to track)
 
         fun newInstance(trackJson: String): AudioplayerFragment {
             return AudioplayerFragment().apply {

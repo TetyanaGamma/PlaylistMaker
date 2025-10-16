@@ -6,7 +6,7 @@ import com.example.playlistmaker.player.domain.api.AudioplayerRepository
 import com.example.playlistmaker.player.domain.interactor.AudioplayerInteractor
 import com.example.playlistmaker.mediateca.domain.interactors.FavouriteTracksInteractor
 import com.example.playlistmaker.player.domain.interactor.AudioplayerInteractorImpl
-import com.example.playlistmaker.player.ui.AudioplayerViewModel
+import com.example.playlistmaker.player.ui.screens.AudioplayerViewModel
 import com.example.playlistmaker.search.domain.model.Track
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module

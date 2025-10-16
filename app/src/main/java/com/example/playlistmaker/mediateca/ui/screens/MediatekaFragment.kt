@@ -10,7 +10,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentMediatekaBinding
 import com.example.playlistmaker.mediateca.ui.adapters.MediatekaViewPagerAdapter
-import com.example.playlistmaker.player.ui.AudioplayerFragment
+import com.example.playlistmaker.player.ui.screens.AudioplayerFragment
 import com.example.playlistmaker.search.domain.model.Track
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.flow.launchIn

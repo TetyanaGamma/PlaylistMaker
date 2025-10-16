@@ -25,6 +25,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistCreationBinding
 import com.example.playlistmaker.mediateca.ui.screens.PlaylistCreationViewModel
@@ -33,6 +35,7 @@ import com.markodevcic.peko.PermissionResult
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
 
 class PlaylistCreationFragment : Fragment() {
 
@@ -50,11 +53,13 @@ class PlaylistCreationFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (!isAdded || _binding == null) return@registerForActivityResult
             selectedImageUri = uri
-            if (uri != null) {
-                binding.imageAddPhoto.setImageURI(uri)
-            } else {
-                binding.imageAddPhoto.setImageResource(R.drawable.placeholder)
-            }
+            val radiusInPx = (8f * resources.displayMetrics.density).toInt()
+            Glide.with(this)
+                .load(uri ?: R.drawable.placeholder)
+                .placeholder(R.drawable.placeholder)
+                .centerCrop()
+                .transform(RoundedCorners(radiusInPx))
+                .into(binding.imageAddPhoto)
         }
 
     // Старый способ (Android 12 и ниже)
@@ -64,11 +69,13 @@ class PlaylistCreationFragment : Fragment() {
             if (result.resultCode == Activity.RESULT_OK) {
                 val uri = result.data?.data
                 selectedImageUri = uri
-                if (uri != null) {
-                    binding.imageAddPhoto.setImageURI(uri)
-                } else {
-                    binding.imageAddPhoto.setImageResource(R.drawable.placeholder)
-                }
+                val radiusInPx = (8f * resources.displayMetrics.density).toInt()
+                Glide.with(this)
+                    .load(uri ?: R.drawable.placeholder)
+                    .placeholder(R.drawable.placeholder)
+                    .centerCrop()
+                    .transform(RoundedCorners(radiusInPx))
+                    .into(binding.imageAddPhoto)
             }
         }
 
@@ -165,10 +172,28 @@ class PlaylistCreationFragment : Fragment() {
         if (name.isNullOrBlank()) return // Название обязательно
 
         val desc = binding.inputPlaylistDescription.editText?.text?.toString()?.trim() ?: ""
-        val cover = selectedImageUri?.toString() ?: "android.resource://${requireContext().packageName}/${R.drawable.placeholder}"
 
+        // Сохраняем выбранное изображение во внутреннее хранилище и получаем путь
+        val coverPath = if (selectedImageUri != null) {
+            val file = File(requireContext().filesDir, "playlist_${System.currentTimeMillis()}.jpg")
+            val inputStream = requireContext().contentResolver.openInputStream(selectedImageUri!!)
+            file.outputStream().use { inputStream?.copyTo(it) }
+            file.absolutePath
+        } else {
+            // Заглушка, если не выбрали картинку
+            "android.resource://${requireContext().packageName}/${R.drawable.placeholder}"
+        }
         // Создаём плейлист через ViewModel
-        viewModel.createPlaylist(name, desc, cover)
+        viewModel.createPlaylist(name, desc, coverPath)
+
+        // Отображаем обложку с закруглением 8dp
+        val radiusInPx = (8f * resources.displayMetrics.density).toInt()
+        Glide.with(this)
+            .load(coverPath ?: R.drawable.placeholder)
+            .placeholder(R.drawable.placeholder)
+            .centerCrop()
+            .transform(RoundedCorners(radiusInPx))
+            .into(binding.imageAddPhoto)
 
         // Сообщение о создании плейлиста
         Toast.makeText(

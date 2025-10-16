@@ -2,6 +2,7 @@ package com.example.playlistmaker.mediateca.domain.interactors
 
 import com.example.playlistmaker.mediateca.domain.api.PlaylistRepository
 import com.example.playlistmaker.mediateca.domain.model.Playlist
+import com.example.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 
 class PlaylistInteractor(
@@ -22,4 +23,9 @@ class PlaylistInteractor(
     suspend fun getPlaylistById(id: Int): Playlist? {
         return playlistRepository.getPlaylistById(id)
     }
+
+    suspend fun addTrackToPlaylist(track: Track, playlist: Playlist) {
+        playlistRepository.addTrackToPlaylist(track, playlist)
+    }
+
 }

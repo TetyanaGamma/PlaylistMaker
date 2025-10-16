@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -101,6 +102,11 @@ class AudioplayerFragment : Fragment() {
             binding.ibFavorite.setImageResource(favoriteIcon)
         }
 
+        viewModel.addToPlaylistStatus.observe(viewLifecycleOwner) {
+                message ->
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        }
+
         initUi()
         bindTrackData(currentTrack)
 
@@ -147,7 +153,9 @@ class AudioplayerFragment : Fragment() {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED }
 
         adapter = BottomSheetPlaylistAdapter(emptyList()) {
-            // TODO: обработка клика по плейлисту
+
+                playlist ->
+            viewModel.onPlaylistClicked(playlist)
         }
         binding.bottomSheetPlaylists.adapter = adapter
 

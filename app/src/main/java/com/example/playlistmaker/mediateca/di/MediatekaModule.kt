@@ -27,7 +27,8 @@ val mediatekaModule = module {
     single<PlaylistRepository> {
         PlaylistRepositoryimpl(
             playlistDao = get<AppDataBase>().playlistDao(),
-            converter = get()
+            converter = get(),
+            playlistTracksDao = get<AppDataBase>().playlistTracksDao()
         )
     }
 

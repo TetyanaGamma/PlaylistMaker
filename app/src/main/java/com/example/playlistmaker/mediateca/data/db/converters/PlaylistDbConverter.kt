@@ -21,14 +21,15 @@ class PlaylistDbConverter {
     }
 
     fun mapEntityToPlaylist(entity: PlaylistEntity): Playlist {
-        val type = object : TypeToken<List<String>>() {}.type
-        val trackIds: List<String> = gson.fromJson(entity.trackIdsJson, type) ?: emptyList()
+        val type = object : TypeToken<List<Int>>() {}.type
+        val trackIds: List<Int> = gson.fromJson(entity.trackIdsJson, type) ?: emptyList()
         return Playlist(
             playlistId = entity.playlistId,
             playlistName = entity.playlistName,
             playlistDescr = entity.playlistDescr,
             playlistCoverUrl = entity.playlistCoverUrl,
-            trackIds = trackIds
+            trackIdsJson = entity.trackIdsJson,
+            trackCount = entity.trackCount
         )
     }
 }

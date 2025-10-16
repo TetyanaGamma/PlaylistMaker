@@ -7,6 +7,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.PlatlistItemBinding
 import com.example.playlistmaker.mediateca.domain.model.Playlist
+import java.io.File
 
 class BottomSheetPlaylistViewHolder(private val binding: PlatlistItemBinding) :
 RecyclerView.ViewHolder(binding.root){
@@ -19,7 +20,7 @@ RecyclerView.ViewHolder(binding.root){
         ).toInt()
 
         Glide.with(binding.root.context)
-            .load(playlist.playlistCoverUrl)
+            .load(File(playlist.playlistCoverUrl))
             .placeholder(R.drawable.placeholder)
             .centerCrop()
             .transform(RoundedCorners(radiusInPx))

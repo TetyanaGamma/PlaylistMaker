@@ -38,6 +38,11 @@ class AudioplayerViewModel(
     private val _playlists = MutableLiveData<List<Playlist>>()
     val playlists: LiveData<List<Playlist>> = _playlists
 
+    // статуса добавления трека в плейлист
+    private val _addToPlaylistStatus = MutableLiveData<String>()
+    val addToPlaylistStatus: LiveData<String> = _addToPlaylistStatus
+
+
     private var currentTrack: Track? = null
 
     fun setTrack(track: Track) {
@@ -168,6 +173,21 @@ class AudioplayerViewModel(
             playlistInteractor.createPlaylist(playlist)
         }
     }
+
+    fun onPlaylistClicked(playlist: Playlist) {
+        val track = currentTrack ?: return
+        val existingIds = playlist.trackIds
+
+        if (existingIds.contains(track.trackId)) {
+            _addToPlaylistStatus.postValue("Трек уже есть в этом плейлисте")
+        } else {
+            viewModelScope.launch {
+                playlistInteractor.addTrackToPlaylist(track, playlist)
+                _addToPlaylistStatus.postValue("Трек добавлен в плейлист «${playlist.playlistName}»")
+            }
+        }
+    }
+
 
 
     companion object {

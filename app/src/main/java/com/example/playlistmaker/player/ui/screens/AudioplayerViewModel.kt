@@ -163,6 +163,12 @@ class AudioplayerViewModel(
         return String.format("%02d:%02d", minutes, seconds)
     }
 
+    fun addPlaylist(playlist: Playlist) {
+        viewModelScope.launch {
+            playlistInteractor.createPlaylist(playlist)
+        }
+    }
+
 
     companion object {
         const val STATE_DEFAULT = 0

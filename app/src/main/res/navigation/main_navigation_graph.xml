@@ -48,6 +48,9 @@
         <argument
             android:name="trackJson"
             app:argType="string" />
+        <action
+            android:id="@+id/action_audioplayerFragment_to_playlistCreationFragment"
+            app:destination="@id/playlistCreationFragment"/>
     </fragment>
 
     <!-- Экран для создания плейлиста -->

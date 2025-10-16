@@ -38,5 +38,6 @@
     <string name="playlist_name">Название*</string>
     <string name="playlist_description">Описание</string>
     <string name="button_create">Создать</string>
+    <string name="add_to_playlist">Добавить в плейлист</string>
 
 </resources>

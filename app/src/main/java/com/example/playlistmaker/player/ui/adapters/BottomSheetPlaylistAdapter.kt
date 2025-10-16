@@ -29,6 +29,11 @@ RecyclerView.Adapter<BottomSheetPlaylistViewHolder>(){
         holder.bind(playlists[position], onClick)
     }
 
+    fun updateData(newPlaylists: List<Playlist>) {
+        playlists = newPlaylists
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount(): Int = playlists.size
 
 }

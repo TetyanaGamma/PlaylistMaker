@@ -9,12 +9,17 @@ import android.widget.ImageButton
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentAudioplayerBinding
+import com.example.playlistmaker.mediateca.ui.adapters.PlaylistsAdapter
+import com.example.playlistmaker.player.ui.adapters.BottomSheetPlaylistAdapter
 import com.example.playlistmaker.player.ui.screens.AudioplayerViewModel
 import com.example.playlistmaker.search.domain.model.Track
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.SimpleDateFormat
@@ -24,6 +29,8 @@ class AudioplayerFragment : Fragment() {
 
     private var _binding: FragmentAudioplayerBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var adapter: BottomSheetPlaylistAdapter
 
     private val currentTrack: Track by lazy {
         requireArguments().getParcelable<Track>(TRACK_EXTRA)!!
@@ -105,6 +112,56 @@ class AudioplayerFragment : Fragment() {
         }
         binding.ibPlayStop.setOnClickListener { viewModel.onPlayButtonClicked() }
         binding.ibPause.setOnClickListener { viewModel.onPause() }
+        val bottomSheetContainer = binding.playlistsBottomSheet
+        val overlay = binding.overlay
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        overlay.visibility = View.GONE
+                    }
+                    else -> {
+                        overlay.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+                val alpha = when {
+                    slideOffset < 0f -> 0f
+                    slideOffset > 1f -> 1f
+                    else -> slideOffset
+                }
+                overlay.alpha = alpha
+
+            }
+        })
+
+        binding.ibSeen.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED }
+
+        adapter = BottomSheetPlaylistAdapter(emptyList()) {
+            // TODO: обработка клика по плейлисту
+        }
+        binding.bottomSheetPlaylists.adapter = adapter
+
+
+        // Список плейлистов
+        viewModel.playlists.observe(viewLifecycleOwner) { list ->
+            adapter.updateData(list)
+        }
+
+        binding.bottomSheetButton.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            findNavController().navigate(R.id.action_audioplayerFragment_to_playlistCreationFragment)
+        }
+
     }
 
     private fun bindTrackData(track: Track) {

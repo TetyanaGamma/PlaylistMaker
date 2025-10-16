@@ -102,10 +102,21 @@ class AudioplayerFragment : Fragment() {
             binding.ibFavorite.setImageResource(favoriteIcon)
         }
 
-        viewModel.addToPlaylistStatus.observe(viewLifecycleOwner) {
-                message ->
+        viewModel.addToPlaylistStatus.observe(viewLifecycleOwner) { message ->
             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
         }
+
+        viewModel.closeBottomSheet.observe(viewLifecycleOwner) { shouldClose ->
+            if (shouldClose) {
+                binding.playlistsBottomSheet.apply {
+                    val behavior = BottomSheetBehavior.from(this)
+                    behavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+                // Сбрасываем значение, чтобы сигнал не сработал повторно
+                viewModel._closeBottomSheet.value = false
+            }
+        }
+
 
         initUi()
         bindTrackData(currentTrack)
@@ -123,7 +134,8 @@ class AudioplayerFragment : Fragment() {
         val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
-        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
 
@@ -131,6 +143,7 @@ class AudioplayerFragment : Fragment() {
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         overlay.visibility = View.GONE
                     }
+
                     else -> {
                         overlay.visibility = View.VISIBLE
                     }
@@ -150,7 +163,8 @@ class AudioplayerFragment : Fragment() {
         })
 
         binding.ibSeen.setOnClickListener {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED }
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
 
         adapter = BottomSheetPlaylistAdapter(emptyList()) {
 

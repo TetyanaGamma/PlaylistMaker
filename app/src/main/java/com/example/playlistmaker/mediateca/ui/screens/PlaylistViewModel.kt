@@ -24,7 +24,6 @@ class PlaylistsViewModel(
         }
     }
 
-
     fun addPlaylist(playlist: Playlist) {
         viewModelScope.launch {
             interactor.createPlaylist(playlist)

@@ -57,5 +57,4 @@ val dataModule = module {
     single { FavouriteTracksInteractor(get()) }
      single { PlaylistInteractor(get()) }
 
-
 }

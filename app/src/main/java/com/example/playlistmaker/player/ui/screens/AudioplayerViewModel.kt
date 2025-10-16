@@ -42,6 +42,10 @@ class AudioplayerViewModel(
     private val _addToPlaylistStatus = MutableLiveData<String>()
     val addToPlaylistStatus: LiveData<String> = _addToPlaylistStatus
 
+     val _closeBottomSheet = MutableLiveData<Boolean>()
+    val closeBottomSheet: LiveData<Boolean> = _closeBottomSheet
+
+
 
     private var currentTrack: Track? = null
 
@@ -184,11 +188,10 @@ class AudioplayerViewModel(
             viewModelScope.launch {
                 playlistInteractor.addTrackToPlaylist(track, playlist)
                 _addToPlaylistStatus.postValue("Трек добавлен в плейлист «${playlist.playlistName}»")
+                _closeBottomSheet.postValue(true) // сигнал закрыть BottomSheet
             }
         }
     }
-
-
 
     companion object {
         const val STATE_DEFAULT = 0

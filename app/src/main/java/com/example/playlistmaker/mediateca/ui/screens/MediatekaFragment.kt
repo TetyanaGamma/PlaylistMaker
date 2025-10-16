@@ -83,23 +83,6 @@ class MediatekaFragment : Fragment(R.layout.fragment_mediateka),
         )
     }
 
-    fun openPlaylistCreation() {
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            val navController = findNavController()
-            val currentDestination = navController.currentDestination?.id
-
-            if (currentDestination == R.id.mediatekaFragment) {
-                navController.navigate(
-                    R.id.action_mediateka_to_playlistCreation,
-                    null,
-                    NavOptions.Builder()
-                        .setLaunchSingleTop(true)
-                        .build()
-                )
-            }
-        }
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         if (::tabMediator.isInitialized) tabMediator.detach()

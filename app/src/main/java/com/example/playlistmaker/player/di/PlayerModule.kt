@@ -30,7 +30,7 @@ val playerModule = module {
             audioplayerInteractor = get(),
             track = track,
             favouriteTracksInteractor = get(),
-        playlistInteractor = get()
+            playlistInteractor = get()
         )
     }
 }

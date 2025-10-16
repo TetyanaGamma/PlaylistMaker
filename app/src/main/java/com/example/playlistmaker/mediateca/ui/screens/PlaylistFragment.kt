@@ -15,7 +15,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
 
-    private var _binding: FragmentPlaylistBinding?=null
+    private var _binding: FragmentPlaylistBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var adapter: PlaylistsAdapter
@@ -62,7 +62,8 @@ class PlaylistsFragment : Fragment() {
         // Список плейлистов
         viewModel.playlists.observe(viewLifecycleOwner) { list ->
             adapter.updateData(list)
-            binding.noPlaylistsPlaceholder.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
+            binding.noPlaylistsPlaceholder.visibility =
+                if (list.isEmpty()) View.VISIBLE else View.GONE
         }
     }
 

@@ -95,6 +95,24 @@ class PlaylistCreationFragment : Fragment() {
         val nameEditText = binding.inputPlaylistName.editText
         val descEditText = binding.inputPlaylistDescription.editText
 
+        // Восстанавливаем данные из savedInstanceState
+        if (savedInstanceState != null) {
+            nameEditText?.setText(savedInstanceState.getString(KEY_NAME, ""))
+            descEditText?.setText(savedInstanceState.getString(KEY_DESC, ""))
+
+            val uriString = savedInstanceState.getString(KEY_IMAGE_URI)
+            if (!uriString.isNullOrEmpty()) {
+                selectedImageUri = Uri.parse(uriString)
+                val radiusInPx = (8f * resources.displayMetrics.density).toInt()
+                Glide.with(this)
+                    .load(selectedImageUri)
+                    .placeholder(R.drawable.placeholder)
+                    .centerCrop()
+                    .transform(RoundedCorners(radiusInPx))
+                    .into(binding.imageAddPhoto)
+            }
+        }
+
         // Показываем клавиатуру при фокусе
         nameEditText?.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) showKeyboard(nameEditText)
@@ -207,12 +225,14 @@ class PlaylistCreationFragment : Fragment() {
 
     private fun showKeyboard(editText: View?) {
         editText?.requestFocus()
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
     }
 
     private fun hideKeyboard(view: View?) {
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
@@ -228,10 +248,10 @@ class PlaylistCreationFragment : Fragment() {
 
         } else {
             AlertDialog.Builder(requireContext())
-                .setTitle("Завершить создание плейлиста?")
-                .setMessage("Все несохраненные данные будут потеряны")
-                .setNegativeButton("Отмена") { dialog, _ -> dialog.dismiss() }
-                .setPositiveButton("Завершить") { _, _ ->
+                .setTitle(getString(R.string.dialog_question))
+                .setMessage(getString(R.string.dialog_negative_message))
+                .setNegativeButton(getString(R.string.dialog_cancle)) { dialog, _ -> dialog.dismiss() }
+                .setPositiveButton(getString(R.string.dialog_finish)) { _, _ ->
                     if (isAdded && _binding != null) findNavController().popBackStack()
                 }
                 .create()
@@ -239,8 +259,21 @@ class PlaylistCreationFragment : Fragment() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(KEY_NAME, binding.inputPlaylistName.editText?.text?.toString())
+        outState.putString(KEY_DESC, binding.inputPlaylistDescription.editText?.text?.toString())
+        outState.putString(KEY_IMAGE_URI, selectedImageUri?.toString())
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        private const val KEY_NAME = "key_name"
+        private const val KEY_DESC = "key_desc"
+        private const val KEY_IMAGE_URI = "key_image_uri"
     }
 }

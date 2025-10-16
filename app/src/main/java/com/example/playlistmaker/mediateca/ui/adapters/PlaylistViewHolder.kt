@@ -17,9 +17,7 @@ class PlaylistViewHolder(
         binding.playlistName.text = playlist.playlistName
         binding.playlistTracksCount.text = "${playlist.trackCount} треков"
 
-
         val coverPath = playlist.playlistCoverUrl
-
 
         val model = if (coverPath.startsWith("android.resource://") || File(coverPath).exists()) {
             // Если картинка в базе (локальном хранилище) или ресурс
@@ -28,13 +26,11 @@ class PlaylistViewHolder(
             // Плейсхолдер
             R.drawable.placeholder
         }
-
         Glide.with(binding.root.context)
             .load(model)
             .centerCrop() // только обрезка, без RoundedCorners
             .placeholder(R.drawable.placeholder)
             .into(binding.playlistImage)
-
 
         binding.root.setOnClickListener { onClick(playlist) }
     }

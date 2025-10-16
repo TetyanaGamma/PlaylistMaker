@@ -6,9 +6,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.PlatlistItemBinding
 import com.example.playlistmaker.mediateca.domain.model.Playlist
 
-class BottomSheetPlaylistAdapter(private var playlists: List<Playlist>,
-                                 private val onClick: (Playlist) -> Unit) :
-RecyclerView.Adapter<BottomSheetPlaylistViewHolder>(){
+class BottomSheetPlaylistAdapter(
+    private var playlists: List<Playlist>,
+    private val onClick: (Playlist) -> Unit
+) :
+    RecyclerView.Adapter<BottomSheetPlaylistViewHolder>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -24,8 +26,7 @@ RecyclerView.Adapter<BottomSheetPlaylistViewHolder>(){
 
     override fun onBindViewHolder(
         holder: BottomSheetPlaylistViewHolder,
-        position: Int
-    ) {
+        position: Int) {
         holder.bind(playlists[position], onClick)
     }
 

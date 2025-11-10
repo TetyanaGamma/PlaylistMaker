@@ -1,5 +1,6 @@
 package com.example.playlistmaker.mediateca.ui.screens
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,8 +27,13 @@ class PlaylistsViewModel(
 
     fun addPlaylist(playlist: Playlist) {
         viewModelScope.launch {
-            interactor.createPlaylist(playlist)
+            interactor.createPlaylist(
+                name = playlist.playlistName,
+                description = playlist.playlistDescr,
+                coverImageUri = playlist.playlistCoverUrl?.let { Uri.parse(it) }
+            )
         }
     }
+
 
 }

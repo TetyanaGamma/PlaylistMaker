@@ -5,6 +5,7 @@ import com.example.playlistmaker.mediateca.data.db.AppDataBase
 import com.example.playlistmaker.mediateca.data.db.MIGRATION_1_2
 import com.example.playlistmaker.mediateca.data.db.MIGRATION_2_3
 import com.example.playlistmaker.mediateca.data.db.converters.PlaylistDbConverter
+import com.example.playlistmaker.mediateca.data.db.converters.PlaylistTrackDataConverter
 import com.example.playlistmaker.mediateca.data.db.converters.TrackDbConverter
 import com.example.playlistmaker.mediateca.data.repositoryImpl.FavouriteTracksRepositoryImpl
 import com.example.playlistmaker.mediateca.data.repositoryImpl.PlaylistRepositoryimpl
@@ -18,16 +19,11 @@ import org.koin.dsl.module
 
 val dataModule = module {
 
-    single {
-        Room.databaseBuilder(
-            androidContext(),
-            AppDataBase::class.java,
-            "playlist_maker_database"
-        ) .addMigrations(MIGRATION_1_2,
-            MIGRATION_2_3
-        )
-            .build()
-    }
+
+        single<AppDataBase> {
+            AppDataBase.getInstance(androidContext())
+        }
+
 
     // DAO
     single { get<AppDataBase>().trackDao() }
@@ -37,6 +33,7 @@ val dataModule = module {
     // Конвертер
     single { TrackDbConverter() }
     single { PlaylistDbConverter() }
+    single { PlaylistTrackDataConverter() }
 
     // Репозиторий
     single<FavouriteTracksRepository> {
@@ -50,7 +47,10 @@ val dataModule = module {
         PlaylistRepositoryimpl(
             playlistDao = get<AppDataBase>().playlistDao(),
             converter = get(),
-            playlistTracksDao = get<AppDataBase>().playlistTracksDao()
+            playlistTracksDao = get<AppDataBase>().playlistTracksDao(),
+            context = androidContext(),
+            trackDao = get<AppDataBase>().trackDao(),
+            playlistTrackDataConverter = get()
         )
     }
 

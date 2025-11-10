@@ -35,7 +35,7 @@ class RootActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.audioplayerFragment -> {
+                R.id.audioplayerFragment, R.id.playlistCreationFragment -> {
                     bottomNavigationView.visibility = View.GONE
                 }
 
@@ -46,5 +46,20 @@ class RootActivity : AppCompatActivity() {
         }
 
     }
+
+    override fun onResume() {
+        super.onResume()
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.rootFragmentContainerView) as NavHostFragment
+        val currentDest = navHostFragment.navController.currentDestination?.id
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+
+        if (currentDest == R.id.mediatekaFragment ||
+            currentDest == R.id.searchFragment ||
+            currentDest == R.id.mediatekaFragment
+        ) {
+            bottomNavigationView.visibility = View.VISIBLE
+        }
+    }
+
 
 }

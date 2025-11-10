@@ -11,6 +11,9 @@
 
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <item name="android:navigationBarColor">?attr/colorPrimary</item>
+
+        <item name="colorOutline">@color/grey</item> <!-- серая рамка -->
+        <item name="colorControlActivated">@color/grey</item>
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />

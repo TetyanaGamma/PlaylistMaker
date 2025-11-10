@@ -2,11 +2,13 @@ package com.example.playlistmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.mediateca.di.dataModule
 import com.example.playlistmaker.mediateca.di.mediatekaModule
 import com.example.playlistmaker.player.di.playerModule
 import com.example.playlistmaker.search.di.searchModule
 import com.example.playlistmaker.settings.di.settingsModule
 import com.example.playlistmaker.settings.domain.interactor.SettingsInteractor
+import com.markodevcic.peko.PermissionRequester
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent.getKoin
@@ -18,8 +20,11 @@ class App : Application() {
     var darkTheme: Boolean = false
         private set
 
+
     override fun onCreate() {
         super.onCreate()
+        //Инициализация библиотеки Peko для permission
+        PermissionRequester.initialize(applicationContext)
 
         startKoin {
             androidContext(this@App)
@@ -27,7 +32,8 @@ class App : Application() {
                 playerModule,
                 settingsModule,
                 searchModule,
-                mediatekaModule
+                mediatekaModule,
+                dataModule
             )
         }
         settingsInteractor = getKoin().get()

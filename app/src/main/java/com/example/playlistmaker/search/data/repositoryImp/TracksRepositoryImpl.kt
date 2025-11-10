@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.data.repositoryImp
 
+import com.example.playlistmaker.mediateca.data.db.AppDataBase
 import com.example.playlistmaker.search.data.network.NetworkClient
 import com.example.playlistmaker.search.data.network.TrackResponse
 import com.example.playlistmaker.search.data.network.TrackSearchRequest
@@ -10,7 +11,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 
-class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
+class TracksRepositoryImpl(private val networkClient: NetworkClient,
+                           private val database: AppDataBase) : TracksRepository {
 
     override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         // эмитим Loading
@@ -34,7 +36,15 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
                 )
             } ?: emptyList()
 
-            emit(Resource.Success(tracks))
+
+            // Проставляем флаг isFavorite
+            database.trackDao().getFavouriteTrackIds().collect { favouriteIds ->
+                val updatedTracks = tracks.map { track ->
+                    track.copy(isFavourite = favouriteIds.contains(track.trackId))
+                }
+
+                emit(Resource.Success(updatedTracks))
+            }
         } else {
             emit(Resource.Error(Throwable("Ошибка сети или запроса: код ${response.resultCode}")))
         }

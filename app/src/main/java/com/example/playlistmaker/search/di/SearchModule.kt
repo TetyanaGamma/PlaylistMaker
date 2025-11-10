@@ -1,6 +1,6 @@
 package com.example.playlistmaker.search.di
 
-import SearchInteractor
+import com.example.playlistmaker.search.domain.interactor.SearchInteractor
 import com.example.playlistmaker.search.data.network.NetworkClient
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.search.data.network.TrackApi
@@ -36,7 +36,9 @@ val searchModule = module {
     }
 
     single<SearchHistoryRepository> {
-        SearchHistoryRepositoryImpl(get())
+        SearchHistoryRepositoryImpl(
+            storage = get(),
+            database = get())
     }
 
     single {
@@ -53,7 +55,9 @@ val searchModule = module {
     }
 
     single<TracksRepository> {
-        TracksRepositoryImpl(get())
+        TracksRepositoryImpl(
+            networkClient = get(),
+            database = get())
     }
 
     single<SearchInteractor> {

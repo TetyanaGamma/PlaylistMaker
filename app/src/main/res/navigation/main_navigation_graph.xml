@@ -3,32 +3,70 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation_graph"
-    app:startDestination="@id/meditekaFragment">
+    app:startDestination="@id/mediatekaFragment">
 
+    <!-- Медиатека с ViewPager -->
     <fragment
-        android:id="@+id/meditekaFragment"
-        android:name="com.example.playlistmaker.mediateca.ui.MediatekaFragment"
+        android:id="@+id/mediatekaFragment"
+        android:name="com.example.playlistmaker.mediateca.ui.screens.MediatekaFragment"
         android:label="MediatekaFragment"
-        tools:layout="@layout/fragment_mediateka" />
+        tools:layout="@layout/fragment_mediateka">
+        <!-- Action для перехода на плеер -->
+        <action
+            android:id="@+id/action_mediateka_to_audioplayer"
+            app:destination="@id/audioplayerFragment" />
+        <action
+            android:id="@+id/action_mediateka_to_playlistCreation"
+            app:destination="@+id/playlistCreationFragment"/>
+    </fragment>
 
+    <!-- Настройки -->
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.playlistmaker.settings.ui.SettingsFragment"
         android:label="SettingsFragment"
         tools:layout="@layout/fragment_settings" />
 
+    <!-- Поиск -->
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.example.playlistmaker.search.ui.screen.SearchFragment"
         android:label="SearchFragment"
         tools:layout="@layout/fragment_search">
+        <!-- Action для перехода на плеер -->
         <action
             android:id="@+id/action_searchFragment_to_audioplayerFragment"
-            app:destination="@+id/audioplayerFragment" />
+            app:destination="@id/audioplayerFragment" />
     </fragment>
+
+    <!-- Плеер -->
     <fragment
         android:id="@+id/audioplayerFragment"
-        android:name="com.example.playlistmaker.player.ui.AudioplayerFragment"
+        android:name="com.example.playlistmaker.player.ui.screens.AudioplayerFragment"
         android:label="fragment_audioplayer"
-        tools:layout="@layout/fragment_audioplayer" />
+        tools:layout="@layout/fragment_audioplayer">
+        <argument
+            android:name="trackJson"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_audioplayerFragment_to_playlistCreationFragment"
+            app:destination="@id/playlistCreationFragment"/>
+    </fragment>
+
+    <!-- Экран для создания плейлиста -->
+    <fragment
+        android:id="@+id/playlistCreationFragment"
+        android:name="com.example.playlistmaker.mediateca.ui.screens.PlaylistCreationFragment"
+        android:label="PlaylistCreationFragment"
+        tools:layout="@layout/fragment_playlist_creation"
+    />
+
+    <!-- Экран  плейлистов -->
+    <fragment
+        android:id="@+id/playlistFragment"
+        android:name="com.example.playlistmaker.media.ui.PlaylistsFragment"
+        android:label="PlaylistFragment"
+        tools:layout="@layout/fragment_playlist"
+       />
+
 </navigation>

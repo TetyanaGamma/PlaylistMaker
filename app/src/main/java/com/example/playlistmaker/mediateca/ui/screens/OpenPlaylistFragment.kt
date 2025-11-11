@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistOpenBinding
+import com.example.playlistmaker.player.ui.screens.AudioplayerFragment
 import com.example.playlistmaker.search.ui.adapter.TrackAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -77,7 +78,11 @@ class OpenPlaylistFragment : Fragment() {
         binding.tracksListView.adapter = trackAdapter
 
         trackAdapter.setOnTrackClickListener { track ->
-            // TODO: открыть аудиоплеер
+
+            findNavController().navigate(
+                R.id.action_OpenPlaylistFragment_to_audioplayerFragment,
+                Bundle().apply { putParcelable(AudioplayerFragment.Companion.TRACK_EXTRA, track) }
+            )
         }
     }
 

@@ -81,6 +81,9 @@
         <argument
             android:name="playlistId"
             app:argType="integer"/>
+        <action
+            android:id="@+id/action_OpenPlaylistFragment_to_audioplayerFragment"
+            app:destination="@id/audioplayerFragment"/>
     </fragment>
 
 

@@ -9,13 +9,22 @@ class TrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
 
     var tracks = ArrayList<Track>()
     private var listener: OnTrackClicklistener? = null
+    private var longClickListener: OnTrackLongClickListener? = null
 
     fun interface OnTrackClicklistener {
         fun onTrackClick(track: Track)
     }
 
+    fun interface OnTrackLongClickListener {
+        fun onTrackLongClick(track: Track)
+    }
+
     fun setOnTrackClickListener(listener: OnTrackClicklistener) {
         this.listener = listener
+    }
+
+    fun setOnTrackLongClickListener(listener: OnTrackLongClickListener) {
+        this.longClickListener = listener
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
@@ -28,6 +37,10 @@ class TrackAdapter : RecyclerView.Adapter<TrackViewHolder>() {
         // Обработка клика по элементу
         holder.itemView.setOnClickListener {
             listener?.onTrackClick(tracks[position])
+        }
+        holder.itemView.setOnLongClickListener {
+            longClickListener?.onTrackLongClick(tracks[position])
+            true
         }
     }
 }

@@ -47,5 +47,8 @@
     <string name="share_playlist">Поделиться</string>
     <string name="edit_playlist">Редактировать информацию</string>
     <string name="remove_playlist">Удалить плейлис</string>
+    <string name="delete_track_message">Хотите удалить трек?</string>
+    <string name="button_no">НЕТ</string>
+    <string name="button_yes">ДА</string>
 
 </resources>

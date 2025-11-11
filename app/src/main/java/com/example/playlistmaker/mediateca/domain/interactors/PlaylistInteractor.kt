@@ -95,6 +95,18 @@ class PlaylistInteractor(
         }
     }
 
+    suspend fun removeTrackFromPlaylist(playlistId: Int, trackId: Int) {
+        playlistRepository.removeTrackFromPlaylist(playlistId, trackId)
+
+        // Обновляем UI после удаления
+        val updatedTracks = playlistRepository.getTracksForPlaylist(playlistId)
+        playlistRepository.updatePlaylistTrackIds(
+            playlistId,
+            updatedTracks.map { it.trackId }
+        )
+        playlistRepository.updatePlaylistTrackCount(playlistId, updatedTracks.size)
+    }
+
     suspend fun isTrackInPlaylist(playlistId: Int, trackId: Int): Boolean {
         return playlistRepository.isTrackInPlaylist(playlistId, trackId)
     }

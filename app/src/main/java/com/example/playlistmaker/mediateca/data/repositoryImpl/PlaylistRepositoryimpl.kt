@@ -162,6 +162,15 @@ class PlaylistRepositoryimpl(
     }
 
 
+    override suspend fun countPlaylistsWithTrack(trackId: Int): Int {
+        return playlistTracksDao.countPlaylistsWithTrack(trackId)
+    }
+
+    override suspend fun cleanupUnusedTrack() {
+        playlistTracksDao.cleanupUnusedTracks()
+    }
+
+
     // Получение треков для конкретного плейлиста
     override suspend fun getTracksForPlaylist(playlistId: Int): List<Track> {
         return playlistTracksDao.getTracksByPlaylistId(playlistId).map {

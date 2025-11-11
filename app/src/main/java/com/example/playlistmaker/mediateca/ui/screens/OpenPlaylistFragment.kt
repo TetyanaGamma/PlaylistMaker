@@ -14,6 +14,7 @@ import com.example.playlistmaker.databinding.FragmentPlaylistOpenBinding
 import com.example.playlistmaker.player.ui.screens.AudioplayerFragment
 import com.example.playlistmaker.search.ui.adapter.TrackAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -83,6 +84,17 @@ class OpenPlaylistFragment : Fragment() {
                 R.id.action_OpenPlaylistFragment_to_audioplayerFragment,
                 Bundle().apply { putParcelable(AudioplayerFragment.Companion.TRACK_EXTRA, track) }
             )
+        }
+        trackAdapter.setOnTrackLongClickListener { track ->
+            MaterialAlertDialogBuilder(requireContext())
+                .setMessage(getString(R.string.delete_track_message))
+                .setNegativeButton(getString(R.string.button_no)) { dialog, _ -> dialog.dismiss() }
+                .setPositiveButton(getString(R.string.button_yes)) { dialog, _ ->
+                    val playlistId = arguments?.getInt("playlistId") ?: return@setPositiveButton
+                    viewModel.removeTrackFromPlaylist(playlistId, track.trackId)
+                    dialog.dismiss()
+                }
+                .show()
         }
     }
 

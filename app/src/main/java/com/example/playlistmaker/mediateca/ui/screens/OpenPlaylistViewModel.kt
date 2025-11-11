@@ -35,4 +35,14 @@ class OpenPlaylistViewModel(
             }
         }
     }
+
+    fun removeTrackFromPlaylist(playlistId: Int, trackId: Int) {
+        viewModelScope.launch {
+            playlistInteractor.removeTrackFromPlaylist(playlistId, trackId)
+            // После удаления обновляем список треков
+            val updatedTracks = playlistInteractor.getTracksForPlaylist(playlistId)
+            _playlistTracks.postValue(updatedTracks)
+        }
+    }
+
 }

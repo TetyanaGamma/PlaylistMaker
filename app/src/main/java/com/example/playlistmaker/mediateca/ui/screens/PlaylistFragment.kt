@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistBinding
 import com.example.playlistmaker.mediateca.ui.adapters.PlaylistsAdapter
+import com.example.playlistmaker.mediateca.ui.screens.MediatekaFragmentDirections
 import com.example.playlistmaker.mediateca.ui.screens.PlaylistsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -53,8 +54,20 @@ class PlaylistsFragment : Fragment() {
             }
         }
 
-        adapter = PlaylistsAdapter(emptyList()) {
-            // TODO: обработка клика по плейлисту
+        adapter = PlaylistsAdapter(emptyList()) { playlist ->
+            val mainNavController = requireActivity()
+                .supportFragmentManager
+                .findFragmentById(R.id.rootFragmentContainerView)
+                ?.findNavController()
+
+            mainNavController?.let { navController ->
+                // Проверяем, что мы сейчас на экране медиатеки
+                if (navController.currentDestination?.id == R.id.mediatekaFragment) {
+                    val action = MediatekaFragmentDirections
+                        .actionMediatekaToOpenPlaylistFragment(playlist.playlistId)
+                    navController.navigate(action)
+                }
+            }
         }
         binding.recyclerPlaylists.adapter = adapter
         binding.recyclerPlaylists.layoutManager = GridLayoutManager(requireContext(), 2)

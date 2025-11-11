@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     id("kotlin-parcelize")
     id ("kotlin-kapt")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -41,6 +42,9 @@ android {
         viewBinding = true
     }
 }
+
+
+
 
 dependencies {
     // --- Базовые Android библиотеки ---

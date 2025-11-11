@@ -1,5 +1,6 @@
 package com.example.playlistmaker.mediateca.di
 
+import com.example.playlistmaker.media.ui.screens.OpenPlaylistViewModel
 import com.example.playlistmaker.mediateca.data.db.AppDataBase
 import com.example.playlistmaker.mediateca.data.repositoryImpl.FavouriteTracksRepositoryImpl
 import com.example.playlistmaker.mediateca.data.repositoryImpl.PlaylistRepositoryimpl
@@ -46,5 +47,6 @@ val mediatekaModule = module {
     viewModel { PlaylistsViewModel(interactor = get()) }
     viewModel { FavoriteTracksViewModel(interactor = get()) }
     viewModel { PlaylistCreationViewModel(interactor = get()) }
+    viewModel { OpenPlaylistViewModel(playlistInteractor = get()) }
 
 }

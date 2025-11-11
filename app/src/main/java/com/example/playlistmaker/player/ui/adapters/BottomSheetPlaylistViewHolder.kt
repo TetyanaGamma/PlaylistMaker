@@ -4,11 +4,11 @@ import android.util.TypedValue
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.PlatlistItemBinding
+import com.example.playlistmaker.databinding.PlaylistItemBinding
 import com.example.playlistmaker.mediateca.domain.model.Playlist
 import java.io.File
 
-class BottomSheetPlaylistViewHolder(private val binding: PlatlistItemBinding) :
+class BottomSheetPlaylistViewHolder(private val binding: PlaylistItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(playlist: Playlist, onClick: (Playlist) -> Unit) {

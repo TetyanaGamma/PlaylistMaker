@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_mediateka_to_playlistCreation"
             app:destination="@+id/playlistCreationFragment"/>
+        <action
+            android:id="@+id/action_mediateka_to_openPlaylistFragment"
+            app:destination="@id/openPlaylistFragment" />
     </fragment>
 
     <!-- Настройки -->
@@ -64,9 +67,21 @@
     <!-- Экран  плейлистов -->
     <fragment
         android:id="@+id/playlistFragment"
-        android:name="com.example.playlistmaker.media.ui.PlaylistsFragment"
+        android:name="com.example.playlistmaker.media.ui.screens.PlaylistsFragment"
         android:label="PlaylistFragment"
-        tools:layout="@layout/fragment_playlist"
-       />
+        tools:layout="@layout/fragment_playlist">
+
+        </fragment>
+
+    <fragment
+        android:id="@+id/openPlaylistFragment"
+        android:name="com.example.playlistmaker.media.ui.screens.OpenPlaylistFragment"
+        android:label="OpenPlaylistFragment"
+        tools:layout="@layout/fragment_playlist_open">
+        <argument
+            android:name="playlistId"
+            app:argType="integer"/>
+    </fragment>
+
 
 </navigation>

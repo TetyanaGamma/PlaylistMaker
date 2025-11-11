@@ -79,4 +79,21 @@ class OpenPlaylistViewModel(
 
         return builder.toString().trim()
     }
+
+    fun deletePlaylist(
+        playlistId: Int,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                playlistInteractor.deletePlaylist(playlistId)
+                onSuccess()
+            } catch (e: Exception) {
+                onError(e.message ?: "Ошибка при удалении плейлиста")
+            }
+        }
+    }
+
+
 }

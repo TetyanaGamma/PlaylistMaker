@@ -1,17 +1,18 @@
 package com.example.playlistmaker.media.ui.screens
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistOpenBinding
-import kotlinx.coroutines.launch
+import com.example.playlistmaker.search.ui.adapter.TrackAdapter
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -21,10 +22,10 @@ class OpenPlaylistFragment : Fragment() {
     private var _binding: FragmentPlaylistOpenBinding? = null
     private val binding get() = _binding!!
 
-    private var playlistId: Int? = null
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
+    private val trackAdapter = TrackAdapter()
+
     private val viewModel: OpenPlaylistViewModel by viewModel()
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,18 +43,61 @@ class OpenPlaylistFragment : Fragment() {
         binding.toolbarPlaylistOpen.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
+// Скрываем меню BottomSheet при открытии плейлиста
+        binding.bottomSheetMenu.visibility = View.GONE
+
+        setupBottomSheet()
+        setupRecyclerView()
+        observeTracks()
+        observePlaylistInfo()
 
         val playlistId = arguments?.getInt("playlistId") ?: return
+        viewModel.loadPlaylistInfo(playlistId)
+    }
 
-        // Загружаем данные о плейлисте
-        playlistId?.let {
-            loadPlaylistInfo(it)
+    private fun setupBottomSheet() {
+        val bottomSheet = binding.bottomSheetPlaylists
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+
+        bottomSheetBehavior.isHideable = false // нельзя скрыть
+      //  bottomSheetBehavior.peekHeight = resources.getDimensionPixelSize(R.dimen.bottom_sheet_peek_height)
+
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+        })
+    }
+
+    private fun setupRecyclerView() {
+        binding.tracksListView.adapter = trackAdapter
+
+        trackAdapter.setOnTrackClickListener { track ->
+            // TODO: открыть аудиоплеер
         }
     }
 
-    private fun loadPlaylistInfo(id: Int) {
-        lifecycleScope.launch {
-            val info = viewModel.getPlaylistInfo(id)
+    private fun observeTracks() {
+        viewModel.playlistTracks.observe(viewLifecycleOwner, Observer { tracks ->
+            if (tracks.isNullOrEmpty()) {
+                binding.noTracksMessage.visibility = View.VISIBLE
+                binding.tracksListView.visibility = View.GONE
+            } else {
+                binding.noTracksMessage.visibility = View.GONE
+                binding.tracksListView.visibility = View.VISIBLE
+                trackAdapter.tracks.clear()
+                trackAdapter.tracks.addAll(tracks)
+                trackAdapter.notifyDataSetChanged()
+            }
+        })
+    }
+
+    private fun observePlaylistInfo() {
+        viewModel.playlistInfo.observe(viewLifecycleOwner, Observer { info ->
             info?.let { playlistInfo ->
                 val playlist = playlistInfo.playlist
 
@@ -63,9 +107,8 @@ class OpenPlaylistFragment : Fragment() {
                 // Описание
                 binding.tvDescripcionPlayList.text = playlist.playlistDescr ?: ""
 
-
                 // Обложка
-                val coverUri = playlist.playlistCoverUrl?.let { android.net.Uri.parse(it) }
+                val coverUri: Uri? = playlist.playlistCoverUrl?.let { Uri.parse(it) }
                 Glide.with(binding.ivCoverPlaylist.context)
                     .load(coverUri)
                     .placeholder(R.drawable.placeholder)
@@ -76,13 +119,15 @@ class OpenPlaylistFragment : Fragment() {
                 val minutes = SimpleDateFormat("mm", Locale.getDefault())
                     .format(Date(playlistInfo.totalDuration))
                 binding.playlistDuration.text = binding.root.context.resources.getQuantityString(
-                    R.plurals.minutes_count, minutes.toInt(), minutes.toInt())
+                    R.plurals.minutes_count, minutes.toInt(), minutes.toInt()
+                )
 
                 // Количество треков
                 binding.playlistTrackCount.text = binding.root.context.resources.getQuantityString(
-                    R.plurals.track_count, playlist.trackCount, playlist.trackCount)
+                    R.plurals.track_count, playlist.trackCount, playlist.trackCount
+                )
             }
-        }
+        })
     }
 
     override fun onDestroyView() {

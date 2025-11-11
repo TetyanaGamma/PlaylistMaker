@@ -10,9 +10,11 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistOpenBinding
+import com.example.playlistmaker.player.ui.adapters.BottomSheetPlaylistAdapter
 import com.example.playlistmaker.player.ui.screens.AudioplayerFragment
 import com.example.playlistmaker.search.ui.adapter.TrackAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -27,7 +29,10 @@ class OpenPlaylistFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
+    private lateinit var bottomSheetMenuBehavior: BottomSheetBehavior<*>
+
     private val trackAdapter = TrackAdapter()
+    private lateinit var bottomSheetAdapter: BottomSheetPlaylistAdapter
 
     private val viewModel: OpenPlaylistViewModel by viewModel()
 
@@ -47,14 +52,13 @@ class OpenPlaylistFragment : Fragment() {
         binding.toolbarPlaylistOpen.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
-// Скрываем меню BottomSheet при открытии плейлиста
-        binding.bottomSheetMenu.visibility = View.GONE
 
         setupBottomSheet()
         setupRecyclerView()
         observeTracks()
         observePlaylistInfo()
         setupShareButton()
+        setupMenuBottomSheet()
 
         val playlistId = arguments?.getInt("playlistId") ?: return
         viewModel.loadPlaylistInfo(playlistId)
@@ -63,9 +67,7 @@ class OpenPlaylistFragment : Fragment() {
     private fun setupBottomSheet() {
         val bottomSheet = binding.bottomSheetPlaylists
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-
-        bottomSheetBehavior.isHideable = false // нельзя скрыть
-      //  bottomSheetBehavior.peekHeight = resources.getDimensionPixelSize(R.dimen.bottom_sheet_peek_height)
+        bottomSheetBehavior.isHideable = false
 
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -73,19 +75,58 @@ class OpenPlaylistFragment : Fragment() {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 }
             }
-
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
+    }
+
+    private fun setupMenuBottomSheet() {
+        bottomSheetMenuBehavior = BottomSheetBehavior.from(binding.bottomSheetMenu)
+        bottomSheetMenuBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
+        // Затемнение фона
+        binding.overlay.setOnClickListener {
+            bottomSheetMenuBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            binding.overlay.visibility = View.GONE
+        }
+
+        // Кнопка меню
+        binding.menuIcon.setOnClickListener {
+            if (bottomSheetMenuBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
+                bottomSheetMenuBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                binding.overlay.visibility = View.VISIBLE
+            } else {
+                bottomSheetMenuBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                binding.overlay.visibility = View.GONE
+            }
+        }
+
+        // Отслеживание скрытия
+        bottomSheetMenuBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    binding.overlay.visibility = View.GONE
+                }
+            }
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+        })
+
+        // Инициализация адаптера с пустым списком, потом обновим
+        bottomSheetAdapter = BottomSheetPlaylistAdapter(emptyList()) { clickedPlaylist ->
+            bottomSheetMenuBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            binding.overlay.visibility = View.GONE
+        }
+        binding.playListView.layoutManager = LinearLayoutManager(requireContext())
+        binding.playListView.adapter = bottomSheetAdapter
     }
 
     private fun setupRecyclerView() {
         binding.tracksListView.adapter = trackAdapter
 
         trackAdapter.setOnTrackClickListener { track ->
-
             findNavController().navigate(
                 R.id.action_OpenPlaylistFragment_to_audioplayerFragment,
-                Bundle().apply { putParcelable(AudioplayerFragment.Companion.TRACK_EXTRA, track) }
+                Bundle().apply { putParcelable(AudioplayerFragment.TRACK_EXTRA, track) }
             )
         }
         trackAdapter.setOnTrackLongClickListener { track ->
@@ -121,10 +162,8 @@ class OpenPlaylistFragment : Fragment() {
             info?.let { playlistInfo ->
                 val playlist = playlistInfo.playlist
 
-                // Название
+                // Название и описание
                 binding.tvPlayListName.text = playlist.playlistName
-
-                // Описание
                 binding.tvDescripcionPlayList.text = playlist.playlistDescr ?: ""
 
                 // Обложка
@@ -146,44 +185,20 @@ class OpenPlaylistFragment : Fragment() {
                 binding.playlistTrackCount.text = binding.root.context.resources.getQuantityString(
                     R.plurals.track_count, playlist.trackCount, playlist.trackCount
                 )
+
+                // **Обновляем BottomSheetAdapter с текущим плейлистом**
+                bottomSheetAdapter.updateData(listOf(playlist))
             }
         })
     }
 
     private fun setupShareButton() {
         binding.shareIcon.setOnClickListener {
-            val data = viewModel.getShareMessage()
-            if (data == null) {
-                Toast.makeText(
-                    requireContext(),
-                    R.string.no_tracks_to_share,
-                    Toast.LENGTH_SHORT
-                ).show()
+            val messageToShare = viewModel.getShareMessage()
+            if (messageToShare == null) {
+                Toast.makeText(requireContext(), R.string.no_tracks_to_share, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
-            val (playlistName, tracks) = data
-
-            val builder = StringBuilder()
-            builder.appendLine(playlistName)
-
-            // Кол-во треков через plurals
-            val trackCountText = resources.getQuantityString(
-                R.plurals.track_count,
-                tracks.size,
-                tracks.size
-            )
-            builder.appendLine(trackCountText)
-            builder.appendLine()
-
-            tracks.forEachIndexed { index, track ->
-                val minutes = (track.trackTimeMillis / 1000) / 60
-                val seconds = (track.trackTimeMillis / 1000) % 60
-                val duration = String.format("%02d:%02d", minutes, seconds)
-                builder.appendLine("${index + 1}. ${track.artistName} - ${track.trackName} ($duration)")
-            }
-
-            val messageToShare = builder.toString().trim()
 
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 putExtra(Intent.EXTRA_TEXT, messageToShare)
@@ -192,7 +207,6 @@ class OpenPlaylistFragment : Fragment() {
             startActivity(Intent.createChooser(shareIntent, null))
         }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

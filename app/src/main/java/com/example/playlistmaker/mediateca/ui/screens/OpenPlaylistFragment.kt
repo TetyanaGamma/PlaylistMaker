@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistOpenBinding
+import com.example.playlistmaker.mediateca.ui.screens.PlaylistEditFragment
 import com.example.playlistmaker.player.ui.adapters.BottomSheetPlaylistAdapter
 import com.example.playlistmaker.player.ui.screens.AudioplayerFragment
 import com.example.playlistmaker.search.ui.adapter.TrackAdapter
@@ -23,6 +25,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class OpenPlaylistFragment : Fragment() {
 
@@ -51,9 +54,23 @@ class OpenPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        bottomSheetMenuBehavior = BottomSheetBehavior.from(binding.bottomSheetMenu)
+        bottomSheetMenuBehavior.isHideable = true
+        bottomSheetMenuBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
         binding.toolbarPlaylistOpen.setNavigationOnClickListener {
-            findNavController().popBackStack()
+            navigateBackToMediateka()
         }
+
+        // Обработка системной кнопки Back
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+               navigateBackToMediateka()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
+
 
         setupTrackBottomSheet()
         setupMenuBottomSheet()
@@ -65,6 +82,16 @@ class OpenPlaylistFragment : Fragment() {
         val playlistId = arguments?.getInt("playlistId") ?: return
         currentPlaylistId = playlistId
         viewModel.loadPlaylistInfo(playlistId)
+
+        //  Слушаем результат из экрана редактирования
+        findNavController().currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<Boolean>("playlist_updated")
+            ?.observe(viewLifecycleOwner) { updated ->
+                if (updated == true) {
+                    viewModel.loadPlaylistInfo(currentPlaylistId)
+                }
+            }
     }
 
     private fun setupTrackBottomSheet() {
@@ -134,9 +161,17 @@ class OpenPlaylistFragment : Fragment() {
             } ?: Toast.makeText(requireContext(), R.string.no_tracks_to_share, Toast.LENGTH_SHORT).show()
         }
 
-        // Кнопки "Редактировать" и "Удалить" пока пустые
+
         binding.editPlayList.setOnClickListener {
-            Toast.makeText(requireContext(), "Редактирование пока не реализовано", Toast.LENGTH_SHORT).show()
+            // Берём только ID плейлиста
+            val playlistId = viewModel.playlistInfo.value?.playlist?.playlistId ?: return@setOnClickListener
+            // Создаём bundle с ID
+            val bundle = Bundle().apply {
+                putInt(PlaylistEditFragment.ARG_PLAYLIST_ID, playlistId)
+            }
+
+            findNavController().navigate(R.id.action_OpenPlaylistFragment_to_playlistEditFragment, bundle)
+
         }
         binding.removePlayList.setOnClickListener {
             bottomSheetMenuBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -254,6 +289,11 @@ class OpenPlaylistFragment : Fragment() {
             }
         )
     }
+
+    private fun navigateBackToMediateka() {
+        findNavController().popBackStack(R.id.mediatekaFragment, false)
+    }
+
 
 
     override fun onDestroyView() {

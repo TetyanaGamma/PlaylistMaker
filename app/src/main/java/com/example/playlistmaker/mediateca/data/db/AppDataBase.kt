@@ -12,7 +12,7 @@ import com.example.playlistmaker.mediateca.data.db.entities.PlaylistTracksEntity
 import com.example.playlistmaker.mediateca.data.db.entities.TrackEntity
 
 @Database(
-    version = 4, // новая версия
+    version = 5, // новая версия
     entities = [TrackEntity::class,
         PlaylistEntity::class,
         PlaylistTracksEntity::class],

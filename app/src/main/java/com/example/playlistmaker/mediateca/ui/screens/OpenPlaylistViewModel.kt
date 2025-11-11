@@ -38,8 +38,9 @@ class OpenPlaylistViewModel(
     fun removeTrackFromPlaylist(playlistId: Int, trackId: Int) {
         viewModelScope.launch {
             playlistInteractor.removeTrackFromPlaylist(playlistId, trackId)
-            val updatedTracks = playlistInteractor.getTracksForPlaylist(playlistId)
-            _playlistTracks.postValue(updatedTracks)
+           // val updatedTracks = playlistInteractor.getTracksForPlaylist(playlistId)
+          //  _playlistTracks.postValue(updatedTracks)
+            loadPlaylistInfo(playlistId) // обновляем и треки, и инфо
         }
     }
 
@@ -57,7 +58,7 @@ class OpenPlaylistViewModel(
         val builder = StringBuilder()
 
         builder.appendLine(playlist.playlistName)
-        if (playlist.playlistDescr.isNotBlank()) {
+        if (!playlist.playlistDescr.isNullOrBlank()) {
             builder.appendLine(playlist.playlistDescr)
         }
 

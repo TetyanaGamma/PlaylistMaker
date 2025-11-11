@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.mediateca.domain.interactors.PlaylistInteractor
 import kotlinx.coroutines.launch
 
-class PlaylistCreationViewModel(
+open class PlaylistCreationViewModel(
     private val interactor: PlaylistInteractor
 ) : ViewModel() {
 

@@ -84,6 +84,25 @@
         <action
             android:id="@+id/action_OpenPlaylistFragment_to_audioplayerFragment"
             app:destination="@id/audioplayerFragment"/>
+        <action
+            android:id="@+id/action_OpenPlaylistFragment_to_playlistEditFragment"
+            app:destination="@id/playlistEditFragment"/>
+    </fragment>
+
+    <!-- Экран для редактирования плейлиста -->
+    <fragment
+        android:id="@+id/playlistEditFragment"
+        android:name="com.example.playlistmaker.mediateca.ui.screens.PlaylistEditFragment"
+        android:label="PlaylistEditFragment"
+        tools:layout="@layout/fragment_playlist_creation">
+        <argument
+            android:name="arg_playlist_id"
+            app:argType="integer" />
+
+        <!--  Переход обратно к открытому плейлисту -->
+        <action
+            android:id="@+id/action_playlistEditFragment_to_OpenPlaylistFragment"
+            app:destination="@id/openPlaylistFragment" />
     </fragment>
 
 

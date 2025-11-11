@@ -21,15 +21,15 @@ import com.example.playlistmaker.databinding.FragmentPlaylistCreationBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.core.widget.addTextChangedListener
 
-class PlaylistCreationFragment : Fragment() {
+open class PlaylistCreationFragment : Fragment() {
 
-    private var _binding: FragmentPlaylistCreationBinding? = null
-    private val binding get() = _binding!!
+    protected var _binding: FragmentPlaylistCreationBinding? = null
+    protected val binding get() = _binding!!
 
-    private val viewModel: PlaylistCreationViewModel by viewModel()
-    private var selectedImageUri: Uri? = null
+    protected open val viewModel: PlaylistCreationViewModel by viewModel()
+    protected var selectedImageUri: Uri? = null
 
-    private val radiusInPx by lazy { (8f * resources.displayMetrics.density).toInt() }
+    protected open val radiusInPx by lazy { (8f * resources.displayMetrics.density).toInt() }
 
     private val photoPickerLauncher =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->

@@ -11,6 +11,7 @@ import com.example.playlistmaker.mediateca.domain.interactors.PlaylistInteractor
 import com.example.playlistmaker.mediateca.ui.screens.FavoriteTracksViewModel
 import com.example.playlistmaker.mediateca.ui.screens.MediatekaViewModel
 import com.example.playlistmaker.mediateca.ui.screens.PlaylistCreationViewModel
+import com.example.playlistmaker.mediateca.ui.screens.PlaylistEditViewModel
 import com.example.playlistmaker.mediateca.ui.screens.PlaylistsViewModel
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
@@ -50,5 +51,6 @@ val mediatekaModule = module {
     viewModel { PlaylistCreationViewModel(interactor = get()) }
     viewModel { OpenPlaylistViewModel( application = androidApplication(),
         playlistInteractor = get()) }
+    viewModel { PlaylistEditViewModel(interactor = get()) }
 
 }

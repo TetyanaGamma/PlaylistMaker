@@ -10,8 +10,8 @@ data class PlaylistEntity(
     @PrimaryKey(autoGenerate = true)
     val playlistId: Int = 0,
     val playlistName: String,
-    val playlistDescr: String,
-    val playlistCoverUrl: String, //путь к изображению обложки альбома
+    val playlistDescr: String? = null,
+    val playlistCoverUrl: String? = null, //путь к изображению обложки альбома
            // количество треков в плейлисте
     val trackCount: Int = 0,
     val createdTimestamp: Long = System.currentTimeMillis()

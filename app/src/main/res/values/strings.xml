@@ -54,5 +54,8 @@
     <string name="playlist_deleted">Плейлист успешно удален</string>
     <string name="delete_playlist_title">Удалить плейлист</string>
     <string name="delete_playlist_message">Хотите удалить плейлист?</string>
+    <string name="save">Сохранить</string>
+    <string name="playlist_updated">Плейлист успешно обновлен</string>
+    <string name="error_updating_playlist">Не удалось обновить плейлист</string>
 
 </resources>

@@ -50,5 +50,6 @@
     <string name="delete_track_message">Хотите удалить трек?</string>
     <string name="button_no">НЕТ</string>
     <string name="button_yes">ДА</string>
+    <string name="no_tracks_to_share">В этом плейлисте нет списка треков, которым можно поделиться</string>
 
 </resources>

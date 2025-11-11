@@ -1,10 +1,12 @@
 package com.example.playlistmaker.media.ui.screens
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -52,6 +54,7 @@ class OpenPlaylistFragment : Fragment() {
         setupRecyclerView()
         observeTracks()
         observePlaylistInfo()
+        setupShareButton()
 
         val playlistId = arguments?.getInt("playlistId") ?: return
         viewModel.loadPlaylistInfo(playlistId)
@@ -146,6 +149,50 @@ class OpenPlaylistFragment : Fragment() {
             }
         })
     }
+
+    private fun setupShareButton() {
+        binding.shareIcon.setOnClickListener {
+            val data = viewModel.getShareMessage()
+            if (data == null) {
+                Toast.makeText(
+                    requireContext(),
+                    R.string.no_tracks_to_share,
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+            val (playlistName, tracks) = data
+
+            val builder = StringBuilder()
+            builder.appendLine(playlistName)
+
+            // Кол-во треков через plurals
+            val trackCountText = resources.getQuantityString(
+                R.plurals.track_count,
+                tracks.size,
+                tracks.size
+            )
+            builder.appendLine(trackCountText)
+            builder.appendLine()
+
+            tracks.forEachIndexed { index, track ->
+                val minutes = (track.trackTimeMillis / 1000) / 60
+                val seconds = (track.trackTimeMillis / 1000) % 60
+                val duration = String.format("%02d:%02d", minutes, seconds)
+                builder.appendLine("${index + 1}. ${track.artistName} - ${track.trackName} ($duration)")
+            }
+
+            val messageToShare = builder.toString().trim()
+
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                putExtra(Intent.EXTRA_TEXT, messageToShare)
+                type = "text/plain"
+            }
+            startActivity(Intent.createChooser(shareIntent, null))
+        }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.R
 import com.example.playlistmaker.mediateca.domain.interactors.PlaylistInteractor
 import com.example.playlistmaker.mediateca.domain.interactors.PlaylistInfo
 import com.example.playlistmaker.search.domain.model.Track
@@ -44,5 +45,16 @@ class OpenPlaylistViewModel(
             _playlistTracks.postValue(updatedTracks)
         }
     }
+
+    fun getShareMessage(): Pair<String, List<Track>>? {
+        val playlistInfo = _playlistInfo.value ?: return null
+        val tracks = _playlistTracks.value ?: emptyList()
+
+        if (tracks.isEmpty()) return null
+
+        return playlistInfo.playlist.playlistName to tracks
+    }
+
+
 
 }

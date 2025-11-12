@@ -53,7 +53,7 @@ class OpenPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.toolbarPlaylistOpen.setNavigationOnClickListener {
+        binding.btnBack.setOnClickListener {
             navigateBackToMediateka()
         }
 

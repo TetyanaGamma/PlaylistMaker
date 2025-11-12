@@ -1,6 +1,7 @@
 package com.example.playlistmaker.mediateca.di
 
 
+import androidx.room.Room
 import com.example.playlistmaker.mediateca.data.db.AppDataBase
 import com.example.playlistmaker.mediateca.data.db.converters.PlaylistDbConverter
 import com.example.playlistmaker.mediateca.data.db.converters.PlaylistTrackDataConverter
@@ -16,8 +17,15 @@ import org.koin.dsl.module
 
 val dataModule = module {
 
-    single<AppDataBase> {
-        AppDataBase.getInstance(androidContext())
+    // RoomDatabase
+    single {
+        Room.databaseBuilder(
+            androidContext(),
+            AppDataBase::class.java,
+            "playlist_maker_database"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     // DAO

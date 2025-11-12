@@ -27,7 +27,7 @@ open class PlaylistCreationFragment : Fragment() {
     protected val binding get() = _binding!!
 
     protected open val viewModel: PlaylistCreationViewModel by viewModel()
-    protected var selectedImageUri: Uri? = null
+    protected open var selectedImageUri: Uri? = null
 
     protected open val radiusInPx by lazy { (8f * resources.displayMetrics.density).toInt() }
 

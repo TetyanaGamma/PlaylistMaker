@@ -3,6 +3,7 @@ package com.example.playlistmaker.mediateca.ui.screens
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -10,12 +11,13 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.mediateca.domain.model.Playlist
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import androidx.activity.OnBackPressedCallback
 
 class PlaylistEditFragment : PlaylistCreationFragment() {
 
     override val viewModel: PlaylistEditViewModel by viewModel()
 
+    // selectedImageUri хранит последнее выбранное пользователем изображение
+   override var selectedImageUri: Uri? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,51 +36,55 @@ class PlaylistEditFragment : PlaylistCreationFragment() {
                 populateFields(it)
             }
         }
+
         // Сохраняем изменения
         binding.buttonCreatePlaylist.setOnClickListener {
             saveChanges()
         }
+
         // Toolbar back button
         binding.newPlaylistToolbar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
+
         // Обработка системной кнопки Back
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                // Просто закрываем экран, игнорируя изменения
                 findNavController().popBackStack()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
+        // Обработка выбора изображения из галереи
+        setupImagePicker()
     }
 
     private fun populateFields(playlist: Playlist) {
         binding.inputPlaylistName.editText?.setText(playlist.playlistName)
         binding.inputPlaylistDescription.editText?.setText(playlist.playlistDescr)
-        selectedImageUri =
-            playlist.playlistCoverUrl?.takeIf { it.isNotBlank() }?.let { Uri.parse(it) }
 
-        if (selectedImageUri != null) {
-            Glide.with(this)
-                .load(selectedImageUri)
-                .placeholder(R.drawable.placeholder)
-                .centerCrop()
-                .transform(RoundedCorners(radiusInPx))
-                .into(binding.imageAddPhoto)
-        } else {
-            // Если нет картинки или строка пустая
-            Glide.with(this)
-                .load(R.drawable.placeholder)
-                .centerCrop()
-                .transform(RoundedCorners(radiusInPx))
-                .into(binding.imageAddPhoto)
+        // Если selectedImageUri ещё null, берём из плейлиста
+        if (selectedImageUri == null) {
+            selectedImageUri =
+                playlist.playlistCoverUrl?.takeIf { it.isNotBlank() }?.let { Uri.parse(it) }
         }
+
+        showImage(selectedImageUri, playlist)
 
         // Проверяем активность кнопки
         binding.buttonCreatePlaylist.isEnabled = playlist.playlistName.isNotBlank()
         binding.inputPlaylistName.editText?.addTextChangedListener { s ->
             binding.buttonCreatePlaylist.isEnabled = !s.isNullOrBlank()
         }
+    }
+
+    private fun showImage(uri: Uri?, playlist: Playlist) {
+        val imageToLoad = uri ?: playlist.playlistCoverUrl?.takeIf { it.isNotBlank() }?.let { Uri.parse(it) }
+        Glide.with(this)
+            .load(imageToLoad ?: R.drawable.placeholder)
+            .centerCrop()
+            .transform(RoundedCorners(radiusInPx))
+            .into(binding.imageAddPhoto)
     }
 
     private fun saveChanges() {
@@ -92,7 +98,7 @@ class PlaylistEditFragment : PlaylistCreationFragment() {
                     ?.savedStateHandle
                     ?.set("playlist_updated", true)
 
-                //  Возвращаемся на экран открытого плейлиста по ID
+                // Возвращаемся на экран открытого плейлиста по ID
                 val playlistId = arguments?.getInt(ARG_PLAYLIST_ID)
                 val bundle = Bundle().apply {
                     putInt("playlistId", playlistId ?: return@updatePlaylist)
@@ -104,9 +110,23 @@ class PlaylistEditFragment : PlaylistCreationFragment() {
                 )
             }
         }
-
     }
 
+    private fun setupImagePicker() {
+        val imagePickerLauncher =
+            registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.GetContent()) { uri: Uri? ->
+                if (uri != null) {
+                    selectedImageUri = uri
+                    showImage(selectedImageUri, viewModel.playlistData.value!!)
+                }
+                // если uri == null — ничего не трогаем, оставляем предыдущую обложку
+            }
+
+        binding.imageAddPhoto.setOnClickListener {
+            // Открываем галерею для выбора изображения
+            imagePickerLauncher.launch("image/*")
+        }
+    }
 
     companion object {
         const val ARG_PLAYLIST_ID = "arg_playlist_id"

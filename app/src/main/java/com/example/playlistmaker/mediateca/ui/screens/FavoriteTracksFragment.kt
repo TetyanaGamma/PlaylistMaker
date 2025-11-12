@@ -1,20 +1,20 @@
-package com.example.playlistmaker.mediateca.ui
+package com.example.playlistmaker.mediateca.ui.screens
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentFavoriteTracksBinding
-import com.example.playlistmaker.mediateca.ui.FavoriteTracksViewModel
+import com.example.playlistmaker.mediateca.ui.screens.FavoriteTracksViewModel
+import com.example.playlistmaker.player.ui.screens.AudioplayerFragment
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.ui.adapter.TrackAdapter
-import com.example.playlistmaker.player.ui.AudioplayerFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavoriteTracksFragment : Fragment() {
@@ -51,7 +51,7 @@ class FavoriteTracksFragment : Fragment() {
             // Навигация через родительский NavController
             findNavController().navigate(
                 R.id.action_mediateka_to_audioplayer,
-                Bundle().apply { putParcelable(AudioplayerFragment.TRACK_EXTRA, track) }
+                Bundle().apply { putParcelable(AudioplayerFragment.Companion.TRACK_EXTRA, track) }
             )
         }
     }
@@ -101,4 +101,3 @@ class FavoriteTracksFragment : Fragment() {
         fun newInstance() = FavoriteTracksFragment()
     }
 }
-

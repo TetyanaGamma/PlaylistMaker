@@ -80,6 +80,10 @@ dependencies {
     kapt(libs.androidx.room.compiler)
     testImplementation(libs.androidx.room.testing)
 
+    // Peco
+    implementation(libs.peko)
+
+
     implementation(libs.lifecycle.livedata.ktx)
 
     // --- Тестирование ---

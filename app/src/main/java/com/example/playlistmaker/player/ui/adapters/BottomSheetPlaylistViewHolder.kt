@@ -4,21 +4,24 @@ import android.util.TypedValue
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.PlatlistItemBinding
+import com.example.playlistmaker.databinding.PlaylistItemBinding
 import com.example.playlistmaker.mediateca.domain.model.Playlist
 import java.io.File
 
-class BottomSheetPlaylistViewHolder(private val binding: PlatlistItemBinding) :
+class BottomSheetPlaylistViewHolder(private val binding: PlaylistItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(playlist: Playlist, onClick: (Playlist) -> Unit) {
         val coverPath = playlist.playlistCoverUrl
 
-        val model = if (coverPath.startsWith("android.resource://") || File(coverPath).exists()) {
-            if (coverPath.startsWith("android.resource://")) coverPath else File(coverPath)
-        } else {
-            R.drawable.placeholder
+        val model = when {
+            coverPath.isNullOrBlank() -> R.drawable.placeholder
+            coverPath.startsWith("android.resource://") -> coverPath
+            coverPath.startsWith("content://") || coverPath.startsWith("file://") -> coverPath
+            File(coverPath).exists() -> File(coverPath)
+            else -> R.drawable.placeholder
         }
+
 
         Glide.with(binding.root.context)
             .load(model)
@@ -27,7 +30,8 @@ class BottomSheetPlaylistViewHolder(private val binding: PlatlistItemBinding) :
             .into(binding.playlistImageBottomSheet)
 
         binding.playlistNameBottonSheet.text = playlist.playlistName
-        binding.trackCount.text = "${playlist.trackCount} треков"
+        binding.trackCount.text =    binding.root.context.resources.getQuantityString(
+            R.plurals.track_count, playlist.trackCount, playlist.trackCount)
 
         binding.root.setOnClickListener { onClick(playlist) }
     }

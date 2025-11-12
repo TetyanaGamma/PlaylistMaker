@@ -3,7 +3,8 @@ package com.example.playlistmaker.player.ui.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.databinding.PlatlistItemBinding
+
+import com.example.playlistmaker.databinding.PlaylistItemBinding
 import com.example.playlistmaker.mediateca.domain.model.Playlist
 
 class BottomSheetPlaylistAdapter(
@@ -16,7 +17,7 @@ class BottomSheetPlaylistAdapter(
         parent: ViewGroup,
         viewType: Int
     ): BottomSheetPlaylistViewHolder {
-        val binding = PlatlistItemBinding.inflate(
+        val binding = PlaylistItemBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false

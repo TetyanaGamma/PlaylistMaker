@@ -1,5 +1,6 @@
 package com.example.playlistmaker.player.ui.screens
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -174,9 +175,14 @@ class AudioplayerViewModel(
 
     fun addPlaylist(playlist: Playlist) {
         viewModelScope.launch {
-            playlistInteractor.createPlaylist(playlist)
+            playlistInteractor.createPlaylist(
+                name = playlist.playlistName,
+                description = playlist.playlistDescr,
+                coverImageUri = playlist.playlistCoverUrl?.let { Uri.parse(it) }
+            )
         }
     }
+
 
     fun onPlaylistClicked(playlist: Playlist) {
         val track = currentTrack ?: return
@@ -186,12 +192,17 @@ class AudioplayerViewModel(
             _addToPlaylistStatus.postValue("Трек уже есть в этом плейлисте")
         } else {
             viewModelScope.launch {
-                playlistInteractor.addTrackToPlaylist(track, playlist)
-                _addToPlaylistStatus.postValue("Трек добавлен в плейлист «${playlist.playlistName}»")
-                _closeBottomSheet.postValue(true) // сигнал закрыть BottomSheet
+                val result = playlistInteractor.addTrackToPlaylist(playlist.playlistId, track)
+                result.onSuccess {
+                    _addToPlaylistStatus.postValue("Трек добавлен в плейлист «${playlist.playlistName}»")
+                    _closeBottomSheet.postValue(true) // сигнал закрыть BottomSheet
+                }.onFailure {
+                    _addToPlaylistStatus.postValue("Не удалось добавить трек: ${it.message}")
+                }
             }
         }
     }
+
 
     companion object {
         const val STATE_DEFAULT = 0

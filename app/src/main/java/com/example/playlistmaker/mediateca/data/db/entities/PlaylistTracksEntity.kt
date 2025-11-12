@@ -1,11 +1,28 @@
 package com.example.playlistmaker.mediateca.data.db.entities
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
-@Entity(tableName = "tracks_in_playlists_table")
+
+// Трек в плейлисте с прямой связью One-to-Many
+@Entity(
+    tableName = "tracks_in_playlists_table",
+    foreignKeys = [
+        ForeignKey(
+            entity = PlaylistEntity::class,
+            parentColumns = ["playlistId"],
+            childColumns = ["playlistId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index(value = ["playlistId"])]
+)
 data class PlaylistTracksEntity(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
     val trackId: Int, //Id
+    val playlistId: Int,
     val trackName: String, // Название композиции
     val artistName: String, // Имя исполнителя
     val trackTimeMillis: Long, // Продолжительность трека

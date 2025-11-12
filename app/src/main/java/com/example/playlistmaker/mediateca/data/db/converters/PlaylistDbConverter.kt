@@ -2,12 +2,9 @@ package com.example.playlistmaker.mediateca.data.db.converters
 
 import com.example.playlistmaker.mediateca.data.db.entities.PlaylistEntity
 import com.example.playlistmaker.mediateca.domain.model.Playlist
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+
 
 class PlaylistDbConverter {
-
-    private val gson = Gson()
 
     fun mapPlaylistToEntity(playlist: Playlist): PlaylistEntity {
         return PlaylistEntity(
@@ -15,21 +12,21 @@ class PlaylistDbConverter {
             playlistName = playlist.playlistName,
             playlistDescr = playlist.playlistDescr,
             playlistCoverUrl = playlist.playlistCoverUrl,
-            trackIdsJson = gson.toJson(playlist.trackIds),
-            trackCount = playlist.trackIds.size
+            trackCount = playlist.trackCount,
+            createdTimestamp = playlist.createdTimestamp
         )
     }
 
-    fun mapEntityToPlaylist(entity: PlaylistEntity): Playlist {
-        val type = object : TypeToken<List<Int>>() {}.type
-        val trackIds: List<Int> = gson.fromJson(entity.trackIdsJson, type) ?: emptyList()
+    fun mapEntityToPlaylist(entity: PlaylistEntity, trackIds: List<Int> = emptyList()): Playlist {
+
         return Playlist(
             playlistId = entity.playlistId,
             playlistName = entity.playlistName,
             playlistDescr = entity.playlistDescr,
             playlistCoverUrl = entity.playlistCoverUrl,
-            trackIdsJson = entity.trackIdsJson,
-            trackCount = entity.trackCount
+            trackIds = trackIds,
+            trackCount = entity.trackCount,
+            createdTimestamp = entity.createdTimestamp
         )
     }
 }

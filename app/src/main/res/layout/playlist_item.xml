@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:foreground="?attr/selectableItemBackground"
-    android:gravity="center_vertical"
+    android:gravity="center_vertical|start"
     android:orientation="horizontal">
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -16,11 +16,13 @@
         android:adjustViewBounds="true"
         app:shapeAppearanceOverlay="@style/RoundedCorners2" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/small_margin"
-        android:layout_weight="4">
+        android:layout_weight="1"
+        android:gravity="center_vertical|start"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/playlist_nameBottonSheet"
@@ -31,10 +33,8 @@
             android:maxLines="1"
             android:text="@string/test_track_name"
             android:textAppearance="@style/SwitchTextAppearance"
-            app:layout_constraintBottom_toTopOf="@id/track_count"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed" />
+
+             />
 
         <TextView
             android:id="@+id/track_count"
@@ -45,12 +45,11 @@
             android:maxLines="1"
             android:text="@string/test_artist_name"
             android:textAppearance="@style/TrackArtistAndTimeText"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/playlist_nameBottonSheet"
-            app:layout_constraintTop_toBottomOf="@+id/playlist_nameBottonSheet" />
+             />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
 
 
 </LinearLayout>

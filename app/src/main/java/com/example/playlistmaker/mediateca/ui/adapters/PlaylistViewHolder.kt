@@ -15,17 +15,20 @@ class PlaylistViewHolder(
 
     fun bind(playlist: Playlist, onClick: (Playlist) -> Unit) {
         binding.playlistName.text = playlist.playlistName
-        binding.playlistTracksCount.text = "${playlist.trackCount} треков"
+        binding.playlistTracksCount.text =
+            binding.root.context.resources.getQuantityString(
+                R.plurals.track_count, playlist.trackCount, playlist.trackCount)
 
         val coverPath = playlist.playlistCoverUrl
 
-        val model = if (coverPath.startsWith("android.resource://") || File(coverPath).exists()) {
-            // Если картинка в базе (локальном хранилище) или ресурс
-            if (coverPath.startsWith("android.resource://")) coverPath else File(coverPath)
-        } else {
-            // Плейсхолдер
-            R.drawable.placeholder
+        val model = when {
+            coverPath.isNullOrBlank() -> R.drawable.placeholder
+            coverPath.startsWith("android.resource://") -> coverPath
+            coverPath.startsWith("content://") || coverPath.startsWith("file://") -> coverPath
+            File(coverPath).exists() -> File(coverPath)
+            else -> R.drawable.placeholder
         }
+
         Glide.with(binding.root.context)
             .load(model)
             .centerCrop() // только обрезка, без RoundedCorners

@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_mediateka_to_playlistCreation"
             app:destination="@+id/playlistCreationFragment"/>
+        <action
+            android:id="@+id/action_mediateka_to_openPlaylistFragment"
+            app:destination="@id/openPlaylistFragment" />
     </fragment>
 
     <!-- Настройки -->
@@ -64,9 +67,43 @@
     <!-- Экран  плейлистов -->
     <fragment
         android:id="@+id/playlistFragment"
-        android:name="com.example.playlistmaker.media.ui.PlaylistsFragment"
+        android:name="com.example.playlistmaker.media.ui.screens.PlaylistsFragment"
         android:label="PlaylistFragment"
-        tools:layout="@layout/fragment_playlist"
-       />
+        tools:layout="@layout/fragment_playlist">
+
+        </fragment>
+
+    <fragment
+        android:id="@+id/openPlaylistFragment"
+        android:name="com.example.playlistmaker.media.ui.screens.OpenPlaylistFragment"
+        android:label="OpenPlaylistFragment"
+        tools:layout="@layout/fragment_playlist_open">
+        <argument
+            android:name="playlistId"
+            app:argType="integer"/>
+        <action
+            android:id="@+id/action_OpenPlaylistFragment_to_audioplayerFragment"
+            app:destination="@id/audioplayerFragment"/>
+        <action
+            android:id="@+id/action_OpenPlaylistFragment_to_playlistEditFragment"
+            app:destination="@id/playlistEditFragment"/>
+    </fragment>
+
+    <!-- Экран для редактирования плейлиста -->
+    <fragment
+        android:id="@+id/playlistEditFragment"
+        android:name="com.example.playlistmaker.mediateca.ui.screens.PlaylistEditFragment"
+        android:label="PlaylistEditFragment"
+        tools:layout="@layout/fragment_playlist_creation">
+        <argument
+            android:name="arg_playlist_id"
+            app:argType="integer" />
+
+        <!--  Переход обратно к открытому плейлисту -->
+        <action
+            android:id="@+id/action_playlistEditFragment_to_OpenPlaylistFragment"
+            app:destination="@id/openPlaylistFragment" />
+    </fragment>
+
 
 </navigation>

@@ -14,6 +14,8 @@
     <color name="switch_track_inactive">#E6E8EB</color>
     <color name="switch_track_active_dark">#9FBBF3</color>
 
+    <color name="overlay">#99000000</color>
+
 
 
 

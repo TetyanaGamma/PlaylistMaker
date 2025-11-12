@@ -43,5 +43,19 @@
     <string name="dialog_negative_message">Все несохраненные данные будут потеряны</string>
     <string name="dialog_cancle">Отмена</string>
     <string name="dialog_finish">Завершить</string>
+    <string name="no_tracks_in_playlist">В плейлисте нет треков</string>
+    <string name="share_playlist">Поделиться</string>
+    <string name="edit_playlist">Редактировать информацию</string>
+    <string name="remove_playlist">Удалить плейлист</string>
+    <string name="delete_track_message">Хотите удалить трек?</string>
+    <string name="button_no">НЕТ</string>
+    <string name="button_yes">ДА</string>
+    <string name="no_tracks_to_share">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="playlist_deleted">Плейлист успешно удален</string>
+    <string name="delete_playlist_title">Удалить плейлист</string>
+    <string name="delete_playlist_message">Хотите удалить плейлист?</string>
+    <string name="save">Сохранить</string>
+    <string name="playlist_updated">Плейлист успешно обновлен</string>
+    <string name="error_updating_playlist">Не удалось обновить плейлист</string>
 
 </resources>

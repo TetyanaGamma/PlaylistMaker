@@ -2,6 +2,7 @@ package com.example.playlistmaker.mediateca.data.repositoryImpl
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import com.example.playlistmaker.mediateca.data.db.converters.PlaylistDbConverter
 import com.example.playlistmaker.mediateca.data.db.converters.PlaylistTrackDataConverter
 import com.example.playlistmaker.mediateca.data.db.dao.PlaylistDao
@@ -21,7 +22,7 @@ class PlaylistRepositoryimpl(
     private val context: Context,
     private val playlistDao: PlaylistDao,
     private val converter: PlaylistDbConverter,
-    private val playlistTrackDataConverter:  PlaylistTrackDataConverter,
+    private val playlistTrackDataConverter: PlaylistTrackDataConverter,
     private val playlistTracksDao: PlaylistTracksDao,
     private val trackDao: TrackDao
 ) : PlaylistRepository {
@@ -35,7 +36,6 @@ class PlaylistRepositoryimpl(
             }
         }
     }
-
 
     // Создание нового плейлиста
     override suspend fun createPlaylist(
@@ -57,12 +57,15 @@ class PlaylistRepositoryimpl(
 
     // Обновление плейлиста
     override suspend fun updatePlaylist(playlist: Playlist) {
-        playlistDao.updatePlaylist(converter.mapPlaylistToEntity(playlist))
+        val entity = converter.mapPlaylistToEntity(playlist)
+        Log.d("PlaylistRepo", "Updating entity: $entity")
+        playlistDao.updatePlaylist(entity)
+
     }
 
+    // сохранение картинки во внутренее хранилище
     override suspend fun saveCoverImage(uri: Uri?): Uri {
         if (uri == null) return Uri.EMPTY
-
         val file = File(context.filesDir, "playlist_${System.currentTimeMillis()}.jpg")
         val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
         file.outputStream().use { output -> inputStream?.copyTo(output) }
@@ -103,9 +106,7 @@ class PlaylistRepositoryimpl(
             previewUrl = track.previewUrl,
             isFavourite = track.isFavourite
         )
-
         playlistTracksDao.insertTrack(trackEntity)
-
         // Обновляем данные плейлиста: количество треков и список ID
         val trackIds = playlistTracksDao.getTrackIdsByPlaylistId(playlistId)
         updatePlaylistTrackIds(playlistId, trackIds)
@@ -149,7 +150,7 @@ class PlaylistRepositoryimpl(
         if (trackIds.isEmpty()) return emptyList()
 
         val allTracks = playlistTracksDao.getAllTracks()
-        val favoriteTrackIds =trackDao.getFavouriteTrackIds().first()
+        val favoriteTrackIds = trackDao.getFavouriteTrackIds().first()
 
         return allTracks
             .filter { it.trackId in trackIds }

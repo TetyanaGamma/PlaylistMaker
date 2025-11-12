@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -32,7 +31,7 @@ class OpenPlaylistFragment : Fragment() {
     private var _binding: FragmentPlaylistOpenBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
+    private lateinit var tracksBottomSheetBehavior: BottomSheetBehavior<*>
     private lateinit var bottomSheetMenuBehavior: BottomSheetBehavior<*>
 
     private val trackAdapter = TrackAdapter()
@@ -54,10 +53,6 @@ class OpenPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        bottomSheetMenuBehavior = BottomSheetBehavior.from(binding.bottomSheetMenu)
-        bottomSheetMenuBehavior.isHideable = true
-        bottomSheetMenuBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-
         binding.toolbarPlaylistOpen.setNavigationOnClickListener {
             navigateBackToMediateka()
         }
@@ -65,12 +60,10 @@ class OpenPlaylistFragment : Fragment() {
         // Обработка системной кнопки Back
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-               navigateBackToMediateka()
+                navigateBackToMediateka()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-
-
 
         setupTrackBottomSheet()
         setupMenuBottomSheet()
@@ -95,15 +88,23 @@ class OpenPlaylistFragment : Fragment() {
     }
 
     private fun setupTrackBottomSheet() {
-        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetPlaylists)
-        bottomSheetBehavior.isHideable = false
-        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        // Bottom Sheet для треков
+        tracksBottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetPlaylists)
+        tracksBottomSheetBehavior.isHideable = false
+        tracksBottomSheetBehavior.isFitToContents = false
+        tracksBottomSheetBehavior.skipCollapsed = false
+        val peekHeight = resources.getDimensionPixelSize(R.dimen.peekHeight_240)
+        tracksBottomSheetBehavior.peekHeight = peekHeight
+        tracksBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
+        tracksBottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                }
+                // Список треков не показывает overlay при развороте
             }
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                // Не управляем overlay для списка треков
+            }
         })
     }
 
@@ -120,33 +121,32 @@ class OpenPlaylistFragment : Fragment() {
         binding.playListView.layoutManager = LinearLayoutManager(requireContext())
         binding.playListView.adapter = menuAdapter
 
-        // Overlay затемнение при открытии меню
-        binding.overlay.setOnClickListener {
-            bottomSheetMenuBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            binding.overlay.visibility = View.GONE
-        }
-
         binding.menuIcon.setOnClickListener {
             if (bottomSheetMenuBehavior.state != BottomSheetBehavior.STATE_EXPANDED) {
-                bottomSheetMenuBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                binding.overlay.alpha = 0f
                 binding.overlay.visibility = View.VISIBLE
+                bottomSheetMenuBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                binding.overlay.animate().alpha(1f).setDuration(200).start()
             } else {
-                bottomSheetMenuBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                binding.overlay.visibility = View.GONE
+                hideMenuOverlay()
             }
         }
-
+        binding.overlay.setOnClickListener {
+            hideMenuOverlay()
+        }
         bottomSheetMenuBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    binding.overlay.visibility = View.GONE
+                    hideMenuOverlay()
                 }
             }
+
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 binding.overlay.alpha = slideOffset.coerceIn(0f, 1f)
             }
         })
+
         // Кнопка "Поделиться" в меню
         binding.sharePlayList.setOnClickListener {
             bottomSheetMenuBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -158,19 +158,24 @@ class OpenPlaylistFragment : Fragment() {
                     type = "text/plain"
                 }
                 startActivity(Intent.createChooser(shareIntent, null))
-            } ?: Toast.makeText(requireContext(), R.string.no_tracks_to_share, Toast.LENGTH_SHORT).show()
+            } ?: Toast.makeText(requireContext(), R.string.no_tracks_to_share, Toast.LENGTH_SHORT)
+                .show()
         }
 
 
         binding.editPlayList.setOnClickListener {
             // Берём только ID плейлиста
-            val playlistId = viewModel.playlistInfo.value?.playlist?.playlistId ?: return@setOnClickListener
+            val playlistId =
+                viewModel.playlistInfo.value?.playlist?.playlistId ?: return@setOnClickListener
             // Создаём bundle с ID
             val bundle = Bundle().apply {
                 putInt(PlaylistEditFragment.ARG_PLAYLIST_ID, playlistId)
             }
 
-            findNavController().navigate(R.id.action_OpenPlaylistFragment_to_playlistEditFragment, bundle)
+            findNavController().navigate(
+                R.id.action_OpenPlaylistFragment_to_playlistEditFragment,
+                bundle
+            )
 
         }
         binding.removePlayList.setOnClickListener {
@@ -179,6 +184,14 @@ class OpenPlaylistFragment : Fragment() {
             showDeletePlaylistDialog()
         }
     }
+
+    private fun hideMenuOverlay() {
+        binding.overlay.animate().alpha(0f).setDuration(200).withEndAction {
+            binding.overlay.visibility = View.GONE
+        }.start()
+        bottomSheetMenuBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+    }
+
 
     private fun setupRecyclerView() {
         binding.tracksListView.adapter = trackAdapter
@@ -253,7 +266,8 @@ class OpenPlaylistFragment : Fragment() {
         binding.shareIcon.setOnClickListener {
             val messageToShare = viewModel.getShareMessage()
             if (messageToShare == null) {
-                Toast.makeText(requireContext(), R.string.no_tracks_to_share, Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.no_tracks_to_share, Toast.LENGTH_SHORT)
+                    .show()
                 return@setOnClickListener
             }
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -266,8 +280,8 @@ class OpenPlaylistFragment : Fragment() {
 
     private fun showDeletePlaylistDialog() {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.delete_playlist_title) // "Удалить плейлист"
-            .setMessage(R.string.delete_playlist_message) // "Хотите удалить плейлист?"
+            .setTitle(R.string.delete_playlist_title)
+            .setMessage(R.string.delete_playlist_message)
             .setNegativeButton(R.string.button_no) { dialog, _ ->
                 dialog.dismiss()
             }
@@ -279,9 +293,11 @@ class OpenPlaylistFragment : Fragment() {
     }
 
     private fun deleteCurrentPlaylist() {
-        viewModel.deletePlaylist(currentPlaylistId,
+        viewModel.deletePlaylist(
+            currentPlaylistId,
             onSuccess = {
-                Toast.makeText(requireContext(), R.string.playlist_deleted, Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.playlist_deleted, Toast.LENGTH_SHORT)
+                    .show()
                 findNavController().popBackStack()
             },
             onError = { message ->
@@ -293,7 +309,6 @@ class OpenPlaylistFragment : Fragment() {
     private fun navigateBackToMediateka() {
         findNavController().popBackStack(R.id.mediatekaFragment, false)
     }
-
 
 
     override fun onDestroyView() {

@@ -9,5 +9,6 @@
     <dimen name="list_padding">16dp</dimen>
     <dimen name="dp8">8dp</dimen>
     <dimen name="dp16">16dp</dimen>
+    <dimen name="peekHeight_240">240dp</dimen>
 
 </resources>

@@ -37,7 +37,6 @@ class PlaylistTrackDataConverter {
             trackTimeMillis = track.trackTimeMillis,
             previewUrl = track.previewUrl,
             isFavourite = track.isFavourite
-
         )
     }
 

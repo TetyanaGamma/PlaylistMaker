@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 
-
 @Entity(tableName = "playlists_table")
 data class PlaylistEntity(
     @PrimaryKey(autoGenerate = true)
@@ -12,7 +11,7 @@ data class PlaylistEntity(
     val playlistName: String,
     val playlistDescr: String? = null,
     val playlistCoverUrl: String? = null, //путь к изображению обложки альбома
-           // количество треков в плейлисте
+    // количество треков в плейлисте
     val trackCount: Int = 0,
     val createdTimestamp: Long = System.currentTimeMillis()
 )

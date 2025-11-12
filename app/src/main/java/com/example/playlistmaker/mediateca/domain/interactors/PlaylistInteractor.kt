@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 class PlaylistInteractor(
-    private val playlistRepository: PlaylistRepository
-) {
+    private val playlistRepository: PlaylistRepository) {
+
     suspend fun saveCoverImage(coverImageUri: Uri?): Uri {
         return withContext(Dispatchers.IO) {
             playlistRepository.saveCoverImage(coverImageUri)
@@ -23,15 +23,12 @@ class PlaylistInteractor(
         coverImageUri: Uri?
     ): Result<Long> {
         return try {
-            // Валидация названия
             if (name.isBlank()) {
                 return Result.failure(IllegalArgumentException("Playlist name cannot be empty"))
             }
-
             val savedCoverUri = withContext(Dispatchers.IO) {
                 playlistRepository.saveCoverImage(coverImageUri)
             }
-
             val playlistId = playlistRepository.createPlaylist(name, description, savedCoverUri)
             Result.success(playlistId)
         } catch (e: Exception) {
@@ -39,13 +36,11 @@ class PlaylistInteractor(
         }
     }
 
-
     suspend fun updatePlaylist(playlist: Playlist): Result<Unit> {
         return try {
             if (playlist.playlistName.isBlank()) {
                 return Result.failure(IllegalArgumentException("Playlist name cannot be empty"))
             }
-
             playlistRepository.updatePlaylist(playlist)
             Result.success(Unit)
         } catch (e: Exception) {
@@ -77,18 +72,14 @@ class PlaylistInteractor(
             if (isInPlaylist) {
                 return Result.failure(TrackAlreadyInPlaylistException())
             }
-
             // Получаем текущий плейлист
             val playlist = playlistRepository.getPlaylistById(playlistId)
                 ?: return Result.failure(PlaylistNotFoundException())
-
             // Добавляем трек
             playlistRepository.addTrackToPlaylist(playlistId, track)
-
             // Обновляем список ID треков и счетчик
             val updatedTrackIds = playlist.trackIds + track.trackId
             playlistRepository.updatePlaylistTrackIds(playlistId, updatedTrackIds)
-
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -114,6 +105,7 @@ class PlaylistInteractor(
     suspend fun getTracksForPlaylist(playlistId: Int): List<Track> {
         return playlistRepository.getTracksForPlaylist(playlistId)
     }
+
     suspend fun getPlaylistInfo(playlistId: Int): PlaylistInfo? {
         val playlist = playlistRepository.getPlaylistById(playlistId) ?: return null
         val tracks = playlistRepository.getTracksForPlaylist(playlistId)
@@ -124,8 +116,6 @@ class PlaylistInteractor(
             totalDuration = tracks.sumOf { it.trackTimeMillis }
         )
     }
-
-
 }
 
 data class PlaylistInfo(

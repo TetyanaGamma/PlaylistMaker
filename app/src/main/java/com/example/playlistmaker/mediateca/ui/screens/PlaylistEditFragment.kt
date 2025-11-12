@@ -3,13 +3,11 @@ package com.example.playlistmaker.mediateca.ui.screens
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.FragmentPlaylistCreationBinding
 import com.example.playlistmaker.mediateca.domain.model.Playlist
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.activity.OnBackPressedCallback
@@ -30,19 +28,16 @@ class PlaylistEditFragment : PlaylistCreationFragment() {
         val playlistId = arguments?.getInt(ARG_PLAYLIST_ID) ?: return
         viewModel.loadPlaylist(playlistId)
 
-
         // Наблюдаем за данными плейлиста
         viewModel.playlistData.observe(viewLifecycleOwner) { playlist ->
             playlist?.let {
                 populateFields(it)
             }
         }
-
         // Сохраняем изменения
         binding.buttonCreatePlaylist.setOnClickListener {
             saveChanges()
         }
-
         // Toolbar back button
         binding.newPlaylistToolbar.setNavigationOnClickListener {
             findNavController().popBackStack()
@@ -55,17 +50,25 @@ class PlaylistEditFragment : PlaylistCreationFragment() {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-
     }
 
     private fun populateFields(playlist: Playlist) {
         binding.inputPlaylistName.editText?.setText(playlist.playlistName)
         binding.inputPlaylistDescription.editText?.setText(playlist.playlistDescr)
-        playlist.playlistCoverUrl?.let {
-            selectedImageUri = Uri.parse(it)
+        selectedImageUri =
+            playlist.playlistCoverUrl?.takeIf { it.isNotBlank() }?.let { Uri.parse(it) }
+
+        if (selectedImageUri != null) {
             Glide.with(this)
                 .load(selectedImageUri)
                 .placeholder(R.drawable.placeholder)
+                .centerCrop()
+                .transform(RoundedCorners(radiusInPx))
+                .into(binding.imageAddPhoto)
+        } else {
+            // Если нет картинки или строка пустая
+            Glide.with(this)
+                .load(R.drawable.placeholder)
                 .centerCrop()
                 .transform(RoundedCorners(radiusInPx))
                 .into(binding.imageAddPhoto)
@@ -84,8 +87,6 @@ class PlaylistEditFragment : PlaylistCreationFragment() {
 
         viewModel.updatePlaylist(name, desc, selectedImageUri) { success ->
             if (success) {
-                //   Toast.makeText(requireContext(), getString(R.string.playlist_updated), Toast.LENGTH_SHORT).show()
-
                 // Отправляем результат назад (что плейлист обновлён)
                 findNavController().previousBackStackEntry
                     ?.savedStateHandle
@@ -104,8 +105,7 @@ class PlaylistEditFragment : PlaylistCreationFragment() {
             }
         }
 
-        }
-
+    }
 
 
     companion object {

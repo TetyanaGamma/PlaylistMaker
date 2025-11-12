@@ -38,16 +38,11 @@ class OpenPlaylistViewModel(
     fun removeTrackFromPlaylist(playlistId: Int, trackId: Int) {
         viewModelScope.launch {
             playlistInteractor.removeTrackFromPlaylist(playlistId, trackId)
-           // val updatedTracks = playlistInteractor.getTracksForPlaylist(playlistId)
-          //  _playlistTracks.postValue(updatedTracks)
-            loadPlaylistInfo(playlistId) // обновляем и треки, и инфо
+            loadPlaylistInfo(playlistId)
         }
     }
 
-    /**
-     * Формирует текст сообщения для кнопки "Поделиться"
-     * Возвращает null, если в плейлисте нет треков
-     */
+    // Формирует текст сообщения для кнопки "Поделиться"
     fun getShareMessage(): String? {
         val info = _playlistInfo.value ?: return null
         val playlist = info.playlist

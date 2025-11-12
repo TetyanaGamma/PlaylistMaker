@@ -133,7 +133,7 @@
                     android:layout_height="3dp"
                     android:layout_marginStart="5dp"
                     android:layout_marginEnd="5dp"
-                     android:src="@drawable/ellipse_1"
+                    android:src="@drawable/ellipse_1"
                     app:tint="@color/black"/>
 
                 <TextView
@@ -202,7 +202,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bottom_sheet_layout"
-        app:backgroundTint="@color/white"
+        app:backgroundTint="?attr/colorSurface"
         android:orientation="vertical"
         android:layout_marginTop="24dp"
         android:paddingHorizontal="@dimen/dp8"
@@ -253,7 +253,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bottom_sheet_layout"
-        app:backgroundTint="@color/white"
+        app:backgroundTint="?attr/colorSurface"
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/dp8"
         android:paddingBottom="@dimen/dp16"
